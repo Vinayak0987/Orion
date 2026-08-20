@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orion — Project Documentation</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f7fa; color: #1f2733; line-height: 1.5; }
+
+/* Sidebar */
+.sidebar { width: 230px; background: #0f2744; color: #e2e8f0; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 100; display: flex; flex-direction: column; }
+.sidebar-brand { padding: 20px 16px 12px; border-bottom: 1px solid #1e3a5f; }
+.sidebar-brand h1 { font-size: 20px; color: #fff; margin-bottom: 2px; }
+.sidebar-brand p { font-size: 11px; color: #64748b; }
+.sidebar-nav { list-style: none; padding: 8px 0; flex: 1; }
+.sidebar-nav li a { display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #94a3b8; text-decoration: none; font-size: 13.5px; border-left: 3px solid transparent; transition: all 0.15s; cursor: pointer; }
+.sidebar-nav li a:hover { background: #1e3a5f; color: #fff; }
+.sidebar-nav li a.active { background: #1e3a5f; color: #3b82f6; border-left-color: #3b82f6; font-weight: 600; }
+.sidebar-nav li a .nav-icon { width: 18px; text-align: center; font-size: 14px; }
+.nav-divider { padding: 14px 16px 6px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #475569; }
+
+/* Main content */
+.main { margin-left: 230px; padding: 0; min-height: 100vh; }
+
+/* Page header */
+.page-header { background: #fff; border-bottom: 1px solid #e2e7ee; padding: 20px 32px; position: sticky; top: 0; z-index: 50; }
+.page-header h2 { font-size: 20px; color: #1f3a5f; }
+.page-header p { font-size: 13px; color: #6b7480; margin-top: 2px; }
+
+/* Page content */
+.page { display: none; padding: 24px 32px; max-width: 1000px; }
+.page.active { display: block; }
+
+/* Components */
+h3 { color: #1f3a5f; font-size: 16px; margin: 20px 0 10px; }
+h4 { color: #334155; font-size: 14px; margin: 14px 0 8px; }
+.stats { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.stat { background: #fff; border: 1px solid #e2e7ee; border-radius: 8px; padding: 12px 16px; text-align: center; min-width: 100px; }
+.stat-value { font-size: 22px; font-weight: 700; color: #1f3a5f; }
+.stat-label { font-size: 11px; color: #6b7480; text-transform: uppercase; letter-spacing: 0.5px; }
+.search { width: 100%; padding: 10px 14px; border: 1px solid #e2e7ee; border-radius: 8px; font-size: 14px; margin-bottom: 16px; }
+.search:focus { outline: 2px solid #1f3a5f; border-color: #1f3a5f; }
+
+/* Tree */
+.tree { background: #fff; border: 1px solid #e2e7ee; border-radius: 8px; padding: 8px 0; }
+.folder, .file { padding: 4px 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13.5px; }
+.folder:hover, .file:hover { background: #f5f8fb; }
+.folder { font-weight: 600; color: #1f3a5f; }
+.folder-icon { width: 18px; text-align: center; color: #d97706; font-size: 14px; transition: transform 0.15s; }
+.folder.closed .folder-icon { transform: rotate(-90deg); }
+.file { padding-left: 28px; color: #475569; }
+.file-icon { width: 18px; text-align: center; font-size: 12px; color: #6b7480; }
+.desc { margin-left: auto; font-size: 11.5px; color: #94a3b8; max-width: 350px; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.children { padding-left: 16px; border-left: 1px solid #f0f3f7; margin-left: 8px; }
+.children.hidden { display: none; }
+.badge { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 99px; font-weight: 600; margin-left: 6px; }
+.badge-py { background: #dbeafe; color: #1a56db; }
+.badge-jsx { background: #fce7f3; color: #db2777; }
+.badge-md { background: #e7f6ec; color: #15803d; }
+.badge-cfg { background: #f3e8ff; color: #7c3aed; }
+.badge-data { background: #fef3c7; color: #d97706; }
+
+/* Tables */
+.tech-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #e2e7ee; border-radius: 8px; overflow: hidden; font-size: 13.5px; margin-bottom: 16px; }
+.tech-table th { background: #f1f5f9; color: #475569; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 14px; text-align: left; }
+.tech-table td { padding: 10px 14px; border-top: 1px solid #f0f3f7; vertical-align: top; }
+.tech-table tr:hover { background: #f8fafc; }
+.tech-name { font-weight: 600; color: #1f3a5f; }
+.tech-version { font-family: monospace; font-size: 12px; color: #6b7480; background: #f1f5f9; padding: 1px 6px; border-radius: 4px; }
+.cost-free { font-size: 11px; font-weight: 600; border-radius: 99px; padding: 2px 8px; background: #e7f6ec; color: #15803d; }
+.cost-freemium { font-size: 11px; font-weight: 600; border-radius: 99px; padding: 2px 8px; background: #dbeafe; color: #1a56db; }
+
+/* Category badges */
+.cat-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 99px; margin-bottom: 10px; color: #fff; }
+.cat-core { background: #1f3a5f; }
+.cat-llm { background: #7c3aed; }
+.cat-data { background: #059669; }
+.cat-frontend { background: #db2777; }
+.cat-devops { background: #ea580c; }
+.cat-eval { background: #0d9488; }
+
+/* Info boxes */
+.info-box { padding: 10px 14px; border-radius: 8px; font-size: 13px; margin: 12px 0; }
+.info-green { background: #e7f6ec; border-left: 3px solid #15803d; }
+.info-yellow { background: #fef3c7; border-left: 3px solid #d97706; }
+.info-blue { background: #dbeafe; border-left: 3px solid #1a56db; }
+
+code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 12.5px; }
+a { color: #1a56db; }
+
+.section-gap { margin-bottom: 28px; }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+<div class="sidebar-brand"><h1>Orion</h1><p>AI Business Operating System</p></div>
+<ul class="sidebar-nav">
+<li><a data-page="structure" class="active"><span class="nav-icon">&#128193;</span> Project Structure</a></li>
+<li class="nav-divider">Tech Stack</li>
+<li><a data-page="core"><span class="nav-icon">&#9881;</span> Core Framework</a></li>
+<li><a data-page="llm"><span class="nav-icon">&#129302;</span> LLM Providers</a></li>
+<li><a data-page="data"><span class="nav-icon">&#128451;</span> Data & Storage</a></li>
+<li><a data-page="apis"><span class="nav-icon">&#127760;</span> External APIs</a></li>
+<li><a data-page="frontend-tech"><span class="nav-icon">&#128187;</span> Frontend</a></li>
+<li><a data-page="devops"><span class="nav-icon">&#128295;</span> DevOps & Testing</a></li>
+<li><a data-page="eval"><span class="nav-icon">&#128202;</span> Evaluation</a></li>
+<li class="nav-divider">Setup Guide</li>
+<li><a data-page="demo"><span class="nav-icon">&#127916;</span> Live Demo Guide</a></li>
+<li><a data-page="install"><span class="nav-icon">&#128229;</span> Installation</a></li>
+<li><a data-page="config"><span class="nav-icon">&#128273;</span> API Keys & Config</a></li>
+<li><a data-page="running"><span class="nav-icon">&#9654;</span> Running the App</a></li>
+<li><a data-page="testing"><span class="nav-icon">&#9989;</span> Tests & Demos</a></li>
+<li><a data-page="trouble"><span class="nav-icon">&#128679;</span> Troubleshooting</a></li>
+</ul>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+<div class="page-header" id="pageHeader"><h2>Project Structure</h2><p>Interactive file explorer — click folders to expand</p></div>
+
+<!-- ==================== PAGE: STRUCTURE ==================== -->
+<div class="page active" id="page-structure">
+<div class="stats">
+<div class="stat"><div class="stat-value">989</div><div class="stat-label">Tests</div></div>
+<div class="stat"><div class="stat-value">21</div><div class="stat-label">AI Agents</div></div>
+<div class="stat"><div class="stat-value">5</div><div class="stat-label">Departments</div></div>
+<div class="stat"><div class="stat-value">30+</div><div class="stat-label">Endpoints</div></div>
+<div class="stat"><div class="stat-value">190KB</div><div class="stat-label">Bundle</div></div>
+<div class="stat"><div class="stat-value">Rs 0</div><div class="stat-label">Cost</div></div>
+</div>
+<input type="text" class="search" placeholder="Search files..." id="search">
+<div class="tree" id="tree"></div>
+</div>
+
+<!-- ==================== PAGE: CORE ==================== -->
+<div class="page" id="page-core">
+<span class="cat-badge cat-core">CORE FRAMEWORK</span>
+<h3>Primary Application Stack</h3>
+<table class="tech-table"><thead><tr><th>Technology</th><th>Version</th><th>Role</th><th>Why</th><th>Cost</th></tr></thead><tbody>
+<tr><td class="tech-name">Python</td><td><span class="tech-version">3.13.2</span></td><td>Primary language</td><td>Modern features: StrEnum, asyncio, type hints</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">FastAPI</td><td><span class="tech-version">0.115.6</span></td><td>Web framework</td><td>Async, WebSocket, auto-OpenAPI docs</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">Uvicorn</td><td><span class="tech-version">0.34.0</span></td><td>ASGI server</td><td>Production server for FastAPI</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">Pydantic</td><td><span class="tech-version">2.10.4</span></td><td>Validation</td><td>Every LLM response schema-validated</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">LangGraph</td><td><span class="tech-version">0.2.62</span></td><td>Agent orchestration</td><td>Explicit execution graph for RQ2</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">structlog</td><td><span class="tech-version">24.4.0</span></td><td>Logging</td><td>Structured JSON logs</td><td><span class="cost-free">Free</span></td></tr>
+</tbody></table>
+</div>
+
+<!-- ==================== PAGE: LLM ==================== -->
+<div class="page" id="page-llm">
+<span class="cat-badge cat-llm">LLM PROVIDERS</span>
+<h3>AI Model Layer — Fallback Chain</h3>
+<div class="info-box info-blue"><strong>How it works:</strong> Groq (fastest) → Gemini (best JSON) → Ollama (offline). If one fails, the next takes over automatically. User never sees a failure.</div>
+<table class="tech-table"><thead><tr><th>Provider</th><th>Model</th><th>Role</th><th>Free Limit</th><th>Cost</th></tr></thead><tbody>
+<tr><td class="tech-name">Groq</td><td><span class="tech-version">Llama 3.1 8B/70B</span></td><td>Primary (fastest)</td><td>14,400 req/day</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">Google Gemini</td><td><span class="tech-version">Flash Lite</span></td><td>Secondary (best JSON)</td><td>1M tokens/day</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">Ollama (Local)</td><td><span class="tech-version">Llama 3.1 8B</span></td><td>Fallback (offline)</td><td>Unlimited</td><td><span class="cost-free">Free</span></td></tr>
+</tbody></table>
+<div class="info-box info-green"><strong>Minimum needed:</strong> Just ONE of these. Get Groq key in 30 seconds (no credit card) → full speed.</div>
+</div>
+
+<!-- ==================== PAGE: DATA ==================== -->
+<div class="page" id="page-data">
+<span class="cat-badge cat-data">DATA & STORAGE</span>
+<h3>Database & Vector Storage</h3>
+<table class="tech-table"><thead><tr><th>Technology</th><th>Version</th><th>Role</th><th>Why</th><th>Cost</th></tr></thead><tbody>
+<tr><td class="tech-name">SQLite</td><td><span class="tech-version">stdlib</span></td><td>Primary database</td><td>Zero setup, append-only triggers for ledger integrity</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">ChromaDB</td><td><span class="tech-version">0.5.23</span></td><td>Vector cache</td><td>Local file mode, caches API results</td><td><span class="cost-free">Free</span></td></tr>
+</tbody></table>
+</div>
+
+<!-- ==================== PAGE: APIs ==================== -->
+<div class="page" id="page-apis">
+<span class="cat-badge cat-data">EXTERNAL APIs</span>
+<h3>Real-World Data Sources</h3>
+<div class="info-box info-green"><strong>All optional.</strong> System works without any of these — uses fallbacks. They just make the output better.</div>
+<table class="tech-table"><thead><tr><th>API</th><th>Provides</th><th>Free Tier</th><th>Required?</th><th>Cost</th></tr></thead><tbody>
+<tr><td class="tech-name">Google Places</td><td>Real competitors with ratings</td><td>$200/month credit</td><td>No (OSM fallback)</td><td><span class="cost-freemium">Free Tier</span></td></tr>
+<tr><td class="tech-name">OpenStreetMap</td><td>Business locations, names</td><td>Unlimited</td><td>No key needed</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">Serper.dev</td><td>Market research, industry data</td><td>2,500/month</td><td>No (skips research)</td><td><span class="cost-freemium">Free Tier</span></td></tr>
+</tbody></table>
+</div>
+
+<!-- ==================== PAGE: FRONTEND ==================== -->
+<div class="page" id="page-frontend-tech">
+<span class="cat-badge cat-frontend">FRONTEND</span>
+<h3>User Interface</h3>
+<table class="tech-table"><thead><tr><th>Technology</th><th>Version</th><th>Role</th><th>Why</th><th>Cost</th></tr></thead><tbody>
+<tr><td class="tech-name">React</td><td><span class="tech-version">18.3.1</span></td><td>UI framework</td><td>Industry standard, component model</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">Vite</td><td><span class="tech-version">5.4.11</span></td><td>Build tool</td><td>Instant hot reload, fast builds</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">Plain CSS</td><td>—</td><td>Styling</td><td>No framework keeps bundle small</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">Inline SVG</td><td>—</td><td>Charts</td><td>No chart library needed</td><td><span class="cost-free">Free</span></td></tr>
+</tbody></table>
+<div class="info-box info-yellow"><strong>Bundle:</strong> Only react + react-dom. No router, no chart lib, no CSS framework. Total: 190 KB.</div>
+</div>
+
+<!-- ==================== PAGE: DEVOPS ==================== -->
+<div class="page" id="page-devops">
+<span class="cat-badge cat-devops">DEVOPS & TESTING</span>
+<h3>Development Tools</h3>
+<table class="tech-table"><thead><tr><th>Technology</th><th>Version</th><th>Role</th><th>Cost</th></tr></thead><tbody>
+<tr><td class="tech-name">Docker Compose</td><td><span class="tech-version">2.x</span></td><td>One-command deployment</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">pytest</td><td><span class="tech-version">8.3.4</span></td><td>989 tests, socket guard</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">pytest-asyncio</td><td><span class="tech-version">0.25.0</span></td><td>Async endpoint tests</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">respx</td><td><span class="tech-version">0.22.0</span></td><td>HTTP mocking (no network)</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">httpx</td><td><span class="tech-version">0.27.2</span></td><td>Async HTTP client</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">tenacity</td><td><span class="tech-version">9.0.0</span></td><td>Retry with backoff</td><td><span class="cost-free">Free</span></td></tr>
+</tbody></table>
+</div>
+
+<!-- ==================== PAGE: EVAL ==================== -->
+<div class="page" id="page-eval">
+<span class="cat-badge cat-eval">EVALUATION & RESEARCH</span>
+<h3>Statistical Analysis & Figures</h3>
+<table class="tech-table"><thead><tr><th>Technology</th><th>Version</th><th>Role</th><th>Cost</th></tr></thead><tbody>
+<tr><td class="tech-name">scipy</td><td><span class="tech-version">1.14.1</span></td><td>Paired Wilcoxon, t-tests</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">matplotlib</td><td><span class="tech-version">3.9.2</span></td><td>Paper figures, infographics</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">python-pptx</td><td><span class="tech-version">1.0.2</span></td><td>Generates presentation deck</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">Jinja2</td><td><span class="tech-version">3.1.5</span></td><td>HTML report templates</td><td><span class="cost-free">Free</span></td></tr>
+<tr><td class="tech-name">xhtml2pdf</td><td><span class="tech-version">0.2.16</span></td><td>PDF export</td><td><span class="cost-free">Free</span></td></tr>
+</tbody></table>
+</div>
+
+<!-- ==================== PAGE: DEMO ==================== -->
+<div class="page" id="page-demo">
+<style>
+.demo-step { background:#fff; border:1px solid #e2e7ee; border-radius:10px; margin-bottom:24px; overflow:hidden; }
+.demo-step-header { display:flex; align-items:center; gap:12px; padding:14px 18px; background:#f8fafc; border-bottom:1px solid #e2e7ee; }
+.demo-step-num { width:32px; height:32px; border-radius:50%; background:#1f3a5f; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0; }
+.demo-step-title { font-size:15px; font-weight:600; color:#1f3a5f; }
+.demo-step-desc { font-size:12.5px; color:#6b7480; }
+.demo-step-body { padding:16px 18px; }
+.demo-cmd { background:#1e293b; color:#e2e8f0; padding:12px 16px; border-radius:6px; font-family:monospace; font-size:12.5px; margin:10px 0; overflow-x:auto; }
+.demo-cmd .prompt { color:#6b7480; }
+.demo-cmd .cmd { color:#86efac; }
+.demo-cmd .output { color:#94a3b8; }
+
+/* UI Mockups */
+.mockup { border:1px solid #e2e7ee; border-radius:8px; overflow:hidden; margin:14px 0; box-shadow:0 2px 8px rgba(0,0,0,0.04); }
+.mockup-bar { background:#f1f5f9; padding:6px 12px; display:flex; align-items:center; gap:6px; border-bottom:1px solid #e2e7ee; }
+.mockup-dot { width:10px; height:10px; border-radius:50%; }
+.mockup-dot-r { background:#ff5f57; }
+.mockup-dot-y { background:#ffbd2e; }
+.mockup-dot-g { background:#28c840; }
+.mockup-url { margin-left:12px; font-size:11px; color:#6b7480; background:#fff; padding:3px 10px; border-radius:4px; border:1px solid #e2e7ee; }
+.mockup-body { padding:16px; background:#f5f7fa; }
+.mockup-nav { display:flex; gap:2px; background:#eef2f7; padding:3px; border-radius:6px; margin-bottom:14px; }
+.mockup-nav-item { padding:6px 12px; border-radius:4px; font-size:12px; color:#6b7480; cursor:default; }
+.mockup-nav-item.active { background:#fff; color:#1f3a5f; font-weight:600; box-shadow:0 1px 2px rgba(0,0,0,0.05); }
+.mockup-card { background:#fff; border:1px solid #e2e7ee; border-radius:6px; padding:12px; margin-bottom:10px; }
+.mockup-h { font-size:18px; font-weight:700; color:#1f3a5f; margin-bottom:4px; }
+.mockup-sub { font-size:11px; color:#6b7480; margin-bottom:12px; }
+.mockup-input { width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:13px; background:#fff; color:#1f2733; }
+.mockup-btn { display:inline-block; padding:7px 14px; background:#1f3a5f; color:#fff; border-radius:6px; font-size:12px; font-weight:600; }
+.mockup-progress { height:6px; background:#e2e8f0; border-radius:99px; margin:8px 0; overflow:hidden; }
+.mockup-progress-fill { height:100%; background:#3b82f6; border-radius:99px; }
+.mockup-dept { display:flex; align-items:center; gap:8px; padding:5px 0; font-size:12px; }
+.mockup-dept-done { color:#15803d; }
+.mockup-dept-run { color:#1a56db; }
+.mockup-dept-wait { color:#94a3b8; }
+.mockup-kpi { display:flex; gap:8px; margin:10px 0; }
+.mockup-kpi-item { flex:1; background:#f8fafc; border:1px solid #e2e7ee; border-radius:6px; padding:8px; text-align:center; }
+.mockup-kpi-val { font-size:16px; font-weight:700; color:#1f3a5f; }
+.mockup-kpi-lbl { font-size:9px; color:#6b7480; text-transform:uppercase; }
+.mockup-tabs { display:flex; gap:2px; margin:10px 0; border-bottom:1px solid #e2e7ee; }
+.mockup-tab { padding:6px 12px; font-size:11px; color:#6b7480; border-bottom:2px solid transparent; }
+.mockup-tab.active { color:#1f3a5f; font-weight:600; border-bottom-color:#1f3a5f; }
+.mockup-table { width:100%; font-size:11px; border-collapse:collapse; }
+.mockup-table th { text-align:left; padding:5px 8px; background:#f8fafc; color:#6b7480; font-size:10px; text-transform:uppercase; }
+.mockup-table td { padding:5px 8px; border-top:1px solid #f0f3f7; }
+.mockup-anchor { display:inline-flex; align-items:center; gap:4px; background:#f8fafc; border:1px solid #e2e7ee; border-radius:4px; padding:4px 8px; margin:3px; font-size:11px; }
+.mockup-anchor-lock { font-size:9px; }
+.mockup-finding { display:flex; align-items:center; gap:8px; padding:6px 8px; border-bottom:1px solid #f0f3f7; font-size:11px; }
+.mockup-sev { padding:2px 6px; border-radius:99px; font-size:9px; font-weight:700; color:#fff; }
+.mockup-sev-crit { background:#b91c1c; }
+.mockup-sev-high { background:#d97706; }
+.demo-note { background:#dbeafe; border-left:3px solid #1a56db; padding:10px 14px; border-radius:0 6px 6px 0; font-size:12.5px; color:#1e40af; margin:10px 0; }
+</style>
+
+<div class="info-box info-blue"><strong>This is a complete demo walkthrough.</strong> Follow these steps in order to demonstrate the full system. Each step shows the command, what happens, and what the screen looks like.</div>
+
+<!-- STEP 0 -->
+<div class="demo-step">
+<div class="demo-step-header"><div class="demo-step-num">0</div><div><div class="demo-step-title">Start Both Servers</div><div class="demo-step-desc">Backend + Frontend in two terminals</div></div></div>
+<div class="demo-step-body">
+<h4>Terminal 1 — Backend:</h4>
+<div class="demo-cmd"><span class="prompt">PS&gt;</span> <span class="cmd">cd C:\Users\Vinayak\Desktop\kiro\backend</span><br><span class="prompt">PS&gt;</span> <span class="cmd">..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8080</span><br><span class="output">INFO:     Uvicorn running on http://127.0.0.1:8080</span></div>
+<h4>Terminal 2 — Frontend:</h4>
+<div class="demo-cmd"><span class="prompt">PS&gt;</span> <span class="cmd">cd C:\Users\Vinayak\Desktop\kiro\frontend</span><br><span class="prompt">PS&gt;</span> <span class="cmd">npm run dev</span><br><span class="output">VITE v5.4.11  ready in 400ms<br>  Local:   http://localhost:5173/</span></div>
+</div></div>
+
+<!-- STEP 1 -->
+<div class="demo-step">
+<div class="demo-step-header"><div class="demo-step-num">1</div><div><div class="demo-step-title">Open the App — Generate Tab</div><div class="demo-step-desc">Type a business idea in one sentence</div></div></div>
+<div class="demo-step-body">
+<div class="demo-cmd"><span class="prompt">Browser:</span> <span class="cmd">http://localhost:5173/#/generate</span></div>
+<div class="mockup">
+<div class="mockup-bar"><span class="mockup-dot mockup-dot-r"></span><span class="mockup-dot mockup-dot-y"></span><span class="mockup-dot mockup-dot-g"></span><span class="mockup-url">localhost:5173/#/generate</span></div>
+<div class="mockup-body">
+<div class="mockup-nav"><span class="mockup-nav-item active">Generate</span><span class="mockup-nav-item">Business</span><span class="mockup-nav-item">Work</span><span class="mockup-nav-item">Activity</span><span class="mockup-nav-item">Loops</span></div>
+<div class="mockup-h">Orion</div>
+<div class="mockup-sub">AI Business Operating System</div>
+<div class="mockup-card">
+<div style="font-size:12px;font-weight:600;margin-bottom:6px;">Describe your business idea:</div>
+<input class="mockup-input" value="Ice cream shop in Andheri West, budget Rs 15 lakh" readonly>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+<span class="mockup-btn">Generate Business Plan</span>
+<span style="font-size:11px;color:#6b7480;">49/1000</span>
+</div>
+</div>
+</div></div>
+<div class="demo-note">Type any business idea. Examples: "dental clinic near Bandra, 50L" or "SaaS for HR, 2 crore" or just "bakery"</div>
+</div></div>
+
+<!-- STEP 2 -->
+<div class="demo-step">
+<div class="demo-step-header"><div class="demo-step-num">2</div><div><div class="demo-step-title">Watch Real-Time Agent Progress</div><div class="demo-step-desc">21 agents work across 5 departments via WebSocket</div></div></div>
+<div class="demo-step-body">
+<div class="mockup">
+<div class="mockup-bar"><span class="mockup-dot mockup-dot-r"></span><span class="mockup-dot mockup-dot-y"></span><span class="mockup-dot mockup-dot-g"></span><span class="mockup-url">localhost:5173/#/generate</span></div>
+<div class="mockup-body">
+<div class="mockup-card">
+<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><strong>GENERATING...</strong><span style="color:#6b7480;">38s elapsed</span></div>
+<div class="mockup-progress"><div class="mockup-progress-fill" style="width:70%"></div></div>
+<div style="font-size:11px;color:#6b7480;margin-bottom:8px;">4/5 departments complete</div>
+<div class="mockup-dept mockup-dept-done">&#10003; Strategy — done (12s)</div>
+<div class="mockup-dept mockup-dept-done">&#10003; Finance — done (18s)</div>
+<div class="mockup-dept mockup-dept-done">&#10003; Branding — done (14s)</div>
+<div class="mockup-dept mockup-dept-run">&#9679; Marketing — running...</div>
+<div class="mockup-dept mockup-dept-wait">&#9675; Operations — waiting</div>
+</div>
+</div></div>
+<div class="demo-note">This is live — each department shows its status via WebSocket. Strategy runs first, then Finance + Branding + Marketing in parallel, then Operations last.</div>
+</div></div>
+
+<!-- STEP 3 -->
+<div class="demo-step">
+<div class="demo-step-header"><div class="demo-step-num">3</div><div><div class="demo-step-title">View the Complete Business Plan</div><div class="demo-step-desc">Report with KPIs, department tabs, and download options</div></div></div>
+<div class="demo-step-body">
+<div class="mockup">
+<div class="mockup-bar"><span class="mockup-dot mockup-dot-r"></span><span class="mockup-dot mockup-dot-y"></span><span class="mockup-dot mockup-dot-g"></span><span class="mockup-url">localhost:5173/#/generate</span></div>
+<div class="mockup-body">
+<div class="mockup-card">
+<div class="mockup-h">Ice Cream Shop — Andheri West</div>
+<div class="mockup-kpi">
+<div class="mockup-kpi-item"><div class="mockup-kpi-val">100%</div><div class="mockup-kpi-lbl">Complete</div></div>
+<div class="mockup-kpi-item"><div class="mockup-kpi-val">Rs 14.2L</div><div class="mockup-kpi-lbl">Setup Cost</div></div>
+<div class="mockup-kpi-item"><div class="mockup-kpi-val">Month 8</div><div class="mockup-kpi-lbl">Break-even</div></div>
+<div class="mockup-kpi-item"><div class="mockup-kpi-val">Rs 72L</div><div class="mockup-kpi-lbl">Year 1 SOM</div></div>
+</div>
+<div class="mockup-tabs">
+<span class="mockup-tab active">Strategy</span><span class="mockup-tab">Finance</span><span class="mockup-tab">Branding</span><span class="mockup-tab">Marketing</span><span class="mockup-tab">Operations</span>
+</div>
+<div style="font-size:12px;margin-top:10px;">
+<div style="font-weight:600;color:#1f3a5f;margin-bottom:4px;">Market Sizing</div>
+<div style="color:#475569;">TAM: Rs 240 Crore (Mumbai ice cream market)</div>
+<div style="color:#475569;">SAM: Rs 18 Crore (Western suburbs, premium)</div>
+<div style="color:#475569;">SOM: Rs 72 Lakh (Year 1, 3% penetration)</div>
+<div style="font-weight:600;color:#1f3a5f;margin:10px 0 4px;">Competitors (from Google Maps)</div>
+<table class="mockup-table"><thead><tr><th>Business</th><th>Rating</th><th>Reviews</th><th>Source</th></tr></thead><tbody>
+<tr><td>Naturals Ice Cream</td><td>4.3 &#9733;</td><td>247</td><td>Google Maps</td></tr>
+<tr><td>Apsara Ice Cream</td><td>4.1 &#9733;</td><td>189</td><td>Google Maps</td></tr>
+<tr><td>Baskin Robbins</td><td>4.0 &#9733;</td><td>312</td><td>Google Maps</td></tr>
+</tbody></table>
+</div>
+<div style="margin-top:12px;display:flex;gap:8px;">
+<span class="mockup-btn" style="background:#059669;">Download PDF</span>
+<span class="mockup-btn" style="background:#475569;">Download JSON</span>
+</div>
+</div>
+</div></div>
+<div class="demo-note">Click each department tab to see its full output. The competitors are REAL businesses from Google Maps, not hallucinated. Download as PDF for a professional document.</div>
+</div></div>
+
+<!-- STEP 4 -->
+<div class="demo-step">
+<div class="demo-step-header"><div class="demo-step-num">4</div><div><div class="demo-step-title">Business View — Operating Layer Dashboard</div><div class="demo-step-desc">See computed anchors, findings, and department status</div></div></div>
+<div class="demo-step-body">
+<div class="demo-cmd"><span class="prompt">First, seed the demo data (one-time):</span><br><span class="prompt">PS&gt;</span> <span class="cmd">$env:PYTHONPATH="C:\Users\Vinayak\Desktop\kiro\backend;C:\Users\Vinayak\Desktop\kiro"</span><br><span class="prompt">PS&gt;</span> <span class="cmd">$env:PYTHONIOENCODING="utf-8"</span><br><span class="prompt">PS&gt;</span> <span class="cmd">.\.venv\Scripts\python.exe -m scripts.autonomy_demo --days 90</span></div>
+<div class="demo-cmd"><span class="prompt">Browser:</span> <span class="cmd">http://localhost:5173/#/business</span></div>
+<div class="mockup">
+<div class="mockup-bar"><span class="mockup-dot mockup-dot-r"></span><span class="mockup-dot mockup-dot-y"></span><span class="mockup-dot mockup-dot-g"></span><span class="mockup-url">localhost:5173/#/business</span></div>
+<div class="mockup-body">
+<div class="mockup-nav"><span class="mockup-nav-item">Generate</span><span class="mockup-nav-item active">Business</span><span class="mockup-nav-item">Work</span><span class="mockup-nav-item">Activity</span><span class="mockup-nav-item">Loops</span></div>
+<div style="font-size:16px;font-weight:700;color:#1f3a5f;">Business View</div>
+<div style="font-size:11px;color:#6b7480;margin-bottom:12px;">Every number is computed from the ledger — no agent can write one.</div>
+<div style="font-size:11px;font-weight:600;color:#6b7480;margin-bottom:6px;">MARGINS</div>
+<div style="display:flex;gap:8px;margin-bottom:12px;">
+<div class="mockup-anchor"><span class="mockup-anchor-lock">&#128274;</span> Net Margin <strong style="margin-left:4px;">+2.50%</strong></div>
+<div class="mockup-anchor"><span class="mockup-anchor-lock">&#128274;</span> Gross Margin <strong style="margin-left:4px;">60.00%</strong></div>
+</div>
+<div style="font-size:11px;font-weight:600;color:#6b7480;margin-bottom:6px;">OPEN FINDINGS</div>
+<div class="mockup-finding"><span class="mockup-sev mockup-sev-crit">CRITICAL</span><span>proxy_divergence</span><span style="color:#6b7480;">| marketing |</span><span>net_margin -1.5</span></div>
+<div class="mockup-finding"><span class="mockup-sev mockup-sev-high">HIGH</span><span>dept_conflict</span><span style="color:#6b7480;">| mkt + ops |</span><span>net_margin -1.5</span></div>
+</div></div>
+<div class="demo-note">The lock icon (&#128274;) means "computed from the ledger — no agent wrote this." Findings always cite the anchor they are based on. This is what makes the system trustworthy.</div>
+</div></div>
+
+<!-- STEP 5 -->
+<div class="demo-step">
+<div class="demo-step-header"><div class="demo-step-num">5</div><div><div class="demo-step-title">Work View — Governance & Decisions</div><div class="demo-step-desc">Review queue, constitution rules, cadence status</div></div></div>
+<div class="demo-step-body">
+<div class="demo-cmd"><span class="prompt">Browser:</span> <span class="cmd">http://localhost:5173/#/work</span></div>
+<div class="mockup">
+<div class="mockup-bar"><span class="mockup-dot mockup-dot-r"></span><span class="mockup-dot mockup-dot-y"></span><span class="mockup-dot mockup-dot-g"></span><span class="mockup-url">localhost:5173/#/work</span></div>
+<div class="mockup-body">
+<div class="mockup-nav"><span class="mockup-nav-item">Generate</span><span class="mockup-nav-item">Business</span><span class="mockup-nav-item active">Work</span><span class="mockup-nav-item">Activity</span><span class="mockup-nav-item">Loops</span></div>
+<div style="font-size:16px;font-weight:700;color:#1f3a5f;">Work View</div>
+<div class="mockup-card" style="border-left:3px solid #d97706;">
+<div style="font-size:13px;font-weight:600;">Review Queue</div>
+<div style="font-size:11px;color:#d97706;margin:4px 0 8px;">Approving does NOT unlock a hard constraint.</div>
+<div style="font-size:12px;display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f0f3f7;">
+<span><strong>marketing</strong> — large campaign</span><span style="font-size:11px;background:#fdf3e3;color:#d97706;padding:2px 6px;border-radius:99px;">elevated</span><span style="font-weight:600;">Rs 8,000</span>
+</div>
+</div>
+<div class="mockup-card">
+<div style="font-size:13px;font-weight:600;margin-bottom:6px;">Constitution (7 rules — code, not settings)</div>
+<div style="font-size:11px;padding:4px 0;border-bottom:1px solid #f0f3f7;"><code style="color:#1a56db;">C1_DAILY_SPEND_CAP</code> <span style="color:#b91c1c;font-size:10px;font-weight:600;">block</span> — Cannot spend more than the daily cap</div>
+<div style="font-size:11px;padding:4px 0;border-bottom:1px solid #f0f3f7;"><code style="color:#1a56db;">C4_NO_CUSTOMER_DATA_DELETION</code> <span style="color:#b91c1c;font-size:10px;font-weight:600;">block</span> — Customer data cannot be deleted</div>
+</div>
+</div></div>
+<div class="demo-note">The Constitution panel shows hard rules that CANNOT be changed from the UI. Even if you approve a decision, the Constitution can still block it at execution.</div>
+</div></div>
+
+<!-- STEP 6 -->
+<div class="demo-step">
+<div class="demo-step-header"><div class="demo-step-num">6</div><div><div class="demo-step-title">Activity View — Debug & Inspect</div><div class="demo-step-desc">Loop runs, append-only ledger, memory stores</div></div></div>
+<div class="demo-step-body">
+<div class="demo-cmd"><span class="prompt">Browser:</span> <span class="cmd">http://localhost:5173/#/activity</span></div>
+<div class="mockup">
+<div class="mockup-bar"><span class="mockup-dot mockup-dot-r"></span><span class="mockup-dot mockup-dot-y"></span><span class="mockup-dot mockup-dot-g"></span><span class="mockup-url">localhost:5173/#/activity</span></div>
+<div class="mockup-body">
+<div class="mockup-nav"><span class="mockup-nav-item">Generate</span><span class="mockup-nav-item">Business</span><span class="mockup-nav-item">Work</span><span class="mockup-nav-item active">Activity</span><span class="mockup-nav-item">Loops</span></div>
+<div style="font-size:16px;font-weight:700;color:#1f3a5f;">Activity View</div>
+<div class="mockup-card">
+<div style="font-size:13px;font-weight:600;margin-bottom:6px;">Loop Run Log</div>
+<table class="mockup-table"><thead><tr><th>Loop</th><th>Status</th><th>Duration</th></tr></thead><tbody>
+<tr><td>marketing</td><td style="color:#15803d;">&#10003; completed</td><td>12ms</td></tr>
+<tr><td>goodhart_detector</td><td style="color:#15803d;">&#10003; completed</td><td>8ms</td></tr>
+<tr><td>finance</td><td style="color:#15803d;">&#10003; completed</td><td>5ms</td></tr>
+</tbody></table>
+</div>
+<div class="mockup-card">
+<div style="font-size:13px;font-weight:600;margin-bottom:4px;">Ledger <span style="font-size:10px;color:#6b7480;font-weight:400;">(append-only — cannot be edited)</span></div>
+<table class="mockup-table"><thead><tr><th>Seq</th><th>Kind</th><th>Dept</th><th>Amount</th></tr></thead><tbody>
+<tr><td>#486</td><td>marketing_spend</td><td>marketing</td><td>Rs 4,000</td></tr>
+<tr><td>#485</td><td>customer_acquired</td><td>environment</td><td>qty: 14</td></tr>
+<tr><td>#484</td><td>revenue</td><td>environment</td><td>Rs 24,000</td></tr>
+</tbody></table>
+</div>
+</div></div>
+</div></div>
+
+<!-- STEP 7 -->
+<div class="demo-step">
+<div class="demo-step-header"><div class="demo-step-num">7</div><div><div class="demo-step-title">Loops View — Control Topology Graph</div><div class="demo-step-desc">Visual proof that every cycle terminates</div></div></div>
+<div class="demo-step-body">
+<div class="demo-cmd"><span class="prompt">Browser:</span> <span class="cmd">http://localhost:5173/#/loops</span></div>
+<div class="mockup">
+<div class="mockup-bar"><span class="mockup-dot mockup-dot-r"></span><span class="mockup-dot mockup-dot-y"></span><span class="mockup-dot mockup-dot-g"></span><span class="mockup-url">localhost:5173/#/loops</span></div>
+<div class="mockup-body">
+<div class="mockup-nav"><span class="mockup-nav-item">Generate</span><span class="mockup-nav-item">Business</span><span class="mockup-nav-item">Work</span><span class="mockup-nav-item">Activity</span><span class="mockup-nav-item active">Loops</span></div>
+<div style="font-size:16px;font-weight:700;color:#1f3a5f;">Loop Graph</div>
+<div style="font-size:11px;color:#6b7480;margin-bottom:10px;">Every cycle must terminate at an anchor (&#128274;) or a human decision.</div>
+<div style="background:#fff;border:1px solid #e2e7ee;border-radius:8px;padding:16px;text-align:center;">
+<svg width="100%" height="180" viewBox="0 0 400 180">
+<polygon points="200,15 215,35 185,35" fill="#1f3a5f"/><text x="200" y="50" text-anchor="middle" font-size="9" fill="#1f3a5f">anchors</text>
+<rect x="170" y="130" width="60" height="24" rx="3" fill="#7c3aed"/><text x="200" y="146" text-anchor="middle" font-size="8" fill="#fff">human</text>
+<circle cx="80" cy="90" r="16" fill="#2563eb"/><text x="80" y="93" text-anchor="middle" font-size="7" fill="#fff">strategy</text>
+<circle cx="150" cy="90" r="16" fill="#059669"/><text x="150" y="93" text-anchor="middle" font-size="7" fill="#fff">finance</text>
+<circle cx="250" cy="90" r="16" fill="#db2777"/><text x="250" y="93" text-anchor="middle" font-size="7" fill="#fff">mktg</text>
+<circle cx="320" cy="90" r="16" fill="#ea580c"/><text x="320" y="93" text-anchor="middle" font-size="7" fill="#fff">ops</text>
+<circle cx="60" cy="45" r="12" fill="#d97706"/><text x="60" y="48" text-anchor="middle" font-size="6" fill="#fff">G</text>
+<circle cx="340" cy="45" r="12" fill="#d97706"/><text x="340" y="48" text-anchor="middle" font-size="6" fill="#fff">C</text>
+<line x1="80" y1="74" x2="195" y2="38" stroke="#94a3b8" stroke-width="1"/><line x1="150" y1="74" x2="197" y2="38" stroke="#94a3b8" stroke-width="1"/><line x1="250" y1="74" x2="203" y2="38" stroke="#94a3b8" stroke-width="1"/><line x1="320" y1="74" x2="205" y2="38" stroke="#94a3b8" stroke-width="1"/>
+<line x1="185" y1="130" x2="80" y2="106" stroke="#94a3b8" stroke-width="1"/><line x1="195" y1="130" x2="150" y2="106" stroke="#94a3b8" stroke-width="1"/><line x1="205" y1="130" x2="250" y2="106" stroke="#94a3b8" stroke-width="1"/><line x1="215" y1="130" x2="320" y2="106" stroke="#94a3b8" stroke-width="1"/>
+</svg>
+</div>
+<div style="font-size:11px;color:#15803d;margin-top:8px;">&#10003; All cycles terminate at an anchor or human node. Topology is valid.</div>
+</div></div>
+<div class="demo-note">This graph is rendered from LIVE data via the /operating/loops API. It visually proves the system's invariant: no cycle can run without an external check.</div>
+</div></div>
+
+<!-- STEP 8 -->
+<div class="demo-step">
+<div class="demo-step-header"><div class="demo-step-num">8</div><div><div class="demo-step-title">Check Backend Health & API Docs</div><div class="demo-step-desc">Verify all subsystems and explore the API</div></div></div>
+<div class="demo-step-body">
+<div class="demo-cmd"><span class="prompt">Browser:</span> <span class="cmd">http://localhost:8080/health</span></div>
+<div class="mockup-card" style="font-family:monospace;font-size:11px;background:#1e293b;color:#e2e8f0;padding:14px;border-radius:8px;">
+{<br>
+&nbsp;&nbsp;"status": "ok",<br>
+&nbsp;&nbsp;"database": "ok",<br>
+&nbsp;&nbsp;"llm_providers": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"groq": {"available": true},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"gemini": {"available": true},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"ollama": {"available": false}<br>
+&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;"grounding": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"competitor_source": "google_places",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"market_research_source": "serper"<br>
+&nbsp;&nbsp;}<br>
+}
+</div>
+<div class="demo-cmd" style="margin-top:12px;"><span class="prompt">Browser:</span> <span class="cmd">http://localhost:8080/docs</span><br><span class="output">→ Interactive Swagger UI with all 30+ endpoints</span></div>
+</div></div>
+
+</div><!-- /page-demo -->
+
+<!-- ==================== PAGE: INSTALL ==================== -->
+<div class="page" id="page-install">
+<h3>Prerequisites</h3>
+<table class="tech-table"><thead><tr><th>Software</th><th>Min Version</th><th>Download</th><th>Required?</th></tr></thead><tbody>
+<tr><td class="tech-name">Python</td><td><span class="tech-version">3.11+</span></td><td><a href="https://python.org/downloads" target="_blank">python.org</a></td><td><strong>Yes</strong></td></tr>
+<tr><td class="tech-name">Node.js</td><td><span class="tech-version">18+</span></td><td><a href="https://nodejs.org" target="_blank">nodejs.org</a></td><td>Yes (frontend)</td></tr>
+<tr><td class="tech-name">Git</td><td>any</td><td><a href="https://git-scm.com" target="_blank">git-scm.com</a></td><td>To clone</td></tr>
+</tbody></table>
+
+<h3>Windows (PowerShell)</h3>
+<table class="tech-table"><thead><tr><th>#</th><th>Command</th><th>What It Does</th></tr></thead><tbody>
+<tr><td>1</td><td><code>cd C:\Users\YourName\Desktop</code></td><td>Navigate to Desktop</td></tr>
+<tr><td>2</td><td><code>git clone &lt;repo-url&gt; kiro</code></td><td>Clone the project</td></tr>
+<tr><td>3</td><td><code>cd kiro</code></td><td>Enter project folder</td></tr>
+<tr><td>4</td><td><code>python -m venv .venv</code></td><td>Create virtual environment</td></tr>
+<tr><td>5</td><td><code>.\.venv\Scripts\Activate.ps1</code></td><td>Activate it</td></tr>
+<tr><td>6</td><td><code>pip install -r backend/requirements.txt</code></td><td>Install dependencies (~2 min)</td></tr>
+<tr><td>7</td><td><code>copy .env.example .env</code></td><td>Create config file</td></tr>
+</tbody></table>
+
+<h3>Linux / Mac</h3>
+<table class="tech-table"><thead><tr><th>#</th><th>Command</th><th>What It Does</th></tr></thead><tbody>
+<tr><td>1</td><td><code>cd ~/Desktop && git clone &lt;repo-url&gt; kiro && cd kiro</code></td><td>Clone & enter</td></tr>
+<tr><td>2</td><td><code>python3 -m venv .venv && source .venv/bin/activate</code></td><td>Create & activate venv</td></tr>
+<tr><td>3</td><td><code>pip install -r backend/requirements.txt</code></td><td>Install dependencies</td></tr>
+<tr><td>4</td><td><code>cp .env.example .env</code></td><td>Create config file</td></tr>
+</tbody></table>
+</div>
+
+<!-- ==================== PAGE: CONFIG ==================== -->
+<div class="page" id="page-config">
+<h3>API Keys (All Optional)</h3>
+<div class="info-box info-green"><strong>You need at minimum ONE LLM provider.</strong> Get Groq in 30 seconds (no credit card). Everything else is optional.</div>
+<table class="tech-table"><thead><tr><th>Key</th><th>Get From</th><th>Free Limit</th><th>Required?</th></tr></thead><tbody>
+<tr><td class="tech-name">GROQ_API_KEY</td><td><a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a></td><td>14,400 req/day</td><td>Recommended</td></tr>
+<tr><td class="tech-name">GEMINI_API_KEY</td><td><a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com</a></td><td>1M tokens/day</td><td>Optional</td></tr>
+<tr><td class="tech-name">SERPER_API_KEY</td><td><a href="https://serper.dev/api-key" target="_blank">serper.dev</a></td><td>2,500/month</td><td>Optional</td></tr>
+<tr><td class="tech-name">GOOGLE_PLACES_API_KEY</td><td><a href="https://console.cloud.google.com" target="_blank">Google Cloud</a></td><td>$200/month</td><td>Optional</td></tr>
+</tbody></table>
+<h3>Minimal .env (just this works):</h3>
+<div style="background:#1e293b;color:#e2e8f0;padding:14px 18px;border-radius:8px;font-family:monospace;font-size:13px;margin:10px 0;">
+GROQ_API_KEY=gsk_your_key_here<br>
+GENERATION_TIMEOUT_SECONDS=120
+</div>
+<div class="info-box info-yellow"><strong>No keys at all?</strong> Install Ollama, pull a model, and set <code>GENERATION_TIMEOUT_SECONDS=600</code>. It works fully offline.</div>
+</div>
+
+<!-- ==================== PAGE: RUNNING ==================== -->
+<div class="page" id="page-running">
+<h3>Start the Backend</h3>
+<table class="tech-table"><thead><tr><th>#</th><th>Command</th><th>Result</th></tr></thead><tbody>
+<tr><td>1</td><td><code>cd backend</code></td><td>Enter backend folder</td></tr>
+<tr><td>2</td><td><code>..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8080</code></td><td>Server starts</td></tr>
+</tbody></table>
+<div class="info-box info-blue">Check: <a href="http://localhost:8080/health" target="_blank">localhost:8080/health</a> → should show <code>"status":"ok"</code></div>
+
+<h3>Start the Frontend (new terminal)</h3>
+<table class="tech-table"><thead><tr><th>#</th><th>Command</th><th>Result</th></tr></thead><tbody>
+<tr><td>1</td><td><code>cd frontend</code></td><td>Enter frontend folder</td></tr>
+<tr><td>2</td><td><code>npm install</code></td><td>Install React (first time only)</td></tr>
+<tr><td>3</td><td><code>npm run dev</code></td><td>UI at localhost:5173</td></tr>
+</tbody></table>
+<div class="info-box info-blue">Open: <a href="http://localhost:5173" target="_blank">localhost:5173</a> — 5 tabs: Generate, Business, Work, Activity, Loops</div>
+
+<h3>Docker Alternative (one command)</h3>
+<table class="tech-table"><thead><tr><th>#</th><th>Command</th></tr></thead><tbody>
+<tr><td>1</td><td><code>copy .env.example .env</code></td></tr>
+<tr><td>2</td><td><code>docker compose up --build</code></td></tr>
+</tbody></table>
+<p style="margin-top:8px;color:#6b7480;font-size:13px;">Backend: 8080 | Frontend: 5173 | Ollama: 11434 | ChromaDB: 8000</p>
+</div>
+
+<!-- ==================== PAGE: TESTING ==================== -->
+<div class="page" id="page-testing">
+<h3>Run the Test Suite</h3>
+<table class="tech-table"><thead><tr><th>#</th><th>Command</th><th>Expected</th></tr></thead><tbody>
+<tr><td>1</td><td><code>cd backend</code></td><td></td></tr>
+<tr><td>2</td><td><code>$env:PYTHONPATH="C:\path\to\kiro\backend;C:\path\to\kiro"</code></td><td>Set Python path</td></tr>
+<tr><td>3</td><td><code>..\.venv\Scripts\python.exe -m pytest -q</code></td><td><strong>989 passed</strong></td></tr>
+</tbody></table>
+
+<h3>Generate a Business Plan</h3>
+<table class="tech-table"><thead><tr><th>Method</th><th>How</th></tr></thead><tbody>
+<tr><td class="tech-name">Browser</td><td>Open localhost:5173 → type business idea → Enter</td></tr>
+<tr><td class="tech-name">API</td><td><code>curl -X POST localhost:8080/generate -H "Content-Type: application/json" -d "{\"prompt\":\"bakery near Dadar\"}"</code></td></tr>
+</tbody></table>
+
+<h3>Run Demos (no API keys needed)</h3>
+<table class="tech-table"><thead><tr><th>Command</th><th>What It Shows</th></tr></thead><tbody>
+<tr><td><code>$env:PYTHONIOENCODING="utf-8"</code></td><td>Fix Windows encoding</td></tr>
+<tr><td><code>.\.venv\Scripts\python.exe -m scripts.autonomy_demo --days 90</code></td><td>90-day company simulation</td></tr>
+<tr><td><code>.\.venv\Scripts\python.exe -m scripts.operating_demo</code></td><td>Operating layer walkthrough</td></tr>
+</tbody></table>
+
+<h3>Run Evaluation</h3>
+<table class="tech-table"><thead><tr><th>Command</th><th>What</th><th>Time</th></tr></thead><tbody>
+<tr><td><code>.\.venv\Scripts\python.exe -m evaluation.harness --arms multi_agent baseline --limit 5 --label smoke</code></td><td>Quick test</td><td>~10 min</td></tr>
+<tr><td><code>.\.venv\Scripts\python.exe -m evaluation.harness --all --label paper-run-1</code></td><td>Full sweep</td><td>~90 min</td></tr>
+<tr><td><code>.\.venv\Scripts\python.exe -m evaluation.ablation_harness --seeds 10 --days 90 --label ablation-v1</code></td><td>Ablation experiment</td><td>~15 min</td></tr>
+</tbody></table>
+</div>
+
+<!-- ==================== PAGE: TROUBLE ==================== -->
+<div class="page" id="page-trouble">
+<h3>Common Problems & Fixes</h3>
+<table class="tech-table"><thead><tr><th>Problem</th><th>Fix</th></tr></thead><tbody>
+<tr><td class="tech-name">ModuleNotFoundError: app</td><td>Set <code>$env:PYTHONPATH="path\to\kiro\backend;path\to\kiro"</code></td></tr>
+<tr><td class="tech-name">Generation times out</td><td>Set <code>GENERATION_TIMEOUT_SECONDS=600</code> in .env</td></tr>
+<tr><td class="tech-name">"Cannot reach backend" in UI</td><td>Start backend first. Check port 8080 is running.</td></tr>
+<tr><td class="tech-name">PDF returns 503</td><td><code>pip install xhtml2pdf==0.2.16</code></td></tr>
+<tr><td class="tech-name">Tests: NetworkAccessAttempted</td><td>Correct! Socket guard blocks network. Mock the call with respx.</td></tr>
+<tr><td class="tech-name">UnicodeEncodeError in scripts</td><td><code>$env:PYTHONIOENCODING="utf-8"</code></td></tr>
+<tr><td class="tech-name">npm install fails</td><td>Check Node version: <code>node --version</code> (need 18+)</td></tr>
+<tr><td class="tech-name">pip fails on Windows</td><td>Install "Visual Studio Build Tools" (C++ compiler)</td></tr>
+<tr><td class="tech-name">Ollama not connecting</td><td>Run <code>ollama serve</code>. Check <code>OLLAMA_BASE_URL=http://localhost:11434</code></td></tr>
+<tr><td class="tech-name">.env not loading</td><td>Remove stale env vars: <code>Remove-Item env:GROQ_API_KEY -ErrorAction SilentlyContinue</code></td></tr>
+<tr><td class="tech-name">/health shows "degraded"</td><td>Normal if keys are missing. System still works via fallback.</td></tr>
+</tbody></table>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// Page navigation
+var pages = document.querySelectorAll('.page');
+var links = document.querySelectorAll('.sidebar-nav a[data-page]');
+var header = document.getElementById('pageHeader');
+
+var pageTitles = {
+  structure: ['Project Structure', 'Interactive file explorer — click folders to expand'],
+  core: ['Core Framework', 'Python, FastAPI, LangGraph, Pydantic — the foundation'],
+  llm: ['LLM Providers', 'Groq → Gemini → Ollama fallback chain'],
+  data: ['Data & Storage', 'SQLite + ChromaDB — zero setup databases'],
+  apis: ['External APIs', 'Real-world data sources for grounding'],
+  'frontend-tech': ['Frontend', 'React 18 + Vite — minimal, fast, no bloat'],
+  devops: ['DevOps & Testing', 'Docker, pytest, mocking — development tools'],
+  eval: ['Evaluation & Research', 'Statistical analysis and paper figures'],
+  demo: ['Live Demo Walkthrough', 'Step-by-step demonstration with UI screenshots'],
+  install: ['Installation Guide', 'Get Orion running from scratch on any computer'],
+  config: ['API Keys & Configuration', 'What keys you need (spoiler: just one)'],
+  running: ['Running the Application', 'Start backend, frontend, and Docker'],
+  testing: ['Tests, Demos & Evaluation', 'Verify it works, generate plans, run experiments'],
+  trouble: ['Troubleshooting', 'Common problems and exact fixes'],
+};
+
+links.forEach(function(link) {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    var target = this.getAttribute('data-page');
+    pages.forEach(function(p) { p.classList.remove('active'); });
+    links.forEach(function(l) { l.classList.remove('active'); });
+    document.getElementById('page-' + target).classList.add('active');
+    this.classList.add('active');
+    var t = pageTitles[target] || ['', ''];
+    header.querySelector('h2').textContent = t[0];
+    header.querySelector('p').textContent = t[1];
+    window.scrollTo(0, 0);
+  });
+});
+
+// File tree
+var structure = [
+  {type:"folder",name:"backend/",desc:"Python backend — FastAPI + business logic",children:[
+    {type:"folder",name:"app/",desc:"Main application",children:[
+      {type:"file",name:"main.py",desc:"FastAPI app, all endpoints",badge:"py"},
+      {type:"folder",name:"intent/",desc:"Understand user input",children:[
+        {type:"file",name:"classifier.py",desc:"LLM extracts business type, location",badge:"py"},
+        {type:"file",name:"budget_parser.py",desc:"Parses '15L' into integers",badge:"py"},
+      ]},
+      {type:"folder",name:"orchestrator/",desc:"Route & execute agents",children:[
+        {type:"file",name:"routing.py",desc:"Which departments run",badge:"py"},
+        {type:"file",name:"graph.py",desc:"LangGraph DAG",badge:"py"},
+      ]},
+      {type:"folder",name:"agents/",desc:"21 specialized AI agents",children:[
+        {type:"file",name:"strategy.py",desc:"5 agents: market, competitors, SWOT",badge:"py"},
+        {type:"file",name:"finance.py",desc:"4 agents: costs, revenue, P&L",badge:"py"},
+        {type:"file",name:"branding.py",desc:"4 agents: identity, voice, visual",badge:"py"},
+        {type:"file",name:"marketing.py",desc:"4 agents: digital, personas, SEO",badge:"py"},
+        {type:"file",name:"operations.py",desc:"4 agents: supply, staff, process",badge:"py"},
+      ]},
+      {type:"folder",name:"llm/",desc:"LLM fallback chain",children:[
+        {type:"file",name:"chain.py",desc:"Groq → Gemini → Ollama",badge:"py"},
+      ]},
+      {type:"folder",name:"operating/",desc:"Runs company unattended (11 modules)",children:[
+        {type:"file",name:"ledger.py",desc:"Append-only record",badge:"py"},
+        {type:"file",name:"anchors.py",desc:"19 metrics computed from ledger",badge:"py"},
+        {type:"file",name:"monitors.py",desc:"Goodhart, conflict detection",badge:"py"},
+        {type:"file",name:"scheduler.py",desc:"Cadence kernel",badge:"py"},
+        {type:"file",name:"ablation.py",desc:"4 experiment arms",badge:"py"},
+        {type:"file",name:"api.py",desc:"12 REST endpoints for UI",badge:"py"},
+      ]},
+    ]},
+    {type:"folder",name:"tests/",desc:"989 tests, all offline",children:[
+      {type:"file",name:"conftest.py",desc:"Socket guard blocks network",badge:"py"},
+    ]},
+  ]},
+  {type:"folder",name:"frontend/",desc:"React UI — 190KB",children:[
+    {type:"folder",name:"src/",desc:"Source code",children:[
+      {type:"file",name:"App.jsx",desc:"Hash routing, 5-tab nav",badge:"jsx"},
+      {type:"folder",name:"operating/",desc:"14 operating layer components",children:[]},
+      {type:"folder",name:"views/",desc:"Business, Work, Activity, Loops",children:[]},
+    ]},
+  ]},
+  {type:"folder",name:"evaluation/",desc:"Experiment harness",children:[
+    {type:"file",name:"harness.py",desc:"4 arms x 35 prompts",badge:"py"},
+    {type:"file",name:"metrics.py",desc:"F54-F63 metrics",badge:"py"},
+  ]},
+  {type:"folder",name:"scripts/",desc:"Demos & figures",children:[
+    {type:"file",name:"autonomy_demo.py",desc:"90-day simulation",badge:"py"},
+  ]},
+  {type:"folder",name:"docs/",desc:"Documentation",children:[
+    {type:"file",name:"HANDOVER.md",desc:"Start here — full state",badge:"md"},
+    {type:"file",name:"PROJECT_SPEC.md",desc:"65-feature spec",badge:"md"},
+  ]},
+];
+
+function renderTree(items, container) {
+  items.forEach(function(item) {
+    var el = document.createElement('div');
+    if (item.type === 'folder') {
+      el.className = 'folder';
+      el.innerHTML = '<span class="folder-icon">&#9660;</span><span>' + item.name + '</span>' + (item.desc ? '<span class="desc">' + item.desc + '</span>' : '');
+      container.appendChild(el);
+      var ch = document.createElement('div');
+      ch.className = 'children';
+      container.appendChild(ch);
+      if (item.children) renderTree(item.children, ch);
+      el.onclick = function(e) { e.stopPropagation(); el.classList.toggle('closed'); ch.classList.toggle('hidden'); };
+    } else {
+      var ext = item.name.split('.').pop();
+      el.className = 'file';
+      el.innerHTML = '<span class="file-icon">&#128196;</span><span>' + item.name + '</span>' + (item.badge ? '<span class="badge badge-' + item.badge + '">' + ext + '</span>' : '') + (item.desc ? '<span class="desc">' + item.desc + '</span>' : '');
+      el.dataset.search = (item.name + ' ' + (item.desc||'')).toLowerCase();
+      container.appendChild(el);
+    }
+  });
+}
+renderTree(structure, document.getElementById('tree'));
+
+document.getElementById('search').addEventListener('input', function(e) {
+  var q = e.target.value.toLowerCase().trim();
+  document.querySelectorAll('#tree .file').forEach(function(el) {
+    el.style.display = (!q || el.dataset.search.includes(q)) ? '' : 'none';
+  });
+  document.querySelectorAll('#tree .children').forEach(function(el) {
+    if (q) { el.classList.remove('hidden'); if(el.previousElementSibling) el.previousElementSibling.classList.remove('closed'); }
+  });
+});
+</script>
+</body>
+</html>
