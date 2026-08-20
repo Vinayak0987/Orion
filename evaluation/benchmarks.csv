@@ -1,0 +1,25 @@
+# F54 sector margin benchmarks.
+#
+# The harness loads this automatically. Until every row carries a real citation in
+# the `source` column, evaluation/report.py prints Financial Accuracy with a
+# PROVISIONAL banner instead of presenting it as a finding.
+#
+# Replace the numbers below with figures you can cite, and put the exact table and
+# year in `source`. Candidate sources worth checking:
+#   * MSME Ministry Annual Report - sector performance notes
+#   * RBI, "Performance of Private Corporate Business Sector" quarterly release
+#   * NSSO unincorporated non-agricultural enterprise surveys
+#   * CMIE Prowess sector aggregates (paid; check your library's access)
+#
+# Rows with an empty source are treated as unsourced. Delete a row to fall back to
+# the built-in estimate in backend/app/agents/benchmarks.py.
+sector,gross_margin_pct,net_margin_pct,source
+food_and_beverage,60.0,12.0,
+retail,30.0,8.0,
+services,55.0,18.0,
+technology,75.0,20.0,
+education,65.0,22.0,
+healthcare,55.0,20.0,
+manufacturing,25.0,9.0,
+creative,60.0,18.0,
+unspecified,45.0,12.0,

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Orion — Architecture Brief</title>
+<style>
+@page {
+  size: A4;
+  margin: 20mm 18mm 20mm 18mm;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+body {
+  font-family: 'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  font-size: 9.6pt;
+  line-height: 1.44;
+  color: #1A1D26;
+  background: #FFFFFF;
+  margin: 0;
+  hyphens: none;
+}
+
+/* ------------------------------------------------------------- title page */
+
+.title-page {
+  height: 246mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  page-break-after: always;
+}
+
+.title-rule {
+  height: 5px;
+  width: 74px;
+  background: #2D3282;
+  margin-bottom: 30mm;
+}
+
+.title-page h1 {
+  font-size: 33pt;
+  line-height: 1.1;
+  letter-spacing: -0.9px;
+  color: #2D3282;
+  margin: 0 0 12px 0;
+  font-weight: 700;
+}
+
+.title-page .subtitle {
+  font-size: 14.5pt;
+  color: #1A1D26;
+  font-weight: 400;
+  line-height: 1.42;
+  margin: 0 0 20px 0;
+  max-width: 132mm;
+}
+
+.title-page .kicker {
+  font-size: 9pt;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  color: #5A6072;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+
+.title-meta {
+  font-size: 10pt;
+  color: #5A6072;
+  line-height: 1.9;
+  border-top: 1px solid #DCE0EA;
+  padding-top: 14px;
+}
+.title-meta strong { color: #1A1D26; font-weight: 600; }
+
+.spec-note {
+  font-size: 8.8pt;
+  color: #5A6072;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+/* ---------------------------------------------------------------- content */
+
+h2 {
+  font-size: 14.6pt;
+  color: #2D3282;
+  margin: 17px 0 7px 0;
+  padding-bottom: 4px;
+  border-bottom: 1.5px solid #DCE0EA;
+  font-weight: 700;
+  letter-spacing: -0.35px;
+  page-break-after: avoid;
+}
+h2 .num { color: #5A6072; font-weight: 600; margin-right: 9px; }
+
+h3 {
+  font-size: 11pt;
+  color: #1A1D26;
+  margin: 12px 0 4px 0;
+  font-weight: 700;
+  page-break-after: avoid;
+}
+
+h4 {
+  font-size: 10pt;
+  color: #2D3282;
+  margin: 10px 0 3px 0;
+  font-weight: 700;
+  page-break-after: avoid;
+}
+
+p { margin: 0 0 7px 0; text-align: left; }
+
+.lead {
+  font-size: 11pt;
+  line-height: 1.48;
+  color: #1A1D26;
+}
+
+ul, ol { margin: 0 0 8px 0; padding-left: 19px; }
+li { margin-bottom: 4px; }
+
+strong { font-weight: 650; }
+em { font-style: italic; }
+
+code {
+  font-family: 'Cascadia Mono','Consolas','SF Mono',Menlo,monospace;
+  font-size: 8.9pt;
+  background: #F6F7FB;
+  padding: 1px 4px;
+  border-radius: 3px;
+  color: #2D3282;
+}
+
+.page-break { page-break-before: always; }
+.no-break { page-break-inside: avoid; }
+
+/* ----------------------------------------------------------------- tables */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8.8pt;
+  margin: 8px 0 10px 0;
+  page-break-inside: avoid;
+}
+
+th {
+  text-align: left;
+  font-weight: 650;
+  color: #2D3282;
+  border-bottom: 1.5px solid #2D3282;
+  padding: 5px 8px 5px 0;
+  font-size: 8.4pt;
+  letter-spacing: 0.25px;
+  text-transform: uppercase;
+  vertical-align: bottom;
+}
+
+td {
+  padding: 4.5px 8px 4.5px 0;
+  border-bottom: 1px solid #DCE0EA;
+  vertical-align: top;
+  line-height: 1.4;
+}
+
+table.compact td, table.compact th { font-size: 8.1pt; padding: 4px 6px 4px 0; }
+td.yes { color: #1E8A5F; font-weight: 700; }
+td.no  { color: #B4433F; font-weight: 600; }
+td.part { color: #B07A26; font-weight: 600; }
+
+/* ---------------------------------------------------------------- figures */
+
+figure {
+  margin: 10px 0 11px 0;
+  page-break-inside: avoid;
+}
+
+figure svg { display: block; width: 100%; height: auto; }
+
+figcaption {
+  font-size: 8.3pt;
+  color: #5A6072;
+  margin-top: 4px;
+  line-height: 1.4;
+  padding-left: 2px;
+}
+figcaption b { color: #2D3282; font-weight: 650; }
+
+/* ------------------------------------------------------------- callouts */
+
+.callout {
+  background: #F6F7FB;
+  border-left: 3px solid #2D3282;
+  padding: 8px 12px;
+  margin: 9px 0;
+  font-size: 9.4pt;
+  page-break-inside: avoid;
+}
+.callout .label {
+  font-size: 8pt;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #2D3282;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 4px;
+}
+.callout p:last-child { margin-bottom: 0; }
+
+.invariant {
+  background: #10233A;
+  color: #D8E4F5;
+  padding: 10px 14px;
+  margin: 9px 0;
+  border-left: 3px solid #2FD9A8;
+  font-size: 9.7pt;
+  page-break-inside: avoid;
+}
+.invariant .label {
+  font-size: 8pt;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #2FD9A8;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 4px;
+}
+.invariant p { margin: 0; }
+.invariant em { color: #FFFFFF; font-style: normal; font-weight: 650; }
+
+/* ------------------------------------------------------- problem blocks */
+
+.problem {
+  margin: 0 0 9px 0;
+  padding-left: 12px;
+  border-left: 2px solid #DCE0EA;
+  page-break-inside: avoid;
+}
+.problem .pname {
+  font-weight: 700;
+  color: #2D3282;
+  font-size: 10.1pt;
+  display: block;
+  margin-bottom: 2px;
+}
+.problem .row { font-size: 9.2pt; margin-bottom: 2px; line-height: 1.42; }
+.problem .row span.k {
+  display: inline-block;
+  min-width: 74px;
+  font-size: 8pt;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: #5A6072;
+  font-weight: 650;
+}
+
+/* ------------------------------------------------------------------- misc */
+
+.hierarchy {
+  font-family: 'Cascadia Mono','Consolas','SF Mono',Menlo,monospace;
+  font-size: 9.2pt;
+  background: #F6F7FB;
+  padding: 11px 14px;
+  margin: 11px 0;
+  line-height: 1.75;
+  color: #2D3282;
+  page-break-inside: avoid;
+}
+
+.rq {
+  margin: 0 0 11px 0;
+  page-break-inside: avoid;
+}
+.rq .tag {
+  display: inline-block;
+  background: #2D3282;
+  color: #fff;
+  font-size: 8pt;
+  font-weight: 700;
+  padding: 1.5px 7px;
+  border-radius: 3px;
+  margin-right: 7px;
+  letter-spacing: 0.6px;
+}
+.rq .falsify {
+  font-size: 9.2pt;
+  color: #5A6072;
+  margin-top: 3px;
+  padding-left: 12px;
+  border-left: 2px solid #F0688A;
+}
+.rq .falsify b { color: #B4433F; font-weight: 650; }
+
+.refs { font-size: 8.8pt; line-height: 1.55; }
+.refs li { margin-bottom: 7px; }
+
+.two-col { column-count: 2; column-gap: 16px; }
+.two-col p { margin-bottom: 7px; }
+</style>
+</head>
+<body>
+
+<style>
+@page { size: A4; margin: 14mm 14mm 13mm 14mm; }
+body { font-size: 8.5pt; line-height: 1.34; }
+h2 { font-size: 11pt; margin: 9px 0 4px 0; padding-bottom: 3px; }
+h3 { font-size: 9pt; margin: 7px 0 3px 0; }
+p { margin: 0 0 4px 0; }
+table { font-size: 7.5pt; margin: 4px 0 6px 0; }
+th { font-size: 7.1pt; padding: 3.5px 6px 3.5px 0; }
+td { padding: 3px 6px 3px 0; line-height: 1.3; }
+figure { margin: 5px 0 6px 0; }
+figcaption { font-size: 7.1pt; margin-top: 3px; line-height: 1.3; }
+.fig-sm svg { width: 66%; display: block; margin: 0 auto; }
+.fig-md svg { width: 86%; display: block; margin: 0 auto; }
+.callout { padding: 6px 9px; margin: 5px 0; font-size: 8.2pt; }
+.invariant { padding: 7px 10px; margin: 5px 0; font-size: 8.3pt; }
+.brief-head {
+  border-bottom: 2.5px solid #2D3282;
+  padding-bottom: 8px; margin-bottom: 10px;
+}
+.brief-head .kicker {
+  font-size: 7.4pt; letter-spacing: 2px; text-transform: uppercase;
+  color: #5A6072; font-weight: 700;
+}
+.brief-head h1 {
+  font-size: 19pt; color: #2D3282; margin: 3px 0 3px 0; font-weight: 700;
+  letter-spacing: -0.5px; line-height: 1.12;
+}
+.brief-head .sub { font-size: 9.4pt; color: #1A1D26; line-height: 1.35; }
+.brief-head .meta { font-size: 7.4pt; color: #5A6072; margin-top: 5px; }
+.cols { display: flex; gap: 13px; }
+.cols > div { flex: 1; }
+.kv { font-size: 8.2pt; margin-bottom: 3px; }
+.kv b { color: #2D3282; }
+.status {
+  display: inline-block; font-size: 6.8pt; font-weight: 700; padding: 1px 5px;
+  border-radius: 2px; letter-spacing: 0.5px; text-transform: uppercase;
+}
+.st-built { background: #E3F5EC; color: #1E8A5F; }
+.st-spec { background: #F2F4FD; color: #2D3282; }
+.st-prov { background: #FDF3E3; color: #B07A26; }
+ul { margin: 0 0 5px 0; padding-left: 15px; }
+li { margin-bottom: 2.5px; }
+.rq { margin: 0 0 6px 0; font-size: 8.3pt; }
+.rq .tag { font-size: 7pt; padding: 1px 5px; margin-right: 5px; }
+.rq .falsify { font-size: 7.6pt; margin-top: 2px; padding-left: 9px; }
+</style>
+
+
+<div class="brief-head">
+  <div class="kicker">Architecture Brief · 2 pages</div>
+  <h1>Orion</h1>
+  <div class="sub">An AI Business Operating System. Five departments generate a company's opening state, then operate it continuously under human supervision — built so the parts that check the work cannot be captured by the parts doing it.</div>
+  <div class="meta">Vinayak Maurya · Department of Computer Engineering ·
+    University of Mumbai · 27 July 2026 · Full architecture document: 16 pp</div>
+</div>
+<h2>What it is</h2>
+<p>Orion has two layers. The <b>generation layer</b> turns one
+      sentence into a complete founding business plan — positioning, unit
+      economics, brand, acquisition, operations — using 21 specialised agents
+      across five departments over an enforced append-only state contract. The
+      <b>operating layer</b> treats that plan as the company's opening state
+      rather than its output, and runs the same five departments on cadences
+      thereafter.</p>
+<figure class="fig-md"><svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg"><defs><marker id="la" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#2D3282"/></marker><marker id="lm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#5A6072"/></marker><marker id="lr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#B4433F"/></marker><marker id="lg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#1E8A5F"/></marker></defs><text x="20" y="26" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="700" fill="#2D3282" letter-spacing="1.4">ONE SYSTEM, TWO LAYERS</text><rect x="24" y="46" width="452" height="214" rx="6" fill="#FFFFFF" stroke="#4FA8E855" stroke-width="1.3"/><rect x="24" y="46" width="452" height="30" rx="6" fill="#4FA8E8" opacity="0.1"/><text x="40" y="66" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.6" text-anchor="start" font-weight="700" fill="#4FA8E8" letter-spacing="1.2">GENERATION LAYER</text><text x="250" y="100" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="10.4" text-anchor="middle" font-weight="700" fill="#1A1D26">Produces the opening state</text><text x="46" y="128" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9" text-anchor="start" font-weight="700" fill="#4FA8E8">·</text><text x="58" y="128" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.4" text-anchor="start" font-weight="400" fill="#5A6072">21 agents across five departments</text><text x="46" y="148" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9" text-anchor="start" font-weight="700" fill="#4FA8E8">·</text><text x="58" y="148" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.4" text-anchor="start" font-weight="400" fill="#5A6072">routing orchestrator over a shared state object</text><text x="46" y="168" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9" text-anchor="start" font-weight="700" fill="#4FA8E8">·</text><text x="58" y="168" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.4" text-anchor="start" font-weight="400" fill="#5A6072">derived quantities override asserted ones</text><text x="46" y="188" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9" text-anchor="start" font-weight="700" fill="#4FA8E8">·</text><text x="58" y="188" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.4" text-anchor="start" font-weight="400" fill="#5A6072">external grounding for competitors and market data</text><text x="250" y="236" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.8" text-anchor="middle" font-weight="400" fill="#5A6072" font-style="italic">runs once per company</text><rect x="524" y="46" width="452" height="214" rx="6" fill="#FCFCFE" stroke="#2D328240" stroke-width="1.3"/><rect x="524" y="46" width="452" height="30" rx="6" fill="#2D3282" opacity="0.08"/><text x="540" y="66" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.6" text-anchor="start" font-weight="700" fill="#2D3282" letter-spacing="1.2">OPERATING LAYER</text><text x="750" y="100" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="10.4" text-anchor="middle" font-weight="700" fill="#1A1D26">Operates that state onward</text><text x="546" y="128" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9" text-anchor="start" font-weight="700" fill="#2D3282">·</text><text x="558" y="128" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.4" text-anchor="start" font-weight="400" fill="#5A6072">the same five departments, now on cadences</text><text x="546" y="148" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9" text-anchor="start" font-weight="700" fill="#2D3282">·</text><text x="558" y="148" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.4" text-anchor="start" font-weight="400" fill="#5A6072">anchors computed from an append-only record</text><text x="546" y="168" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9" text-anchor="start" font-weight="700" fill="#2D3282">·</text><text x="558" y="168" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.4" text-anchor="start" font-weight="400" fill="#5A6072">constraints enforced in code, not in prompts</text><text x="546" y="188" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9" text-anchor="start" font-weight="700" fill="#2D3282">·</text><text x="558" y="188" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.4" text-anchor="start" font-weight="400" fill="#5A6072">monitor loops and human governance</text><text x="750" y="236" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.8" text-anchor="middle" font-weight="400" fill="#5A6072" font-style="italic">runs indefinitely</text><path d="M476,152 L524,152" fill="none" stroke="#2D3282" stroke-width="1.6" marker-end="url(#la)"/><text x="500" y="138" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.2" text-anchor="middle" font-weight="650" fill="#2D3282">plan becomes</text><text x="500" y="176" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.2" text-anchor="middle" font-weight="650" fill="#2D3282">state</text><text x="20" y="284" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="400" fill="#5A6072">The generation layer's two operative findings — derived figures override asserted ones, and cross-agent constraints hold only when enforced in code — are the principles the operating layer generalises.</text></svg><figcaption><b>Figure 1</b> — The generation layer runs once and produces the opening state; the operating layer runs the same five departments indefinitely.</figcaption></figure>
+<h2>The problem it addresses</h2>
+<p>Any system that pursues a goal by measuring its progress will
+      eventually improve the measurement rather than the goal. A department
+      rewarded for footfall buys footfall that does not convert; the dashboard
+      stays green while the business deteriorates. Three related failures follow:
+      the objective is never questioned, departments optimise against each other,
+      and thresholds silently expire. In a system operating on daily cadences with
+      nobody in the room, these appear in days rather than quarters.</p>
+<h2>Two findings from building the generation layer</h2>
+<p><b>Prompt-level constraints were insufficient.</b> A market
+      prompt carrying an explicit numeric sanity range, and a revenue prompt
+      stating that year-one revenue must not exceed the obtainable market, were
+      both ignored repeatedly. Five such conflicts were found; all five resolved
+      once the value was computed rather than requested.</p>
+<p><b>Decomposition compounds variance.</b> Over five runs of an
+      identical prompt, the multi-agent pipeline's financial-accuracy standard
+      deviation was 4.9× a single-LLM baseline's, with a 7.6× best-to-worst spread
+      against the baseline's 1.8×. Its best run was the more accurate of the two.
+      The architecture is unreliably better, not reliably worse.</p>
+<div class="callout"><span class="label">Both say the same
+      thing</span><p>An agent cannot be relied upon to assert a quantity by which
+      it is judged. The generation layer's answer was local — where two agents
+      assert the same value, the derived figure wins. The operating layer
+      generalises it.</p></div>
+<figure class="fig-md"><svg viewBox="0 0 1000 330" xmlns="http://www.w3.org/2000/svg"><defs><marker id="la" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#2D3282"/></marker><marker id="lm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#5A6072"/></marker><marker id="lr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#B4433F"/></marker><marker id="lg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#1E8A5F"/></marker></defs><text x="20" y="26" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="700" fill="#2D3282" letter-spacing="1.4">MEASURED — IDENTICAL PROMPT, REPEATED RUNS</text><rect x="300" y="52" width="400" height="198" fill="#FFFFFF" stroke="#DCE0EA" stroke-width="1"/><path d="M300,250.0 L700,250.0" stroke="#DCE0EA" stroke-width="0.6" stroke-dasharray="3,3"/><text x="293" y="253.0" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.2" text-anchor="end" font-weight="400" fill="#5A6072">0</text><path d="M300,188.1 L700,188.1" stroke="#DCE0EA" stroke-width="0.6" stroke-dasharray="3,3"/><text x="293" y="191.125" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.2" text-anchor="end" font-weight="400" fill="#5A6072">100</text><path d="M300,126.2 L700,126.2" stroke="#DCE0EA" stroke-width="0.6" stroke-dasharray="3,3"/><text x="293" y="129.25" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.2" text-anchor="end" font-weight="400" fill="#5A6072">200</text><path d="M300,64.4 L700,64.4" stroke="#DCE0EA" stroke-width="0.6" stroke-dasharray="3,3"/><text x="293" y="67.375" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.2" text-anchor="end" font-weight="400" fill="#5A6072">300</text><text x="293" y="46" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.2" text-anchor="end" font-weight="400" fill="#5A6072">MAPE %</text><rect x="374" y="195.9" width="52" height="23.2" fill="#1E8A5F" opacity="0.1"/><path d="M370,211.0 L430,211.0" stroke="#1E8A5F" stroke-width="2"/><circle cx="400" cy="218.0" r="3.6" fill="#FFFFFF" stroke="#1E8A5F" stroke-width="1.6"/><text x="390" y="221.010625" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="6.8" text-anchor="end" font-weight="400" fill="#5A6072">51.7</text><circle cx="400" cy="195.9" r="3.6" fill="#FFFFFF" stroke="#1E8A5F" stroke-width="1.6"/><text x="390" y="198.859375" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="6.8" text-anchor="end" font-weight="400" fill="#5A6072">87.5</text><circle cx="400" cy="219.1" r="3.6" fill="#FFFFFF" stroke="#1E8A5F" stroke-width="1.6"/><text x="390" y="222.0625" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="6.8" text-anchor="end" font-weight="400" fill="#5A6072">50.0</text><text x="400" y="266" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.4" text-anchor="middle" font-weight="700" fill="#1E8A5F">baseline</text><text x="400" y="279" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.4" text-anchor="middle" font-weight="400" fill="#5A6072">mean 63.1  ·  sd 21.2</text><rect x="574" y="70.0" width="52" height="156.2" fill="#B4433F" opacity="0.1"/><path d="M570,151.7 L630,151.7" stroke="#B4433F" stroke-width="2"/><circle cx="600" cy="70.0" r="3.6" fill="#FFFFFF" stroke="#B4433F" stroke-width="1.6"/><text x="610" y="73.00562500000001" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="6.8" text-anchor="start" font-weight="400" fill="#5A6072">290.9</text><circle cx="600" cy="170.1" r="3.6" fill="#FFFFFF" stroke="#B4433F" stroke-width="1.6"/><text x="610" y="173.119375" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="6.8" text-anchor="start" font-weight="400" fill="#5A6072">129.1</text><circle cx="600" cy="102.0" r="3.6" fill="#FFFFFF" stroke="#B4433F" stroke-width="1.6"/><text x="610" y="104.995" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="6.8" text-anchor="start" font-weight="400" fill="#5A6072">239.2</text><circle cx="600" cy="190.1" r="3.6" fill="#FFFFFF" stroke="#B4433F" stroke-width="1.6"/><text x="610" y="193.10500000000002" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="6.8" text-anchor="start" font-weight="400" fill="#5A6072">96.8</text><circle cx="600" cy="226.2" r="3.6" fill="#FFFFFF" stroke="#B4433F" stroke-width="1.6"/><text x="610" y="229.24" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="6.8" text-anchor="start" font-weight="400" fill="#5A6072">38.4</text><text x="600" y="266" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.4" text-anchor="middle" font-weight="700" fill="#B4433F">multi-agent</text><text x="600" y="279" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.4" text-anchor="middle" font-weight="400" fill="#5A6072">mean 158.9  ·  sd 103.8</text><text x="20" y="74" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="10.2" text-anchor="start" font-weight="700" fill="#1A1D26">Same prompt, five times.</text><text x="20" y="92" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.6" text-anchor="start" font-weight="400" fill="#5A6072">p01 — ice cream shop,</text><text x="20" y="106" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.6" text-anchor="start" font-weight="400" fill="#5A6072">Andheri West, ₹15 L.</text><text x="20" y="128" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.6" text-anchor="start" font-weight="400" fill="#5A6072">All spread is run-to-run</text><text x="20" y="142" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.6" text-anchor="start" font-weight="400" fill="#5A6072">variance, not input variance.</text><text x="20" y="176" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.6" text-anchor="start" font-weight="650" fill="#1A1D26">The pipeline's best run</text><text x="20" y="190" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.6" text-anchor="start" font-weight="650" fill="#1A1D26">(38.4) beats the baseline's</text><text x="20" y="204" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.6" text-anchor="start" font-weight="650" fill="#1A1D26">best (50.0). It does not</text><text x="20" y="218" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.6" text-anchor="start" font-weight="650" fill="#1A1D26">reliably produce it.</text><text x="20" y="244" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="700" fill="#B4433F">sd 4.9× the baseline's</text><text x="20" y="258" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="700" fill="#B4433F">spread 7.6× vs 1.8×</text><text x="760" y="90" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.6" text-anchor="start" font-weight="700" fill="#1A1D26">Unreliably better,</text><text x="760" y="105" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.6" text-anchor="start" font-weight="700" fill="#1A1D26">not reliably worse.</text><text x="760" y="128" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="400" fill="#5A6072">This is the signature of</text><text x="760" y="141" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="400" fill="#5A6072">variance compounding along</text><text x="760" y="154" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="400" fill="#5A6072">a dependency chain: each</text><text x="760" y="167" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="400" fill="#5A6072">estimation step carries</text><text x="760" y="180" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="400" fill="#5A6072">error and the errors</text><text x="760" y="193" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="400" fill="#5A6072">compose.</text><text x="20" y="296" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.8" text-anchor="start" font-weight="400" fill="#5A6072">Measured data, n=5 (multi-agent) and n=3 (baseline). Financial accuracy is scored against sector benchmarks that are not yet sourced, so absolute</text><text x="20" y="308" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.8" text-anchor="start" font-weight="400" fill="#5A6072">values are PROVISIONAL; the between-arm comparison is less affected since both arms use the same benchmark. Not a settled finding until the full sweep is run.</text></svg><figcaption><b>Figure 2</b> — Five runs of an identical prompt per arm. All spread is run-to-run variance. <b>Measured</b>; absolute values provisional pending sourced benchmarks.</figcaption></figure>
+<div class="page-break"></div>
+<h2>How the operating layer answers it</h2>
+<p>Rather than one loop per department, Orion runs a <b>graph of
+      loops that check one another</b>, grounded in three things no department can
+      argue with.</p>
+<div class="cols"><div>
+      <div class="kv"><b>Objective numbers, computed by code.</b> Cash, margin,
+        retention, churn, acquisition cost — derived deterministically from an
+        append-only record of events, never reported by a department.</div>
+      <div class="kv"><b>The Constitution.</b> Hard constraints enforced in the
+        execution path, not described in prompts — spend caps, no data deletion,
+        no irreversible action unapproved. This is the first finding above,
+        applied to authority.</div>
+      <div class="kv"><b>Human judgement.</b> Aesthetics, tone, ethics and
+        strategic direction are routed to a person by classification, not at an
+        agent's discretion. Departments draft; they do not ratify.</div>
+      </div><div>
+<div class="invariant"><span class="label">The anchor
+      invariant</span><p><em>No department, planner, worker or reflection process
+      may write an anchor metric, and no learning process may optimise directly
+      against one. Anchors are computed, never reported.</em></p></div>
+<p style="font-size:8.2pt;">The precedent is the held-out
+      evaluation set in production machine learning: locked, never trained on. If
+      the learner could reach it, the score would stop measuring anything. Same
+      reasoning, applied to a company's measure of itself.</p>
+</div></div>
+<figure class="fig-sm"><svg viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arrow-exec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#4FA8E8"/></marker><marker id="arrow-monitor" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#3FD0D4"/></marker><marker id="arrow-halt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#F0688A"/></marker><marker id="arrow-learn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#E8C46A"/></marker><marker id="arrow-anchor" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#2FD9A8"/></marker><marker id="arrow-human" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#C89BF0"/></marker><marker id="arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#8098BE"/></marker></defs><rect width="1000" height="560" rx="6" fill="#1B2A4A"/><text x="30" y="32" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.6" font-weight="700" letter-spacing="1.5" fill="#8098BE">ANCHOR IMMUTABILITY — THE BOUNDARY NO AGENT CROSSES</text><rect x="58" y="58" width="250" height="456" rx="12" fill="#4FA8E8" opacity="0.045"/><rect x="58" y="58" width="250" height="456" rx="12" fill="none" stroke="#4FA8E8" stroke-width="1" opacity="0.3" stroke-dasharray="5,5"/><text x="71" y="75" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8" font-weight="700" letter-spacing="1.2" fill="#4FA8E8" opacity="0.95">AGENT RUNTIME</text><rect x="692" y="58" width="250" height="456" rx="12" fill="#3FD0D4" opacity="0.045"/><rect x="692" y="58" width="250" height="456" rx="12" fill="none" stroke="#3FD0D4" stroke-width="1" opacity="0.3" stroke-dasharray="5,5"/><text x="705" y="75" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8" font-weight="700" letter-spacing="1.2" fill="#3FD0D4" opacity="0.95">READ-ONLY CONSUMERS</text><path d="M225.2,166.4 L419.3,250.9" fill="none" stroke="#8098BE" stroke-width="1.5"  stroke-dasharray="6,5" opacity="0.5" marker-end="url(#arrow-muted)"/><circle cx="322.2" cy="208.6" r="12" fill="#1B2A4A" opacity="0.95"/><path d="M314.7,201.1 L329.7,216.1 M329.7,201.1 L314.7,216.1" stroke="#F0688A" stroke-width="2.4" stroke-linecap="round" fill="none"/><rect x="286.7" y="180.1" width="71.2" height="13" rx="2.5" fill="#1B2A4A" opacity="0.92"/><text x="322.2" y="190.1" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.6" font-weight="600" fill="#F0688A">never written</text><path d="M229.0,291.1 L412.0,287.7" fill="none" stroke="#8098BE" stroke-width="1.5"  stroke-dasharray="6,5" opacity="0.5" marker-end="url(#arrow-muted)"/><circle cx="320.5" cy="289.4" r="12" fill="#1B2A4A" opacity="0.95"/><path d="M313.0,281.9 L328.0,296.9 M328.0,281.9 L313.0,296.9" stroke="#F0688A" stroke-width="2.4" stroke-linecap="round" fill="none"/><rect x="284.9" y="260.9" width="71.2" height="13" rx="2.5" fill="#1B2A4A" opacity="0.92"/><text x="320.5" y="270.9" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.6" font-weight="600" fill="#F0688A">never written</text><path d="M224.6,416.3 L420.5,323.6" fill="none" stroke="#8098BE" stroke-width="1.5"  stroke-dasharray="6,5" opacity="0.5" marker-end="url(#arrow-muted)"/><circle cx="322.5" cy="370.0" r="12" fill="#1B2A4A" opacity="0.95"/><path d="M315.0,362.5 L330.0,377.5 M330.0,362.5 L315.0,377.5" stroke="#F0688A" stroke-width="2.4" stroke-linecap="round" fill="none"/><rect x="264.2" y="341.5" width="116.6" height="13" rx="2.5" fill="#1B2A4A" opacity="0.92"/><text x="322.5" y="351.5" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.6" font-weight="600" fill="#F0688A">never optimised against</text><path d="M580.7,250.9 L774.8,166.4" fill="none" stroke="#2FD9A8" stroke-width="1.5"  opacity="0.88" marker-end="url(#arrow-anchor)"/><rect x="651.3" y="194.1" width="52.9" height="13" rx="2.5" fill="#1B2A4A" opacity="0.92"/><text x="677.8" y="204.1" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.6" font-weight="600" fill="#8098BE">read-only</text><path d="M588.0,287.7 L771.0,291.1" fill="none" stroke="#2FD9A8" stroke-width="1.5"  opacity="0.88" marker-end="url(#arrow-anchor)"/><rect x="653.0" y="274.9" width="52.9" height="13" rx="2.5" fill="#1B2A4A" opacity="0.92"/><text x="679.5" y="284.9" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.6" font-weight="600" fill="#8098BE">read-only</text><path d="M579.5,323.6 L775.4,416.3" fill="none" stroke="#2FD9A8" stroke-width="1.5"  opacity="0.88" marker-end="url(#arrow-anchor)"/><rect x="651.0" y="355.5" width="52.9" height="13" rx="2.5" fill="#1B2A4A" opacity="0.92"/><text x="677.5" y="365.5" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.6" font-weight="600" fill="#8098BE">read-only</text><circle cx="183" cy="148" r="52" fill="#4FA8E8" opacity="0.05"/><circle cx="183" cy="148" r="46" fill="#16233D" stroke="#4FA8E8" stroke-width="1.5" opacity="0.98"/><path d="M177,123 h8 l4,4 v14 h-12 z" stroke="#4FA8E8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M179.6,131 L186.4,131" stroke="#4FA8E8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" opacity="0.65"/><path d="M179.6,134.5 L186.4,134.5" stroke="#4FA8E8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" opacity="0.65"/><path d="M179.6,138 L186.4,138" stroke="#4FA8E8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" opacity="0.65"/><text x="183" y="154.0" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.1" font-weight="600" fill="#D8E4F5">Department</text><text x="183" y="165.4" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.1" font-weight="600" fill="#D8E4F5">Planner</text><circle cx="183" cy="292" r="52" fill="#4FA8E8" opacity="0.05"/><circle cx="183" cy="292" r="46" fill="#16233D" stroke="#4FA8E8" stroke-width="1.5" opacity="0.98"/><circle cx="183" cy="279" r="5" stroke="#4FA8E8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M189.0,279.0 L192.0,279.0" stroke="#4FA8E8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M186.0,284.2 L187.5,286.8" stroke="#4FA8E8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M180.0,284.2 L178.5,286.8" stroke="#4FA8E8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M177.0,279.0 L174.0,279.0" stroke="#4FA8E8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M180.0,273.8 L178.5,271.2" stroke="#4FA8E8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M186.0,273.8 L187.5,271.2" stroke="#4FA8E8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><text x="183" y="304.0" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.1" font-weight="600" fill="#D8E4F5">Workers</text><circle cx="183" cy="436" r="52" fill="#E8C46A" opacity="0.05"/><circle cx="183" cy="436" r="46" fill="#16233D" stroke="#E8C46A" stroke-width="1.5" opacity="0.98"/><path d="M176,422 a7,7 0 1,1 5,5" stroke="#E8C46A" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M173,419 L176,422.5 L179.5,419" stroke="#E8C46A" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><text x="183" y="442.0" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.1" font-weight="600" fill="#D8E4F5">Reflection</text><text x="183" y="453.4" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.1" font-weight="600" fill="#D8E4F5">Loop</text><circle cx="817" cy="148" r="52" fill="#3FD0D4" opacity="0.05"/><circle cx="817" cy="148" r="46" fill="#16233D" stroke="#3FD0D4" stroke-width="1.5" opacity="0.98"/><circle cx="815.5" cy="130.5" r="6" stroke="#3FD0D4" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M820,135 L825,140" stroke="#3FD0D4" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><text x="817" y="154.0" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.1" font-weight="600" fill="#D8E4F5">Goodhart</text><text x="817" y="165.4" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.1" font-weight="600" fill="#D8E4F5">Detector</text><circle cx="817" cy="292" r="52" fill="#3FD0D4" opacity="0.05"/><circle cx="817" cy="292" r="46" fill="#16233D" stroke="#3FD0D4" stroke-width="1.5" opacity="0.98"/><path d="M808,283 L808,268" stroke="#3FD0D4" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/><path d="M808,283 L826,283" stroke="#3FD0D4" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/><path d="M810,279 L815,273 L819,277 L825,270" stroke="#3FD0D4" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><text x="817" y="298.0" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.1" font-weight="600" fill="#D8E4F5">Drift &</text><text x="817" y="309.4" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.1" font-weight="600" fill="#D8E4F5">Decay</text><text x="817" y="320.8" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.1" font-weight="600" fill="#D8E4F5">Monitor</text><circle cx="817" cy="436" r="52" fill="#3FD0D4" opacity="0.05"/><circle cx="817" cy="436" r="46" fill="#16233D" stroke="#3FD0D4" stroke-width="1.5" opacity="0.98"/><path d="M808,427 L808,412" stroke="#3FD0D4" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/><path d="M808,427 L826,427" stroke="#3FD0D4" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/><path d="M810,423 L815,417 L819,421 L825,414" stroke="#3FD0D4" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><text x="817" y="442.0" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.1" font-weight="600" fill="#D8E4F5">Business</text><text x="817" y="453.4" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.1" font-weight="600" fill="#D8E4F5">Health</text><circle cx="500" cy="286" r="94" fill="#2FD9A8" opacity="0.05"/><circle cx="500" cy="286" r="88" fill="#16233D" stroke="#2FD9A8" stroke-width="1.5" opacity="0.98"/><ellipse cx="500" cy="267" rx="8" ry="2.6" stroke="#2FD9A8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="500" cy="272" rx="8" ry="2.6" stroke="#2FD9A8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M492,267 L492,272" stroke="#2FD9A8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M508,267 L508,272" stroke="#2FD9A8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><rect x="495.5" y="276" width="9" height="7" rx="1.4" stroke="#2FD9A8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M497.6,276 v-2.4 a2.4,2.4 0 0,1 4.8,0 v2.4" stroke="#2FD9A8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><text x="500" y="298.0" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.1" font-weight="600" fill="#D8E4F5">Anchor Metrics</text><text x="500" y="310.4" text-anchor="middle" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.4" fill="#2FD9A8" opacity="0.9" font-style="italic">computed from an append-only ledger</text><rect x="576" y="205" width="12" height="9.5" rx="1.8" stroke="#2FD9A8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M578.6,205 v-3.2 a3.4,3.4 0 0,1 6.8,0 v3.2" stroke="#2FD9A8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><circle cx="582" cy="206" r="11" fill="#1B2A4A" stroke="#2FD9A8" stroke-width="1.1"/><rect x="576" y="205" width="12" height="9.5" rx="1.8" stroke="#2FD9A8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M578.6,205 v-3.2 a3.4,3.4 0 0,1 6.8,0 v3.2" stroke="#2FD9A8" fill="none" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><text x="500" y="424" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="middle" font-weight="600" fill="#2FD9A8">Revenue · Contribution margin · Retention · Churn</text><text x="500" y="438" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.0" text-anchor="middle" font-weight="400" fill="#8098BE">CAC · LTV · Cash · SLA breaches</text><text x="500" y="480" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.4" text-anchor="middle" font-weight="700" fill="#D8E4F5">Anchors are computed, never reported.</text><text x="500" y="496" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="middle" font-weight="400" fill="#8098BE">There is no write path from the agent runtime to an anchor.</text><path d="M33,529 L45,539 M45,529 L33,539" stroke="#F0688A" stroke-width="2.1" stroke-linecap="round"/><text x="59" y="537.4" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.8" fill="#8098BE">Write path absent by construction</text><path d="M335,534 L357,534" stroke="#2FD9A8" stroke-width="1.8" marker-end="url(#arrow-anchor)"/><text x="364" y="537.4" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.8" fill="#8098BE">Read-only access</text><circle cx="649" cy="534" r="7" fill="#16233D" stroke="#2FD9A8" stroke-width="1.5"/><text x="669" y="537.4" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.8" fill="#8098BE">Locked anchor</text></svg><figcaption><b>Figure 3</b> — Anchors are readable by every component and writable by none — not because policy forbids it, but because no such path exists.</figcaption></figure>
+<p><b>Adding oversight is not sufficient on its own.</b> If agent A
+      reviews B, B reviews C and C reviews A, everyone approves everyone and
+      nothing touches reality. Orion therefore validates its own topology at
+      registration: every cycle must contain a code-computed anchor or a human
+      decision, and no monitor may share an evaluation signal with the loop it
+      monitors.</p>
+<h2>What is built, and what is specified</h2>
+<table><tr><th style="width:26%">Component</th>
+      <th style="width:13%">Status</th><th>Evidence</th></tr>
+      <tr><td>21 agents, five departments</td>
+        <td><span class="status st-built">Built</span></td>
+        <td>Plan completeness 100% of a 26-field rubric vs 80.8% for a single-LLM
+        baseline</td></tr>
+      <tr><td>Append-only state contract</td>
+        <td><span class="status st-built">Built</span></td>
+        <td>Cross-department writes raise a contract violation; makes agreement
+        measurable at all</td></tr>
+      <tr><td>Derived-over-asserted reconciliation</td>
+        <td><span class="status st-built">Built</span></td>
+        <td>Resolved all five identified cross-agent conflicts</td></tr>
+      <tr><td>Dynamic routing</td>
+        <td><span class="status st-built">Built</span></td>
+        <td>17.3% token saving, 0.0 pp completeness delta</td></tr>
+      <tr><td>External grounding</td>
+        <td><span class="status st-prov">Partial</span></td>
+        <td>OpenStreetMap in use; competitor ground truth not yet collected, so
+        the grounding question is unanswered</td></tr>
+      <tr><td>Anchors · Constitution · monitor loops · cadences</td>
+        <td><span class="status st-spec">Specified</span></td>
+        <td>Not yet implemented or measured</td></tr>
+      </table>
+<p style="font-size:8.2pt;"><b>Caveats that travel with those
+      numbers.</b> They come from a five-prompt smoke run, not the full
+      thirty-five-prompt sweep. Financial accuracy divides by sector benchmarks
+      that are not yet sourced, so its absolute values are provisional —
+      between-arm comparisons are less affected. Business quality has no oracle
+      comparable to a unit test, so every metric here is a proxy, which is an
+      uncomfortable observation for a system about proxy capture and is stated
+      rather than left implicit.</p>
+<h2>Where it stands against comparable systems</h2>
+<p style="font-size:8.3pt;">Orion inherits role specialisation
+      with structured artefacts from MetaGPT, durable execution from workflow
+      engines, approval gates from business process management, and the
+      independent-monitor and locked-evaluation-set patterns from production
+      machine learning. It improves memory from a flat shared context to
+      per-department typed stores, and governance from tool-level permission to
+      business-decision level. What it introduces is the enforced state contract
+      that makes cross-agent disagreement measurable, the anchor invariant, and
+      topology validation that refuses an oversight structure which would only
+      ever agree with itself.</p>
+<p style="font-size:7.8pt; color:#5A6072; font-style:italic;">
+      Codebase, database and test artefacts use the identifier
+      <code>mabgp</code>, from the generation layer's original name, retained for
+      continuity with existing test suites. Full architecture document: 16 pp,
+      15 figures. Research proposal: 14 pp.</p>
+</body>
+</html>

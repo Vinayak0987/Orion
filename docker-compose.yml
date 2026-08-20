@@ -1,0 +1,87 @@
+# F62 - MABGP multi-service stack. Everything here is free and runs locally.
+# Usage: cp .env.example .env  &&  docker compose up --build
+#
+# RAM budget on an 8 GB laptop:
+#   ollama    ~5.0 GB (llama3.1:8b, Q4 quantized)
+#   chromadb  ~0.3 GB
+#   backend   ~0.4 GB
+#   frontend  ~0.2 GB
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: mabgp-backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      OLLAMA_BASE_URL: http://ollama:11434
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: "8000"
+      SQLITE_PATH: /app/data/mabgp.db
+    volumes:
+      - ./backend/app:/app/app          # hot reload during development
+      - mabgp-sqlite:/app/data
+    depends_on:
+      chromadb:
+        condition: service_started
+    networks:
+      - mabgp
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: mabgp-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_BASE_URL: http://localhost:8080
+    volumes:
+      - ./frontend/src:/app/src
+    depends_on:
+      - backend
+    networks:
+      - mabgp
+    restart: unless-stopped
+
+  # F8 - local LLM fallback. Zero cost, zero rate limits.
+  # First run: docker compose exec ollama ollama pull llama3.1:8b
+  ollama:
+    image: ollama/ollama:0.5.4
+    container_name: mabgp-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - mabgp-ollama:/root/.ollama
+    networks:
+      - mabgp
+    restart: unless-stopped
+
+  # F61 - vector store for plan/market-research caching
+  chromadb:
+    image: chromadb/chroma:0.5.23
+    container_name: mabgp-chromadb
+    ports:
+      - "8000:8000"
+    environment:
+      IS_PERSISTENT: "TRUE"
+      ANONYMIZED_TELEMETRY: "FALSE"
+    volumes:
+      - mabgp-chroma:/chroma/chroma
+    networks:
+      - mabgp
+    restart: unless-stopped
+
+volumes:
+  mabgp-sqlite:
+  mabgp-ollama:
+  mabgp-chroma:
+
+networks:
+  mabgp:
+    driver: bridge

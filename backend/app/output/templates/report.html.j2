@@ -1,0 +1,496 @@
+{#
+  F43/F44 - report template, shared by the HTML view and the PDF export.
+
+  CSS is deliberately conservative: tables for layout, no flexbox, no grid, no
+  external fonts or stylesheets. The PDF engine (xhtml2pdf on a bare Python
+  install) supports only a subset of CSS2, and one template that renders
+  identically in both targets is worth more than two that drift apart.
+
+  Brand colours come from the Branding department (F27) so the report is styled
+  in the palette it recommends.
+#}<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>{{ package.business_name }} — Business Plan</title>
+<style>
+  @page { size: A4; margin: 1.8cm 1.6cm; }
+  body { font-family: Helvetica, Arial, sans-serif; font-size: 10.5pt; line-height: 1.5;
+         color: #23272f; margin: 0; }
+  a { color: {{ accent }}; }
+
+  .cover { text-align: center; padding: 40px 0 26px 0; border-bottom: 3px solid {{ primary }}; }
+  .cover h1 { font-size: 28pt; margin: 0 0 6px 0; color: {{ primary }}; }
+  .cover .tagline { font-size: 12pt; color: #555; font-style: italic; margin: 0 0 14px 0; }
+  .cover .facts { font-size: 10pt; color: #444; }
+  .cover .prompt { margin-top: 14px; font-size: 9.5pt; color: #666; }
+
+  h2 { font-size: 14pt; color: {{ primary }}; border-bottom: 1px solid #d8dde3;
+       padding-bottom: 4px; margin: 22px 0 8px 0; }
+  h3 { font-size: 11pt; color: #2f3540; margin: 14px 0 4px 0; }
+  p { margin: 0 0 8px 0; }
+  ul { margin: 4px 0 8px 0; padding-left: 18px; }
+  li { margin-bottom: 3px; }
+
+  table { width: 100%; border-collapse: collapse; margin: 6px 0 12px 0; font-size: 9.5pt; }
+  th { background-color: {{ primary }}; color: #ffffff; text-align: left;
+       padding: 5px 7px; font-weight: bold; }
+  td { padding: 5px 7px; border-bottom: 1px solid #e3e7ec; vertical-align: top; }
+  tr.alt td { background-color: #f6f8fa; }
+  td.num { text-align: right; }
+
+  .kpis { margin: 14px 0 6px 0; }
+  .kpis td { border: 1px solid #dfe4ea; text-align: center; padding: 9px 6px; width: 25%; }
+  .kpis .label { font-size: 8pt; color: #66707c; text-transform: uppercase; }
+  .kpis .value { font-size: 13pt; color: {{ primary }}; font-weight: bold; }
+
+  .swatch { width: 34px; height: 18px; border: 1px solid #c8cdd4; }
+  .note { background-color: #f6f8fa; border-left: 3px solid {{ accent }};
+          padding: 7px 10px; font-size: 9pt; color: #4a525d; margin: 8px 0 12px 0; }
+  .warn { background-color: #fff7ed; border-left: 3px solid #d97706;
+          padding: 7px 10px; font-size: 9pt; color: #7c4a06; margin: 8px 0 12px 0; }
+  .meta { font-size: 8.5pt; color: #6b7480; }
+  .toc td { border-bottom: 1px dotted #d8dde3; padding: 3px 0; }
+  .section { page-break-inside: avoid; }
+</style>
+</head>
+<body>
+
+{# ---------------------------------------------------------------- cover #}
+<div class="cover">
+  <h1>{{ package.business_name }}</h1>
+  {% if tagline %}<p class="tagline">"{{ tagline }}"</p>{% endif %}
+  <p class="facts">
+    {{ intent.business_type_label or intent.business_type | replace("_", " ") | title }}
+    &nbsp;·&nbsp; {{ location }}
+    {% if budget_display %}&nbsp;·&nbsp; Budget {{ budget_display }}{% endif %}
+    {% if intent.scale and intent.scale != "unspecified" %}&nbsp;·&nbsp; {{ intent.scale | title }} scale{% endif %}
+  </p>
+  <p class="prompt">Generated from: "{{ package.prompt }}"</p>
+  <p class="meta">{{ generated_on }} &nbsp;·&nbsp; MABGP multi-agent pipeline</p>
+</div>
+
+{# ------------------------------------------------------------------ KPIs #}
+{% if kpis %}
+<table class="kpis">
+  <tr>
+    {% for kpi in kpis %}
+    <td><div class="label">{{ kpi.label }}</div><div class="value">{{ kpi.value }}</div></td>
+    {% endfor %}
+  </tr>
+</table>
+{% endif %}
+
+{# ----------------------------------------------------------- warnings #}
+{% if contradictions %}
+<div class="warn">
+  <strong>Consistency checks flagged {{ contradictions | length }} item(s):</strong>
+  <ul>{% for warning in contradictions %}<li>{{ warning }}</li>{% endfor %}</ul>
+</div>
+{% endif %}
+
+{# ---------------------------------------------------------------- TOC #}
+<h2>Contents</h2>
+<table class="toc">
+  {% for spec in present_sections %}
+  <tr><td>{{ loop.index }}. {{ spec.title }}</td><td class="num meta">{{ spec.description }}</td></tr>
+  {% endfor %}
+</table>
+
+{# ------------------------------------------------------------ sections #}
+{% for spec in present_sections %}
+{% set data = package.sections[spec.key] %}
+<div class="section">
+<h2>{{ loop.index }}. {{ spec.title }}</h2>
+
+{% if spec.key == "executive_summary" %}
+  {% if data.executive_summary %}<p>{{ data.executive_summary }}</p>{% endif %}
+  {% if data.value_proposition %}<h3>Value proposition</h3><p>{{ data.value_proposition }}</p>{% endif %}
+  <table>
+    {% if data.vision %}<tr><td width="22%"><strong>Vision</strong></td><td>{{ data.vision }}</td></tr>{% endif %}
+    {% if data.mission %}<tr class="alt"><td><strong>Mission</strong></td><td>{{ data.mission }}</td></tr>{% endif %}
+    {% if data.business_model_type %}<tr><td><strong>Model</strong></td><td>{{ data.business_model_type }}</td></tr>{% endif %}
+  </table>
+
+{% elif spec.key == "market_analysis" %}
+  {% if data.market_overview %}<p>{{ data.market_overview }}</p>{% endif %}
+  {% if data.market_size %}
+    <h3>Market sizing</h3>
+    <table>
+      <tr><th>Measure</th><th>Value (INR / year)</th></tr>
+      <tr><td>Total addressable market (TAM)</td><td class="num">{{ data.market_size.tam_inr | inr }}</td></tr>
+      <tr class="alt"><td>Serviceable addressable market (SAM)</td><td class="num">{{ data.market_size.sam_inr | inr }}</td></tr>
+      <tr><td>Serviceable obtainable market (SOM), year 1</td><td class="num">{{ data.market_size.som_inr | inr }}</td></tr>
+    </table>
+    {% if data.market_size.reasoning %}<p class="meta">{{ data.market_size.reasoning }}</p>{% endif %}
+  {% endif %}
+  {% if data.market_statistics %}
+    <h3>Key statistics</h3>
+    <ul>{% for stat in data.market_statistics %}<li>{{ stat }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if data.industry_growth_rate_pct is not none %}
+    <p><strong>Industry growth rate:</strong> {{ data.industry_growth_rate_pct }}% per year</p>
+  {% endif %}
+
+{% elif spec.key == "competition" %}
+  {% if data.competitors %}
+  <table>
+    <tr><th>Competitor</th><th>Rating</th><th>Reviews</th><th>Price</th><th>Source</th></tr>
+    {% for c in data.competitors %}
+    <tr {% if loop.index is even %}class="alt"{% endif %}>
+      <td>{{ c.name }}{% if c.address %}<br /><span class="meta">{{ c.address }}</span>{% endif %}</td>
+      <td class="num">{{ c.rating if c.rating is not none else "—" }}</td>
+      <td class="num">{{ c.review_count if c.review_count is not none else "—" }}</td>
+      <td class="num">{{ "₹" * c.price_level if c.price_level else "—" }}</td>
+      <td>{{ c.source | replace("_", " ") }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% if competitor_source in ("google_places", "openstreetmap") %}
+  <div class="note">These businesses were verified against
+    {{ "Google Places" if competitor_source == "google_places" else "OpenStreetMap" }}
+    {%- if competitor_source == "openstreetmap" %}, which does not publish ratings or review counts{% endif %}.</div>
+  {% else %}
+  <div class="note">Competitors are recalled by the language model and have not been
+    verified against a places database.</div>
+  {% endif %}
+  {% endif %}
+  {% if data.market_gaps %}<h3>Market gaps</h3><ul>{% for gap in data.market_gaps %}<li>{{ gap }}</li>{% endfor %}</ul>{% endif %}
+  {% if data.positioning %}<h3>Recommended positioning</h3><p>{{ data.positioning }}</p>{% endif %}
+
+{% elif spec.key == "location" %}
+  {% if data.location_score is not none %}<p><strong>Location score:</strong> {{ data.location_score }} / 10</p>{% endif %}
+  {% if data.location_rationale %}<p>{{ data.location_rationale }}</p>{% endif %}
+  {% if data.footfall_assessment %}<h3>Footfall</h3><p>{{ data.footfall_assessment }}</p>{% endif %}
+  {% if data.complementary_businesses %}<h3>Complementary businesses nearby</h3>
+    <ul>{% for item in data.complementary_businesses %}<li>{{ item }}</li>{% endfor %}</ul>{% endif %}
+  {% if data.accessibility_notes %}<h3>Accessibility</h3>
+    <ul>{% for item in data.accessibility_notes %}<li>{{ item }}</li>{% endfor %}</ul>{% endif %}
+
+{% elif spec.key == "risks" %}
+  <table>
+    <tr><th>Category</th><th>Risk</th><th>Severity</th><th>Likelihood</th><th>Mitigation</th></tr>
+    {% for risk in data.risks %}
+    <tr {% if loop.index is even %}class="alt"{% endif %}>
+      <td>{{ risk.category | title }}</td><td>{{ risk.description }}</td>
+      <td>{{ risk.severity | title }}</td><td>{{ risk.likelihood | title }}</td>
+      <td>{{ risk.mitigation }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+
+{% elif spec.key == "revenue" %}
+  {% if data.pricing_strategy %}<p>{{ data.pricing_strategy }}</p>{% endif %}
+  {% if data.revenue_streams %}
+  <table>
+    <tr><th>Stream</th><th>Description</th><th>Monthly (INR)</th><th>Share</th></tr>
+    {% for stream in data.revenue_streams %}
+    <tr {% if loop.index is even %}class="alt"{% endif %}>
+      <td>{{ stream.name }}</td><td>{{ stream.description }}</td>
+      <td class="num">{{ stream.monthly_estimate_inr | inr }}</td>
+      <td class="num">{{ (stream.share_pct ~ "%") if stream.share_pct is not none else "—" }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+  <table>
+    <tr><th>Projection</th><th>Revenue (INR)</th></tr>
+    <tr><td>Year 1</td><td class="num">{{ data.projected_revenue_y1_inr | inr }}</td></tr>
+    <tr class="alt"><td>Year 2</td><td class="num">{{ data.projected_revenue_y2_inr | inr }}</td></tr>
+    <tr><td>Year 3</td><td class="num">{{ data.projected_revenue_y3_inr | inr }}</td></tr>
+    {% if data.avg_ticket_size_inr %}<tr class="alt"><td>Average ticket size</td><td class="num">{{ data.avg_ticket_size_inr | inr }}</td></tr>{% endif %}
+  </table>
+  {% if data.seasonality_notes %}<p class="meta">{{ data.seasonality_notes }}</p>{% endif %}
+
+{% elif spec.key == "costs" %}
+  {% if data.setup_costs %}
+  <h3>One-time setup costs</h3>
+  <table>
+    <tr><th>Item</th><th>Category</th><th>Amount (INR)</th></tr>
+    {% for item in data.setup_costs %}
+    <tr {% if loop.index is even %}class="alt"{% endif %}>
+      <td>{{ item.name }}{% if item.notes %}<br /><span class="meta">{{ item.notes }}</span>{% endif %}</td>
+      <td>{{ item.subcategory | replace("_", " ") | title }}</td>
+      <td class="num">{{ item.amount_inr | inr }}</td>
+    </tr>
+    {% endfor %}
+    <tr><td colspan="2"><strong>Total setup</strong></td><td class="num"><strong>{{ data.total_setup_cost_inr | inr }}</strong></td></tr>
+  </table>
+  {% endif %}
+  {% if data.recurring_costs %}
+  <h3>Monthly recurring costs</h3>
+  <table>
+    <tr><th>Item</th><th>Category</th><th>Amount (INR / month)</th></tr>
+    {% for item in data.recurring_costs %}
+    <tr {% if loop.index is even %}class="alt"{% endif %}>
+      <td>{{ item.name }}</td><td>{{ item.subcategory | replace("_", " ") | title }}</td>
+      <td class="num">{{ item.amount_inr | inr }}</td>
+    </tr>
+    {% endfor %}
+    <tr><td colspan="2"><strong>Total monthly</strong></td><td class="num"><strong>{{ data.total_monthly_cost_inr | inr }}</strong></td></tr>
+  </table>
+  {% endif %}
+  {% if data.budget_utilization_pct is not none %}
+  <div class="{{ 'warn' if data.within_budget is false else 'note' }}">
+    Setup cost uses <strong>{{ data.budget_utilization_pct }}%</strong> of the stated budget
+    {%- if data.within_budget is false %} — this exceeds the budget{% endif %}.
+  </div>
+  {% endif %}
+
+{% elif spec.key == "funding" %}
+  {% if data.funding_approach %}<p>{{ data.funding_approach }}</p>{% endif %}
+  <table>
+    {% if data.funding_amount_inr is not none %}<tr><td width="30%"><strong>External funding required</strong></td><td>{{ data.funding_amount_inr | inr }}</td></tr>{% endif %}
+    {% if data.funding_timeline %}<tr class="alt"><td><strong>Timeline</strong></td><td>{{ data.funding_timeline }}</td></tr>{% endif %}
+  </table>
+  {% if data.funding_schemes %}<h3>Applicable schemes</h3>
+    <ul>{% for scheme in data.funding_schemes %}<li>{{ scheme }}</li>{% endfor %}</ul>{% endif %}
+
+{% elif spec.key == "projections" %}
+  <table>
+    <tr><th>Metric</th><th>Value</th></tr>
+    <tr><td>Gross margin</td><td class="num">{{ (data.gross_margin_pct ~ "%") if data.gross_margin_pct is not none else "—" }}</td></tr>
+    <tr class="alt"><td>Net margin</td><td class="num">{{ (data.net_margin_pct ~ "%") if data.net_margin_pct is not none else "—" }}</td></tr>
+    <tr><td>Break-even month</td><td class="num">{{ ("Month " ~ data.break_even_month) if data.break_even_month else "not reached in forecast" }}</td></tr>
+    {% if data.benchmark_margin_pct is not none %}
+    <tr class="alt"><td>Sector net margin benchmark</td><td class="num">{{ data.benchmark_margin_pct }}%</td></tr>
+    {% endif %}
+  </table>
+  {% if data.pl_forecast %}
+  <h3>Profit &amp; loss forecast</h3>
+  <table>
+    <tr><th>Period</th><th>Revenue</th><th>COGS</th><th>Operating exp.</th><th>Net profit</th><th>Net margin</th></tr>
+    {% for period in data.pl_forecast %}
+    <tr {% if loop.index is even %}class="alt"{% endif %}>
+      <td>{{ period.label }}</td>
+      <td class="num">{{ period.revenue_inr | inr }}</td>
+      <td class="num">{{ period.cogs_inr | inr }}</td>
+      <td class="num">{{ period.operating_expense_inr | inr }}</td>
+      <td class="num">{{ period.net_profit_inr | inr }}</td>
+      <td class="num">{{ (period.net_margin_pct ~ "%") if period.net_margin_pct is not none else "—" }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <p class="meta">Forecast periods are computed from model-supplied drivers; margins
+    and break-even are derived arithmetically, not generated.</p>
+  {% endif %}
+
+{% elif spec.key == "brand" %}
+  {% if data.recommended_name %}<p><strong>Recommended name:</strong> {{ data.recommended_name }}</p>{% endif %}
+  {% if data.personality_traits %}<p><strong>Personality:</strong> {{ data.personality_traits | join(", ") }}</p>{% endif %}
+  {% if data.color_palette %}
+  <h3>Colour palette</h3>
+  <table>
+    <tr><th>Role</th><th>Swatch</th><th>Hex</th></tr>
+    <tr><td>Primary</td><td><div class="swatch" style="background-color: {{ data.color_palette.primary_hex }}"></div></td><td>{{ data.color_palette.primary_hex }}</td></tr>
+    {% if data.color_palette.secondary_hex %}<tr class="alt"><td>Secondary</td><td><div class="swatch" style="background-color: {{ data.color_palette.secondary_hex }}"></div></td><td>{{ data.color_palette.secondary_hex }}</td></tr>{% endif %}
+    {% if data.color_palette.accent_hex %}<tr><td>Accent</td><td><div class="swatch" style="background-color: {{ data.color_palette.accent_hex }}"></div></td><td>{{ data.color_palette.accent_hex }}</td></tr>{% endif %}
+  </table>
+  {% if data.color_palette.rationale %}<p class="meta">{{ data.color_palette.rationale }}</p>{% endif %}
+  {% endif %}
+  <table>
+    {% if data.heading_font %}<tr><td width="30%"><strong>Heading font</strong></td><td>{{ data.heading_font }}</td></tr>{% endif %}
+    {% if data.body_font %}<tr class="alt"><td><strong>Body font</strong></td><td>{{ data.body_font }}</td></tr>{% endif %}
+    {% if data.logo_style %}<tr><td><strong>Logo style</strong></td><td>{{ data.logo_style }}</td></tr>{% endif %}
+  </table>
+  {% if data.visual_mood %}<h3>Visual direction</h3><p>{{ data.visual_mood }}</p>{% endif %}
+  {% if data.signage_direction %}<p>{{ data.signage_direction }}</p>{% endif %}
+  {% if data.name_candidates %}
+  <h3>Name candidates considered</h3>
+  <table>
+    <tr><th>Name</th><th>Rationale</th><th></th></tr>
+    {% for candidate in data.name_candidates %}
+    <tr {% if loop.index is even %}class="alt"{% endif %}>
+      <td>{{ candidate.name }}</td><td>{{ candidate.rationale }}</td>
+      <td>{{ "recommended" if candidate.recommended else "" }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+{% elif spec.key == "brand_voice" %}
+  {% if data.tone %}<p>{{ data.tone }}</p>{% endif %}
+  {% if data.taglines %}<h3>Tagline options</h3><ul>{% for line in data.taglines %}<li>{{ line }}</li>{% endfor %}</ul>{% endif %}
+  {% if data.sample_social_post %}<h3>Sample post</h3><div class="note">{{ data.sample_social_post }}</div>{% endif %}
+  {% if data.voice_dos or data.voice_donts %}
+  <table>
+    <tr><th>Always</th><th>Never</th></tr>
+    <tr>
+      <td><ul>{% for item in data.voice_dos %}<li>{{ item }}</li>{% endfor %}</ul></td>
+      <td><ul>{% for item in data.voice_donts %}<li>{{ item }}</li>{% endfor %}</ul></td>
+    </tr>
+  </table>
+  {% endif %}
+
+{% elif spec.key == "personas" %}
+  {% for persona in data.personas %}
+  <h3>{{ persona.name }}</h3>
+  <table>
+    <tr><td width="26%"><strong>Profile</strong></td>
+        <td>{{ persona.age_range }}{% if persona.gender %} · {{ persona.gender }}{% endif %}{% if persona.occupation %} · {{ persona.occupation }}{% endif %}</td></tr>
+    {% if persona.income_range_inr %}<tr class="alt"><td><strong>Income</strong></td><td>INR {{ persona.income_range_inr }} / month</td></tr>{% endif %}
+    {% if persona.location %}<tr><td><strong>Location</strong></td><td>{{ persona.location }}</td></tr>{% endif %}
+    {% if persona.pain_points %}<tr class="alt"><td><strong>Pain points</strong></td><td>{{ persona.pain_points | join("; ") }}</td></tr>{% endif %}
+    {% if persona.buying_triggers %}<tr><td><strong>Buying triggers</strong></td><td>{{ persona.buying_triggers | join("; ") }}</td></tr>{% endif %}
+    {% if persona.objections %}<tr class="alt"><td><strong>Objections</strong></td><td>{{ persona.objections | join("; ") }}</td></tr>{% endif %}
+  </table>
+  {% endfor %}
+
+{% elif spec.key == "marketing" %}
+  {% if data.channel_strategy_summary %}<p>{{ data.channel_strategy_summary }}</p>{% endif %}
+  {% if data.channels %}
+  <table>
+    <tr><th>Channel</th><th>Share</th><th>Budget (INR/mo)</th><th>Primary KPI</th><th>Target</th></tr>
+    {% for channel in data.channels %}
+    <tr {% if loop.index is even %}class="alt"{% endif %}>
+      <td>{{ channel.name }}</td>
+      <td class="num">{{ (channel.budget_share_pct ~ "%") if channel.budget_share_pct is not none else "—" }}</td>
+      <td class="num">{{ channel.monthly_budget_inr | inr }}</td>
+      <td>{{ channel.primary_kpi }}</td><td>{{ channel.kpi_target }}</td>
+    </tr>
+    {% endfor %}
+    {% if data.total_marketing_budget_inr %}
+    <tr><td colspan="2"><strong>Total monthly marketing</strong></td>
+        <td class="num"><strong>{{ data.total_marketing_budget_inr | inr }}</strong></td><td colspan="2"></td></tr>
+    {% endif %}
+  </table>
+  {% endif %}
+
+{% elif spec.key == "campaign" %}
+  {% if data.launch_hook %}<div class="note"><strong>Launch hook:</strong> {{ data.launch_hook }}</div>{% endif %}
+  {% for phase in data.campaign_phases %}
+  <h3>{{ phase.phase | replace("_", " ") | title }} — {{ phase.day_range }}</h3>
+  {% if phase.objective %}<p>{{ phase.objective }}</p>{% endif %}
+  {% if phase.activities %}<ul>{% for activity in phase.activities %}<li>{{ activity }}</li>{% endfor %}</ul>{% endif %}
+  {% if phase.budget_inr %}<p class="meta">Phase budget: {{ phase.budget_inr | inr }}</p>{% endif %}
+  {% endfor %}
+
+{% elif spec.key == "content" %}
+  {% if data.content_frequency %}<p>{{ data.content_frequency }}</p>{% endif %}
+  {% if data.content_formats %}<p><strong>Formats:</strong> {{ data.content_formats | join(", ") }}</p>{% endif %}
+  {% if data.target_keywords %}<h3>Target keywords</h3><ul>{% for keyword in data.target_keywords %}<li>{{ keyword }}</li>{% endfor %}</ul>{% endif %}
+  {% if data.content_topics %}<h3>Content topics</h3><ul>{% for topic in data.content_topics %}<li>{{ topic }}</li>{% endfor %}</ul>{% endif %}
+
+{% elif spec.key == "supply_chain" %}
+  {% if data.inventory_approach %}<p>{{ data.inventory_approach }}</p>{% endif %}
+  {% if data.vendors %}
+  <table>
+    <tr><th>Category</th><th>Supplies</th><th>Sourcing</th><th>Notes</th></tr>
+    {% for vendor in data.vendors %}
+    <tr {% if loop.index is even %}class="alt"{% endif %}>
+      <td>{{ vendor.category }}</td><td>{{ vendor.supplies }}</td>
+      <td>{{ vendor.sourcing_type | replace("_", " ") | title }}</td><td>{{ vendor.notes }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+  {% if data.inventory_requirements %}<h3>Inventory requirements</h3>
+    <ul>{% for item in data.inventory_requirements %}<li>{{ item }}</li>{% endfor %}</ul>{% endif %}
+
+{% elif spec.key == "staffing" %}
+  {% if data.roles %}
+  <table>
+    <tr><th>Role</th><th>Headcount</th><th>Salary (INR/mo)</th><th>Hire month</th><th>Responsibilities</th></tr>
+    {% for role in data.roles %}
+    <tr {% if loop.index is even %}class="alt"{% endif %}>
+      <td>{{ role.title }}</td><td class="num">{{ role.headcount }}</td>
+      <td class="num">{{ role.monthly_salary_inr | inr }}</td>
+      <td class="num">{{ role.hire_month or "—" }}</td>
+      <td>{{ role.responsibilities | join("; ") }}</td>
+    </tr>
+    {% endfor %}
+    <tr><td><strong>Total</strong></td><td class="num"><strong>{{ data.total_headcount_y1 or "—" }}</strong></td>
+        <td class="num"><strong>{{ data.total_monthly_payroll_inr | inr }}</strong></td><td colspan="2"></td></tr>
+  </table>
+  {% endif %}
+
+{% elif spec.key == "tech_stack" %}
+  {% if data.tools %}
+  <table>
+    <tr><th>Tool</th><th>Purpose</th><th>Cost</th><th>INR / month</th></tr>
+    {% for tool in data.tools %}
+    <tr {% if loop.index is even %}class="alt"{% endif %}>
+      <td>{{ tool.name }}</td><td>{{ tool.purpose }}</td>
+      <td>{{ tool.cost | title }}</td><td class="num">{{ tool.monthly_cost_inr | inr }}</td>
+    </tr>
+    {% endfor %}
+    {% if data.total_tool_cost_monthly_inr is not none %}
+    <tr><td colspan="3"><strong>Total monthly tooling</strong></td>
+        <td class="num"><strong>{{ data.total_tool_cost_monthly_inr | inr }}</strong></td></tr>
+    {% endif %}
+  </table>
+  {% endif %}
+
+{% elif spec.key == "operations" %}
+  {% if data.daily_workflow %}
+  <table>
+    <tr><th>#</th><th>Step</th><th>Description</th><th>Owner</th></tr>
+    {% for step in data.daily_workflow %}
+    <tr {% if loop.index is even %}class="alt"{% endif %}>
+      <td class="num">{{ step.order }}</td><td>{{ step.name }}</td>
+      <td>{{ step.description }}</td><td>{{ step.owner_role or "—" }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+  {% if data.key_processes %}<h3>Key processes</h3><ul>{% for item in data.key_processes %}<li>{{ item }}</li>{% endfor %}</ul>{% endif %}
+  {% if data.quality_checkpoints %}<h3>Quality checkpoints</h3><ul>{% for item in data.quality_checkpoints %}<li>{{ item }}</li>{% endfor %}</ul>{% endif %}
+{% endif %}
+</div>
+{% endfor %}
+
+{# ------------------------------------------------------- F46 metadata #}
+<div class="section">
+<h2>{{ present_sections | length + 1 }}. How This Plan Was Generated</h2>
+<table>
+  <tr><th>Property</th><th>Value</th></tr>
+  <tr><td>Session</td><td>{{ meta.session_id }}</td></tr>
+  <tr class="alt"><td>Status</td><td>{{ meta.status | title }}</td></tr>
+  <tr><td>Completeness score</td><td>{{ meta.completeness_score }}%</td></tr>
+  <tr class="alt"><td>Generation time</td><td>{{ duration_display }}</td></tr>
+  <tr><td>Agents</td><td>{{ meta.agents_completed }} of {{ meta.agents_total }} completed{% if meta.agents_failed %}, {{ meta.agents_failed }} failed{% endif %}</td></tr>
+  <tr class="alt"><td>Tokens used</td><td>{{ "{:,}".format(meta.total_tokens) }}</td></tr>
+  <tr><td>Models</td><td>{{ meta.models_used | join(", ") or "—" }}</td></tr>
+  <tr class="alt"><td>Departments run</td><td>{{ meta.active_departments | join(", ") }}</td></tr>
+  {% if meta.skipped_departments %}
+  <tr><td>Departments skipped</td><td>{{ meta.skipped_departments | join(", ") }} <span class="meta">({{ meta.routing_reason }})</span></td></tr>
+  {% endif %}
+  <tr class="alt"><td>Competitor data source</td><td>{{ meta.grounding.get("competitor_source", "—") | replace("_", " ") }}</td></tr>
+  <tr><td>Market research source</td><td>{{ meta.grounding.get("market_research_source", "—") | replace("_", " ") }}</td></tr>
+</table>
+
+{% if meta.api_calls %}
+<h3>External data retrieved</h3>
+<table>
+  <tr><th>API</th><th>Query</th><th>Results</th><th>Cached</th><th>Retrieved</th></tr>
+  {% for call in meta.api_calls %}
+  <tr {% if loop.index is even %}class="alt"{% endif %}>
+    <td>{{ call.api }}</td><td>{{ call.query }}</td>
+    <td class="num">{{ call.result_count }}</td>
+    <td>{{ "yes" if call.cached else "no" }}</td>
+    <td>{{ call.retrieved_at[:10] or "—" }}{% if call.stale %} <span class="meta">(stale)</span>{% endif %}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+<h3>Agent execution</h3>
+<table>
+  <tr><th>Agent</th><th>Feature</th><th>Department</th><th>Provider</th><th>Tokens</th><th>Time</th></tr>
+  {% for agent in meta.agents %}
+  <tr {% if loop.index is even %}class="alt"{% endif %}>
+    <td>{{ agent.agent_id | replace("_", " ") }}</td><td>{{ agent.feature }}</td>
+    <td>{{ agent.department }}</td><td>{{ agent.provider or "—" }}</td>
+    <td class="num">{{ agent.tokens }}</td><td class="num">{{ agent.latency_ms }} ms</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<div class="note">This plan was generated by an automated multi-agent system for
+research purposes. Figures are model-derived estimates and are not professional
+financial, legal or tax advice. Verify all costs, licences and market data before
+committing capital.</div>
+</div>
+
+</body>
+</html>

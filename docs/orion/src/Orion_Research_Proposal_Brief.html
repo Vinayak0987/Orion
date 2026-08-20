@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Orion — Research Proposal Brief</title>
+<style>
+@page {
+  size: A4;
+  margin: 20mm 18mm 20mm 18mm;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+body {
+  font-family: 'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  font-size: 9.6pt;
+  line-height: 1.44;
+  color: #1A1D26;
+  background: #FFFFFF;
+  margin: 0;
+  hyphens: none;
+}
+
+/* ------------------------------------------------------------- title page */
+
+.title-page {
+  height: 246mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  page-break-after: always;
+}
+
+.title-rule {
+  height: 5px;
+  width: 74px;
+  background: #2D3282;
+  margin-bottom: 30mm;
+}
+
+.title-page h1 {
+  font-size: 33pt;
+  line-height: 1.1;
+  letter-spacing: -0.9px;
+  color: #2D3282;
+  margin: 0 0 12px 0;
+  font-weight: 700;
+}
+
+.title-page .subtitle {
+  font-size: 14.5pt;
+  color: #1A1D26;
+  font-weight: 400;
+  line-height: 1.42;
+  margin: 0 0 20px 0;
+  max-width: 132mm;
+}
+
+.title-page .kicker {
+  font-size: 9pt;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  color: #5A6072;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+
+.title-meta {
+  font-size: 10pt;
+  color: #5A6072;
+  line-height: 1.9;
+  border-top: 1px solid #DCE0EA;
+  padding-top: 14px;
+}
+.title-meta strong { color: #1A1D26; font-weight: 600; }
+
+.spec-note {
+  font-size: 8.8pt;
+  color: #5A6072;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+/* ---------------------------------------------------------------- content */
+
+h2 {
+  font-size: 14.6pt;
+  color: #2D3282;
+  margin: 17px 0 7px 0;
+  padding-bottom: 4px;
+  border-bottom: 1.5px solid #DCE0EA;
+  font-weight: 700;
+  letter-spacing: -0.35px;
+  page-break-after: avoid;
+}
+h2 .num { color: #5A6072; font-weight: 600; margin-right: 9px; }
+
+h3 {
+  font-size: 11pt;
+  color: #1A1D26;
+  margin: 12px 0 4px 0;
+  font-weight: 700;
+  page-break-after: avoid;
+}
+
+h4 {
+  font-size: 10pt;
+  color: #2D3282;
+  margin: 10px 0 3px 0;
+  font-weight: 700;
+  page-break-after: avoid;
+}
+
+p { margin: 0 0 7px 0; text-align: left; }
+
+.lead {
+  font-size: 11pt;
+  line-height: 1.48;
+  color: #1A1D26;
+}
+
+ul, ol { margin: 0 0 8px 0; padding-left: 19px; }
+li { margin-bottom: 4px; }
+
+strong { font-weight: 650; }
+em { font-style: italic; }
+
+code {
+  font-family: 'Cascadia Mono','Consolas','SF Mono',Menlo,monospace;
+  font-size: 8.9pt;
+  background: #F6F7FB;
+  padding: 1px 4px;
+  border-radius: 3px;
+  color: #2D3282;
+}
+
+.page-break { page-break-before: always; }
+.no-break { page-break-inside: avoid; }
+
+/* ----------------------------------------------------------------- tables */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8.8pt;
+  margin: 8px 0 10px 0;
+  page-break-inside: avoid;
+}
+
+th {
+  text-align: left;
+  font-weight: 650;
+  color: #2D3282;
+  border-bottom: 1.5px solid #2D3282;
+  padding: 5px 8px 5px 0;
+  font-size: 8.4pt;
+  letter-spacing: 0.25px;
+  text-transform: uppercase;
+  vertical-align: bottom;
+}
+
+td {
+  padding: 4.5px 8px 4.5px 0;
+  border-bottom: 1px solid #DCE0EA;
+  vertical-align: top;
+  line-height: 1.4;
+}
+
+table.compact td, table.compact th { font-size: 8.1pt; padding: 4px 6px 4px 0; }
+td.yes { color: #1E8A5F; font-weight: 700; }
+td.no  { color: #B4433F; font-weight: 600; }
+td.part { color: #B07A26; font-weight: 600; }
+
+/* ---------------------------------------------------------------- figures */
+
+figure {
+  margin: 10px 0 11px 0;
+  page-break-inside: avoid;
+}
+
+figure svg { display: block; width: 100%; height: auto; }
+
+figcaption {
+  font-size: 8.3pt;
+  color: #5A6072;
+  margin-top: 4px;
+  line-height: 1.4;
+  padding-left: 2px;
+}
+figcaption b { color: #2D3282; font-weight: 650; }
+
+/* ------------------------------------------------------------- callouts */
+
+.callout {
+  background: #F6F7FB;
+  border-left: 3px solid #2D3282;
+  padding: 8px 12px;
+  margin: 9px 0;
+  font-size: 9.4pt;
+  page-break-inside: avoid;
+}
+.callout .label {
+  font-size: 8pt;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #2D3282;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 4px;
+}
+.callout p:last-child { margin-bottom: 0; }
+
+.invariant {
+  background: #10233A;
+  color: #D8E4F5;
+  padding: 10px 14px;
+  margin: 9px 0;
+  border-left: 3px solid #2FD9A8;
+  font-size: 9.7pt;
+  page-break-inside: avoid;
+}
+.invariant .label {
+  font-size: 8pt;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #2FD9A8;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 4px;
+}
+.invariant p { margin: 0; }
+.invariant em { color: #FFFFFF; font-style: normal; font-weight: 650; }
+
+/* ------------------------------------------------------- problem blocks */
+
+.problem {
+  margin: 0 0 9px 0;
+  padding-left: 12px;
+  border-left: 2px solid #DCE0EA;
+  page-break-inside: avoid;
+}
+.problem .pname {
+  font-weight: 700;
+  color: #2D3282;
+  font-size: 10.1pt;
+  display: block;
+  margin-bottom: 2px;
+}
+.problem .row { font-size: 9.2pt; margin-bottom: 2px; line-height: 1.42; }
+.problem .row span.k {
+  display: inline-block;
+  min-width: 74px;
+  font-size: 8pt;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: #5A6072;
+  font-weight: 650;
+}
+
+/* ------------------------------------------------------------------- misc */
+
+.hierarchy {
+  font-family: 'Cascadia Mono','Consolas','SF Mono',Menlo,monospace;
+  font-size: 9.2pt;
+  background: #F6F7FB;
+  padding: 11px 14px;
+  margin: 11px 0;
+  line-height: 1.75;
+  color: #2D3282;
+  page-break-inside: avoid;
+}
+
+.rq {
+  margin: 0 0 11px 0;
+  page-break-inside: avoid;
+}
+.rq .tag {
+  display: inline-block;
+  background: #2D3282;
+  color: #fff;
+  font-size: 8pt;
+  font-weight: 700;
+  padding: 1.5px 7px;
+  border-radius: 3px;
+  margin-right: 7px;
+  letter-spacing: 0.6px;
+}
+.rq .falsify {
+  font-size: 9.2pt;
+  color: #5A6072;
+  margin-top: 3px;
+  padding-left: 12px;
+  border-left: 2px solid #F0688A;
+}
+.rq .falsify b { color: #B4433F; font-weight: 650; }
+
+.refs { font-size: 8.8pt; line-height: 1.55; }
+.refs li { margin-bottom: 7px; }
+
+.two-col { column-count: 2; column-gap: 16px; }
+.two-col p { margin-bottom: 7px; }
+</style>
+</head>
+<body>
+
+<style>
+@page { size: A4; margin: 14mm 14mm 13mm 14mm; }
+body { font-size: 8.5pt; line-height: 1.34; }
+h2 { font-size: 11pt; margin: 9px 0 4px 0; padding-bottom: 3px; }
+h3 { font-size: 9pt; margin: 7px 0 3px 0; }
+p { margin: 0 0 4px 0; }
+table { font-size: 7.5pt; margin: 4px 0 6px 0; }
+th { font-size: 7.1pt; padding: 3.5px 6px 3.5px 0; }
+td { padding: 3px 6px 3px 0; line-height: 1.3; }
+figure { margin: 5px 0 6px 0; }
+figcaption { font-size: 7.1pt; margin-top: 3px; line-height: 1.3; }
+.fig-sm svg { width: 66%; display: block; margin: 0 auto; }
+.fig-md svg { width: 86%; display: block; margin: 0 auto; }
+.callout { padding: 6px 9px; margin: 5px 0; font-size: 8.2pt; }
+.invariant { padding: 7px 10px; margin: 5px 0; font-size: 8.3pt; }
+.brief-head {
+  border-bottom: 2.5px solid #2D3282;
+  padding-bottom: 8px; margin-bottom: 10px;
+}
+.brief-head .kicker {
+  font-size: 7.4pt; letter-spacing: 2px; text-transform: uppercase;
+  color: #5A6072; font-weight: 700;
+}
+.brief-head h1 {
+  font-size: 19pt; color: #2D3282; margin: 3px 0 3px 0; font-weight: 700;
+  letter-spacing: -0.5px; line-height: 1.12;
+}
+.brief-head .sub { font-size: 9.4pt; color: #1A1D26; line-height: 1.35; }
+.brief-head .meta { font-size: 7.4pt; color: #5A6072; margin-top: 5px; }
+.cols { display: flex; gap: 13px; }
+.cols > div { flex: 1; }
+.kv { font-size: 8.2pt; margin-bottom: 3px; }
+.kv b { color: #2D3282; }
+.status {
+  display: inline-block; font-size: 6.8pt; font-weight: 700; padding: 1px 5px;
+  border-radius: 2px; letter-spacing: 0.5px; text-transform: uppercase;
+}
+.st-built { background: #E3F5EC; color: #1E8A5F; }
+.st-spec { background: #F2F4FD; color: #2D3282; }
+.st-prov { background: #FDF3E3; color: #B07A26; }
+ul { margin: 0 0 5px 0; padding-left: 15px; }
+li { margin-bottom: 2.5px; }
+.rq { margin: 0 0 6px 0; font-size: 8.3pt; }
+.rq .tag { font-size: 7pt; padding: 1px 5px; margin-right: 5px; }
+.rq .falsify { font-size: 7.6pt; margin-top: 2px; padding-left: 9px; }
+</style>
+
+
+<div class="brief-head">
+  <div class="kicker">Research Proposal Brief · 2 pages</div>
+  <h1>Graph-of-Loops Control for Continuous Autonomous Business Operation</h1>
+  <div class="sub">An extension of an already-evaluated department architecture. We ask whether mutually-checking control loops, anchored in code-computed measurement, can sustain a business operated by that architecture without proxy capture.</div>
+  <div class="meta">Vinayak Maurya · Department of Computer Engineering ·
+    University of Mumbai · 27 July 2026 · Full proposal: 14 pp</div>
+</div>
+<h2>Central question</h2>
+<div class="callout"><p>Can a graph of mutually-checking control
+      loops, anchored in code-computed measurement, hard constraints and human
+      judgement, sustain the continuous autonomous operation of a business
+      without proxy capture — under conditions where a single goal-measure-act
+      loop per department does not?</p></div>
+<p>We do not expect a positive result to show the elimination of
+      proxy capture. The more plausible outcome, if the hypotheses hold at all, is
+      that capture becomes detectable sooner and to a measurable degree.</p>
+<h2>What is already established</h2>
+<table><tr><th style="width:7%">RQ</th>
+      <th style="width:34%">Question</th><th style="width:16%">Status</th>
+      <th>Position</th></tr>
+      <tr><td><b>RQ1</b></td><td>Multi-agent vs single-LLM baseline</td>
+        <td><span class="status st-prov">Partly measured</span></td>
+        <td>Completeness favours decomposition decisively; consistency tied;
+        financial accuracy favours the baseline</td></tr>
+      <tr><td><b>RQ2</b></td><td>Dynamic routing efficiency</td>
+        <td><span class="status st-built">Supported</span></td>
+        <td>17.3% token saving, 0.0 pp completeness delta</td></tr>
+      <tr><td><b>RQ3</b></td><td>Grounding vs parametric knowledge</td>
+        <td><span class="status st-prov">Not measurable</span></td>
+        <td>Requires competitor ground truth not yet collected</td></tr>
+      </table>
+<p>Two methodological findings are the load-bearing inputs to this
+      proposal. <b>M1:</b> cross-agent constraints stated as prompt instructions
+      with explicit numeric bounds were ignored repeatedly, and held only once
+      re-implemented as post-conditions in code. <b>M2:</b> variance compounds
+      along a dependency chain — over five runs of an identical prompt the
+      pipeline's standard deviation was 103.8 against the baseline's 21.2, with
+      the pipeline's best run more accurate than the baseline's best.</p>
+<figure class="fig-md"><svg viewBox="0 0 1000 330" xmlns="http://www.w3.org/2000/svg"><defs><marker id="la" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#2D3282"/></marker><marker id="lm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#5A6072"/></marker><marker id="lr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#B4433F"/></marker><marker id="lg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#1E8A5F"/></marker></defs><text x="20" y="26" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="700" fill="#2D3282" letter-spacing="1.4">MEASURED — IDENTICAL PROMPT, REPEATED RUNS</text><rect x="300" y="52" width="400" height="198" fill="#FFFFFF" stroke="#DCE0EA" stroke-width="1"/><path d="M300,250.0 L700,250.0" stroke="#DCE0EA" stroke-width="0.6" stroke-dasharray="3,3"/><text x="293" y="253.0" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.2" text-anchor="end" font-weight="400" fill="#5A6072">0</text><path d="M300,188.1 L700,188.1" stroke="#DCE0EA" stroke-width="0.6" stroke-dasharray="3,3"/><text x="293" y="191.125" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.2" text-anchor="end" font-weight="400" fill="#5A6072">100</text><path d="M300,126.2 L700,126.2" stroke="#DCE0EA" stroke-width="0.6" stroke-dasharray="3,3"/><text x="293" y="129.25" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.2" text-anchor="end" font-weight="400" fill="#5A6072">200</text><path d="M300,64.4 L700,64.4" stroke="#DCE0EA" stroke-width="0.6" stroke-dasharray="3,3"/><text x="293" y="67.375" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.2" text-anchor="end" font-weight="400" fill="#5A6072">300</text><text x="293" y="46" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.2" text-anchor="end" font-weight="400" fill="#5A6072">MAPE %</text><rect x="374" y="195.9" width="52" height="23.2" fill="#1E8A5F" opacity="0.1"/><path d="M370,211.0 L430,211.0" stroke="#1E8A5F" stroke-width="2"/><circle cx="400" cy="218.0" r="3.6" fill="#FFFFFF" stroke="#1E8A5F" stroke-width="1.6"/><text x="390" y="221.010625" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="6.8" text-anchor="end" font-weight="400" fill="#5A6072">51.7</text><circle cx="400" cy="195.9" r="3.6" fill="#FFFFFF" stroke="#1E8A5F" stroke-width="1.6"/><text x="390" y="198.859375" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="6.8" text-anchor="end" font-weight="400" fill="#5A6072">87.5</text><circle cx="400" cy="219.1" r="3.6" fill="#FFFFFF" stroke="#1E8A5F" stroke-width="1.6"/><text x="390" y="222.0625" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="6.8" text-anchor="end" font-weight="400" fill="#5A6072">50.0</text><text x="400" y="266" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.4" text-anchor="middle" font-weight="700" fill="#1E8A5F">baseline</text><text x="400" y="279" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.4" text-anchor="middle" font-weight="400" fill="#5A6072">mean 63.1  ·  sd 21.2</text><rect x="574" y="70.0" width="52" height="156.2" fill="#B4433F" opacity="0.1"/><path d="M570,151.7 L630,151.7" stroke="#B4433F" stroke-width="2"/><circle cx="600" cy="70.0" r="3.6" fill="#FFFFFF" stroke="#B4433F" stroke-width="1.6"/><text x="610" y="73.00562500000001" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="6.8" text-anchor="start" font-weight="400" fill="#5A6072">290.9</text><circle cx="600" cy="170.1" r="3.6" fill="#FFFFFF" stroke="#B4433F" stroke-width="1.6"/><text x="610" y="173.119375" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="6.8" text-anchor="start" font-weight="400" fill="#5A6072">129.1</text><circle cx="600" cy="102.0" r="3.6" fill="#FFFFFF" stroke="#B4433F" stroke-width="1.6"/><text x="610" y="104.995" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="6.8" text-anchor="start" font-weight="400" fill="#5A6072">239.2</text><circle cx="600" cy="190.1" r="3.6" fill="#FFFFFF" stroke="#B4433F" stroke-width="1.6"/><text x="610" y="193.10500000000002" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="6.8" text-anchor="start" font-weight="400" fill="#5A6072">96.8</text><circle cx="600" cy="226.2" r="3.6" fill="#FFFFFF" stroke="#B4433F" stroke-width="1.6"/><text x="610" y="229.24" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="6.8" text-anchor="start" font-weight="400" fill="#5A6072">38.4</text><text x="600" y="266" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.4" text-anchor="middle" font-weight="700" fill="#B4433F">multi-agent</text><text x="600" y="279" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.4" text-anchor="middle" font-weight="400" fill="#5A6072">mean 158.9  ·  sd 103.8</text><text x="20" y="74" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="10.2" text-anchor="start" font-weight="700" fill="#1A1D26">Same prompt, five times.</text><text x="20" y="92" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.6" text-anchor="start" font-weight="400" fill="#5A6072">p01 — ice cream shop,</text><text x="20" y="106" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.6" text-anchor="start" font-weight="400" fill="#5A6072">Andheri West, ₹15 L.</text><text x="20" y="128" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.6" text-anchor="start" font-weight="400" fill="#5A6072">All spread is run-to-run</text><text x="20" y="142" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.6" text-anchor="start" font-weight="400" fill="#5A6072">variance, not input variance.</text><text x="20" y="176" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.6" text-anchor="start" font-weight="650" fill="#1A1D26">The pipeline's best run</text><text x="20" y="190" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.6" text-anchor="start" font-weight="650" fill="#1A1D26">(38.4) beats the baseline's</text><text x="20" y="204" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.6" text-anchor="start" font-weight="650" fill="#1A1D26">best (50.0). It does not</text><text x="20" y="218" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.6" text-anchor="start" font-weight="650" fill="#1A1D26">reliably produce it.</text><text x="20" y="244" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="700" fill="#B4433F">sd 4.9× the baseline's</text><text x="20" y="258" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="700" fill="#B4433F">spread 7.6× vs 1.8×</text><text x="760" y="90" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.6" text-anchor="start" font-weight="700" fill="#1A1D26">Unreliably better,</text><text x="760" y="105" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9.6" text-anchor="start" font-weight="700" fill="#1A1D26">not reliably worse.</text><text x="760" y="128" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="400" fill="#5A6072">This is the signature of</text><text x="760" y="141" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="400" fill="#5A6072">variance compounding along</text><text x="760" y="154" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="400" fill="#5A6072">a dependency chain: each</text><text x="760" y="167" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="400" fill="#5A6072">estimation step carries</text><text x="760" y="180" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="400" fill="#5A6072">error and the errors</text><text x="760" y="193" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.2" text-anchor="start" font-weight="400" fill="#5A6072">compose.</text><text x="20" y="296" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.8" text-anchor="start" font-weight="400" fill="#5A6072">Measured data, n=5 (multi-agent) and n=3 (baseline). Financial accuracy is scored against sector benchmarks that are not yet sourced, so absolute</text><text x="20" y="308" font-family="'Inter','Segoe UI',Calibri,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="7.8" text-anchor="start" font-weight="400" fill="#5A6072">values are PROVISIONAL; the between-arm comparison is less affected since both arms use the same benchmark. Not a settled finding until the full sweep is run.</text></svg><figcaption><b>Figure 2</b> — Five runs of an identical prompt per arm. All spread is run-to-run variance. <b>Measured</b>; absolute values provisional pending sourced benchmarks.</figcaption></figure>
+<p style="font-size:8.2pt;">Both findings indicate that an agent
+      cannot be relied upon to assert a quantity by which it is judged. We propose
+      to generalise the local remedy — derived figures override asserted ones —
+      into a control architecture for <em>continuous</em> operation.</p>
+<div class="page-break"></div>
+<h2>Proposed questions and hypotheses</h2>
+<div class="rq"><span class="tag">RQ4</span><b>Does variance
+      compounding persist when the estimated quantity is replaced by one computed
+      from a record of events?</b></div>
+<div class="rq"><span class="tag">RQ5</span><b>Does proxy-anchor
+      divergence arise systematically under single-loop control, and how
+      quickly?</b></div>
+<div class="rq"><span class="tag">RQ6</span><b>Do independent
+      monitor loops detect divergence earlier than a composite health
+      indicator?</b></div>
+<div class="rq"><span class="tag">RQ7</span><b>Are the graph
+      invariants — cycle termination at an anchor or human, monitor independence —
+      necessary for detection, or merely sufficient?</b></div>
+<p style="font-size:8.2pt;">Six hypotheses are stated in the full
+      proposal, each paired with an explicit falsification condition recorded
+      before the arms are run. Two examples:</p>
+<div class="rq"><span class="tag">H1</span>A margin computed from a
+      record of transactions will show materially lower run-to-run variance than
+      the same margin estimated through the agent chain.
+      <div class="falsify"><b>Refuted if:</b> the computed quantity's standard
+      deviation is not materially below the 103.8 already measured.</div></div>
+<div class="rq"><span class="tag">H3</span>Under the full
+      loop-graph topology, terminal proxy-anchor divergence will be materially
+      smaller than under single-loop control.
+      <div class="falsify"><b>Refuted if:</b> terminal divergence is
+      statistically indistinguishable from the single-loop arm, or larger.</div>
+      </div>
+<h2>Method</h2>
+<p>The existing four-arm harness is extended, not replaced. The
+      current arms — <code>multi_agent</code>, <code>baseline</code>,
+      <code>all_departments</code>, <code>no_grounding</code> — remain unmodified,
+      so results already obtained stay valid. Four arms are added:
+      <code>single_loop</code>, <code>anchors_only</code>,
+      <code>monitors_only</code>, <code>full_graph</code>. Metrics F54–F58 keep
+      their definitions; F59–F63 are proposed: proxy-anchor divergence, detection
+      latency, conflict incident rate, objective staleness and human decision
+      load.</p>
+<p>Every proposed metric is computed by the harness from the
+      append-only record. None derives from any agent's account of its own
+      performance — if the instrument for detecting proxy capture could itself be
+      influenced by the departments under study, the study would exhibit the
+      failure it proposes to measure.</p>
+<p><b>Baseline fairness</b> is the principal methodological risk.
+      The single-loop arm receives the same memory, planning and execution
+      machinery as the full-graph arm, differing only in control topology; its
+      proxy metrics are drawn from measures actually used in comparable business
+      functions rather than chosen for exploitability; and its specification is
+      fixed and documented before any arm runs. We would rather report a null
+      result against a strong baseline than a positive one against a weak
+      baseline.</p>
+<h2>Pre-committed outcomes</h2>
+<table><tr><th style="width:15%">Outcome</th>
+      <th style="width:40%">Observation</th><th>Reporting</th></tr>
+      <tr><td><b>Supporting</b></td><td>Divergence materially lower in the
+        full-graph arm on paired seeds; monitors detect induced capture
+        earlier</td><td>As evidence that control topology affects proxy capture,
+        bounded by the simulated environment and scale</td></tr>
+      <tr><td><b>Null</b></td><td>Divergence arises but arms are
+        indistinguishable, or divergence does not arise within the horizon</td>
+        <td>As a null result, with analysis of whether the horizon was short, the
+        perturbations weak, or the construct wrong</td></tr>
+      <tr><td><b>Refuting</b></td><td>The full-graph arm diverges equally or more,
+        or its monitors detect later</td><td>As a refutation. Oversight adding cost
+        without adding detection is itself a substantive finding</td></tr>
+      </table>
+<p style="font-size:8.2pt;">The existing work sets the precedent:
+      its central finding is a negative one, reported rather than tuned away.</p>
+<h2>Principal threats to validity</h2>
+<ul>
+      <li><b>Construct.</b> Divergence may conflate Goodhart effects with ordinary
+        action-to-effect lag, anchor mis-specification, or noise — and M2 shows
+        noise here is substantial. The most serious threat, and not fully
+        resolvable.</li>
+      <li><b>Internal.</b> Non-determinism may explain between-arm differences;
+        mitigated by paired seeds and distributional reporting. The full topology
+        also performs more inference, so a compute-matched control is
+        needed.</li>
+      <li><b>External.</b> The operating environment is simulated; a churn
+        decision is a modelling assumption, not an observation. The prompt set is
+        India-specific.</li>
+      <li><b>Reflexivity.</b> The same author designs the architecture, selects
+        the anchors, defines divergence and interprets results. Pre-registration
+        and artefact release are partial mitigations; independent replication
+        would be stronger.</li>
+      </ul>
+<p style="font-size:7.8pt; color:#5A6072; font-style:italic;">
+      Prerequisites before the proposed arms can be interpreted: the full
+      thirty-five-prompt sweep, sourced sector benchmarks, and collected
+      competitor ground truth. Until then F54 remains provisional and F55
+      unmeasurable, and any operating-layer result resting on them inherits that
+      status. Full proposal: 14 pp, 6 figures, 16 references.</p>
+</body>
+</html>

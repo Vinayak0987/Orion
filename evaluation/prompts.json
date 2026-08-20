@@ -1,0 +1,60 @@
+{
+  "version": "1.0",
+  "description": "MABGP evaluation prompt set. Spans 8 sectors, 4 budget scales, physical and digital businesses, and 12 Indian localities. Held fixed so every arm of every experiment sees identical inputs.",
+  "design_notes": [
+    "expect_operations records the routing outcome each prompt SHOULD produce; F58 uses it to verify the router before attributing token savings to it.",
+    "12 prompts omit a budget on purpose, to exercise the unspecified-budget path.",
+    "Localities are drawn from the F3 gazetteer so competitor lookups resolve; ground_truth_competitors is filled by hand for F55.",
+    "Prompt ids are stable: results across runs join on them."
+  ],
+  "prompts": [
+    {"id": "p01", "prompt": "Ice cream shop in Andheri West, Rs 15L budget", "sector": "food_and_beverage", "scale": "small", "expect_operations": true},
+    {"id": "p02", "prompt": "Open a bakery in Dadar with 10 lakh investment", "sector": "food_and_beverage", "scale": "small", "expect_operations": true},
+    {"id": "p03", "prompt": "Cloud kitchen in Powai serving North Indian food, 8 lakh", "sector": "food_and_beverage", "scale": "micro", "expect_operations": true},
+    {"id": "p04", "prompt": "Specialty coffee cafe in Bandra with 25 lakh budget", "sector": "food_and_beverage", "scale": "small", "expect_operations": true},
+    {"id": "p05", "prompt": "Vegetarian thali restaurant near Matunga station", "sector": "food_and_beverage", "scale": "unspecified", "expect_operations": true},
+    {"id": "p06", "prompt": "Juice and smoothie bar in Juhu, budget 6 lakh", "sector": "food_and_beverage", "scale": "micro", "expect_operations": true},
+
+    {"id": "p07", "prompt": "Kirana store in Mulund with 12 lakh capital", "sector": "retail", "scale": "small", "expect_operations": true},
+    {"id": "p08", "prompt": "Womens clothing boutique in Bandra, Rs 20L", "sector": "retail", "scale": "small", "expect_operations": true},
+    {"id": "p09", "prompt": "Mobile phone and accessories shop in Ghatkopar", "sector": "retail", "scale": "unspecified", "expect_operations": true},
+    {"id": "p10", "prompt": "Organic grocery supermarket in Powai with 60 lakh", "sector": "retail", "scale": "medium", "expect_operations": true},
+    {"id": "p11", "prompt": "Stationery and bookstore near Vile Parle, 7 lakh budget", "sector": "retail", "scale": "micro", "expect_operations": true},
+
+    {"id": "p12", "prompt": "Unisex salon in Bandra with 12 lakh investment", "sector": "services", "scale": "small", "expect_operations": true},
+    {"id": "p13", "prompt": "Gym and fitness centre in Goregaon, Rs 45L", "sector": "services", "scale": "small", "expect_operations": true},
+    {"id": "p14", "prompt": "Laundry and dry cleaning service in Chembur, 9 lakh", "sector": "services", "scale": "micro", "expect_operations": true},
+    {"id": "p15", "prompt": "Event management agency in Lower Parel with 30 lakh", "sector": "services", "scale": "small", "expect_operations": true},
+    {"id": "p16", "prompt": "Remote HR consulting agency for Indian startups", "sector": "services", "scale": "unspecified", "expect_operations": false},
+
+    {"id": "p17", "prompt": "Start an online tutoring platform for CBSE students", "sector": "education", "scale": "unspecified", "expect_operations": false},
+    {"id": "p18", "prompt": "NEET coaching institute in Dadar with 40 lakh budget", "sector": "education", "scale": "small", "expect_operations": true},
+    {"id": "p19", "prompt": "Preschool and daycare in Powai, Rs 35L", "sector": "education", "scale": "small", "expect_operations": true},
+    {"id": "p20", "prompt": "Online spoken English course platform, 5 lakh budget", "sector": "education", "scale": "micro", "expect_operations": false},
+
+    {"id": "p21", "prompt": "SaaS platform for small business invoicing in India", "sector": "technology", "scale": "unspecified", "expect_operations": false},
+    {"id": "p22", "prompt": "Mobile app for local home services, 50 lakh funding", "sector": "technology", "scale": "medium", "expect_operations": false},
+    {"id": "p23", "prompt": "IT services company in Bengaluru with 1 crore", "sector": "technology", "scale": "medium", "expect_operations": false},
+    {"id": "p24", "prompt": "Online marketplace for handmade crafts in India", "sector": "technology", "scale": "unspecified", "expect_operations": false},
+
+    {"id": "p25", "prompt": "Dental clinic near Dadar station with 25 lakh investment", "sector": "healthcare", "scale": "small", "expect_operations": true},
+    {"id": "p26", "prompt": "Diagnostic pathology lab in Chembur, Rs 55L", "sector": "healthcare", "scale": "medium", "expect_operations": true},
+    {"id": "p27", "prompt": "Pharmacy and medical store in Kurla, 15 lakh", "sector": "healthcare", "scale": "small", "expect_operations": true},
+    {"id": "p28", "prompt": "Physiotherapy clinic in Khar with 18 lakh budget", "sector": "healthcare", "scale": "small", "expect_operations": true},
+
+    {"id": "p29", "prompt": "Garment manufacturing unit in Thane, 1.5 crore budget", "sector": "manufacturing", "scale": "medium", "expect_operations": true},
+    {"id": "p30", "prompt": "Small packaging materials factory in Navi Mumbai, 80 lakh", "sector": "manufacturing", "scale": "medium", "expect_operations": true},
+    {"id": "p31", "prompt": "Snack food processing unit near Vasai with 2 crore", "sector": "manufacturing", "scale": "large", "expect_operations": true},
+
+    {"id": "p32", "prompt": "Interior design studio in Worli with 20 lakh", "sector": "creative", "scale": "small", "expect_operations": true},
+    {"id": "p33", "prompt": "Wedding photography business in Pune, 10 lakh budget", "sector": "creative", "scale": "small", "expect_operations": true},
+    {"id": "p34", "prompt": "Digital content and video production studio in Andheri", "sector": "creative", "scale": "unspecified", "expect_operations": true},
+    {"id": "p35", "prompt": "Online graphic design agency working remotely", "sector": "creative", "scale": "unspecified", "expect_operations": false}
+  ],
+  "ground_truth_competitors": {
+    "_comment": "F55 Competitor Coverage Rate. For each prompt scored, count the real competing businesses within 2 km by hand (Google Maps, Justdial, a site visit) and list their names here. Coverage = |found ∩ actual| / |actual|. Leave a prompt out to exclude it from F55 rather than scoring it against a guess.",
+    "p01": [],
+    "p12": [],
+    "p25": []
+  }
+}
