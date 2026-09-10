@@ -67,6 +67,22 @@ export const api = {
   },
 
   // =========================================================================
+  // Planning layer (pre-execution inspect-and-confirm)
+  // =========================================================================
+  planning: {
+    createReport: (prompt, forceAllDepartments = false) =>
+      postJson("/planning/reports", { prompt, force_all_departments: forceAllDepartments }),
+
+    reports: (limit = 50, offset = 0) =>
+      getJson(`/planning/reports?limit=${limit}&offset=${offset}`),
+
+    report: (id) => getJson(`/planning/reports/${enc(id)}`),
+
+    confirm: (id, by = "operator") =>
+      postJson(`/planning/reports/${enc(id)}/confirm`, { by }),
+  },
+
+  // =========================================================================
   // Operating layer
   // =========================================================================
   operating: {
@@ -135,12 +151,21 @@ export const api = {
  *   onResult(summary) the completed run
  *   onError(message)  validation or generation failure, or a transport drop
  */
-export function streamGeneration({ prompt, forceAllDepartments = false, onEvent, onResult, onError }) {
+export function streamGeneration({
+  prompt,
+  forceAllDepartments = false,
+  planningReportId = null,
+  onEvent,
+  onResult,
+  onError,
+}) {
   const socket = new WebSocket(wsUrl("/ws/generate"));
   let settled = false;
 
   socket.onopen = () => {
-    socket.send(JSON.stringify({ prompt, force_all_departments: forceAllDepartments }));
+    const payload = { prompt, force_all_departments: forceAllDepartments };
+    if (planningReportId) payload.planning_report_id = planningReportId;
+    socket.send(JSON.stringify(payload));
   };
 
   socket.onmessage = (message) => {
