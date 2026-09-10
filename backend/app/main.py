@@ -51,6 +51,10 @@ log = structlog.get_logger(__name__)
 # Import the operating-layer router (added for §5.5)
 from app.operating.api import router as operating_router
 
+# Planning Report layer (design.md §8) - the pre-execution flow.
+from app.planning import init_planning
+from app.planning.api import router as planning_router
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
@@ -58,6 +62,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     sqlite.init_db()
     from app.operating import init_all
     init_all()
+    init_planning()
     for warning in settings.warnings():
         log.warning("config.warning", detail=warning)
     log.info(
@@ -88,6 +93,7 @@ app.add_middleware(
 )
 
 app.include_router(operating_router)
+app.include_router(planning_router)
 
 
 # =============================================================================
