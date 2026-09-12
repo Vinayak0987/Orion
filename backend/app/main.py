@@ -54,6 +54,7 @@ from app.operating.api import router as operating_router
 # Planning Report layer (design.md §8) - the pre-execution flow.
 from app.planning import init_planning
 from app.planning.api import router as planning_router
+from app.planning.plan_api import router as plan_router
 
 
 @asynccontextmanager
@@ -94,6 +95,7 @@ app.add_middleware(
 
 app.include_router(operating_router)
 app.include_router(planning_router)
+app.include_router(plan_router)
 
 
 # =============================================================================

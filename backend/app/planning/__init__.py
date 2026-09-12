@@ -13,6 +13,17 @@ Modules:
     api     thin HTTP routes under /planning
 """
 
-from app.planning.store import init_planning
+from app.planning.plan_store import init_plans
+from app.planning.store import init_planning as _init_reports
+
+
+def init_planning() -> None:
+    """Initialise all planning tables (reports + execution plans/events).
+
+    Idempotent. Called on FastAPI startup next to the operating `init_all()`.
+    """
+    _init_reports()
+    init_plans()
+
 
 __all__ = ["init_planning"]
