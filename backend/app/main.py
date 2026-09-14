@@ -51,6 +51,9 @@ log = structlog.get_logger(__name__)
 # Import the operating-layer router (added for §5.5)
 from app.operating.api import router as operating_router
 
+# Import the authentication router (user/website data layer — MongoDB Atlas).
+from app.auth.router import router as auth_router
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
@@ -79,15 +82,19 @@ app = FastAPI(
 )
 
 # Local-only CORS: the Vite dev server and the compose frontend.
+# allow_credentials=True is required so the browser sends/receives the httpOnly
+# refresh-token cookie used by the auth flow. With credentials enabled, origins
+# must be explicit (no "*"), which is already the case here.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://localhost:3000"],
-    allow_credentials=False,
+    allow_credentials=True,
     allow_methods=["GET", "POST", "DELETE"],
     allow_headers=["*"],
 )
 
 app.include_router(operating_router)
+app.include_router(auth_router)
 
 
 # =============================================================================

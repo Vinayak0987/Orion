@@ -112,6 +112,33 @@ class Settings(BaseSettings):
     chroma_host: str = "localhost"
     chroma_port: int = 8000
 
+    # --- User / website data layer (MongoDB Atlas) ---------------------------
+    # DELIBERATELY SEPARATE from the agent data stores above. SQLite (mabgp.db)
+    # and ChromaDB hold agent/generation/operating data; user accounts and other
+    # application data live in MongoDB so their schema can evolve independently.
+    #
+    # MONGODB_URI is the full Atlas connection string (mongodb+srv://...), read
+    # from .env - never hardcoded. MONGODB_USERNAME / MONGODB_PASSWORD are read
+    # too for setups whose URI carries <user>/<pass> placeholders; if the URI
+    # already embeds credentials they are simply unused.
+    mongodb_uri: str = ""
+    mongodb_username: str = ""
+    mongodb_password: str = ""
+    mongo_db_name: str = "orion_app"
+
+    # --- Authentication (JWT) ------------------------------------------------
+    # jwt_secret signs access + refresh tokens. It has a throwaway dev default so
+    # the app boots without config, but warnings() flags it when running outside
+    # development - a shared/default secret in production lets anyone mint tokens.
+    jwt_secret: str = "dev-insecure-change-me"
+    jwt_algorithm: str = "HS256"
+    access_token_ttl_minutes: int = 15
+    refresh_token_ttl_days: int = 30
+    # Name of the httpOnly cookie that carries the refresh token.
+    refresh_cookie_name: str = "orion_refresh"
+    # Set true behind HTTPS so the refresh cookie is only sent over TLS.
+    cookie_secure: bool = False
+
     # --- Runtime -------------------------------------------------------------
     app_env: str = "development"
     log_level: str = "INFO"
@@ -150,6 +177,24 @@ class Settings(BaseSettings):
         path.parent.mkdir(parents=True, exist_ok=True)
         return path
 
+    @property
+    def mongo_available(self) -> bool:
+        return bool(self.mongodb_uri.strip())
+
+    @property
+    def refresh_cookie_secure(self) -> bool:
+        """Whether to mark the refresh cookie `Secure` (TLS-only).
+
+        In development the app is served over plain http on localhost, where a
+        Secure cookie is silently dropped by the browser — which would break the
+        login/refresh flow entirely. So Secure is forced off in development
+        regardless of COOKIE_SECURE, and honoured everywhere else. Set
+        APP_ENV=production (and serve over HTTPS) to get a Secure cookie.
+        """
+        if self.app_env == "development":
+            return False
+        return self.cookie_secure
+
     def warnings(self) -> list[str]:
         """Non-fatal configuration warnings surfaced on /health (F64)."""
         issues: list[str] = []
@@ -168,6 +213,15 @@ class Settings(BaseSettings):
         if not self.serper_available:
             issues.append(
                 "SERPER_API_KEY missing - market research (F39) will fall back to LLM-only"
+            )
+        if not self.mongo_available:
+            issues.append(
+                "MONGODB_URI missing - authentication / user data layer disabled"
+            )
+        if self.app_env != "development" and self.jwt_secret == "dev-insecure-change-me":
+            issues.append(
+                "JWT_SECRET is the insecure development default - set a strong secret "
+                "outside development or anyone can forge auth tokens"
             )
         return issues
 
