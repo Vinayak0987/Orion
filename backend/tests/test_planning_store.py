@@ -102,11 +102,16 @@ def test_get_missing_returns_none() -> None:
 
 
 def test_list_newest_first_with_summaries_only() -> None:
+    # Use recent, relative timestamps so the newest row is within the 24 h TTL
+    # regardless of when the suite runs (absolute dates here silently 'expire'
+    # once wall-clock passes the TTL window).
+    now = datetime.now(UTC)
     for index in range(3):
+        created = (now - timedelta(minutes=(3 - index))).isoformat()
         store.create_report(
             **_report(
                 id=f"r{index}",
-                created_at=f"2026-09-1{index}T09:00:00+00:00",
+                created_at=created,
                 agents=[{"agent_id": f"a{index}", "max_tokens": 100}],
             )
         )
@@ -122,8 +127,10 @@ def test_list_newest_first_with_summaries_only() -> None:
 
 
 def test_list_respects_limit_and_offset() -> None:
+    now = datetime.now(UTC)
     for index in range(3):
-        store.create_report(**_report(id=f"r{index}", created_at=f"2026-09-1{index}T09:00:00+00:00"))
+        created = (now - timedelta(minutes=(3 - index))).isoformat()
+        store.create_report(**_report(id=f"r{index}", created_at=created))
 
     assert [r["id"] for r in store.list_reports(limit=2)] == ["r2", "r1"]
     assert [r["id"] for r in store.list_reports(limit=2, offset=2)] == ["r0"]

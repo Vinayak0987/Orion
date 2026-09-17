@@ -21,8 +21,10 @@ from app.agents.base import (
     context_block,
     upstream_block,
 )
+from app.agents.marketing_checks import check_marketing, fallback_summary
+from app.config import settings
 from app.llm.base import ModelTier
-from app.models.departments import BuyerPersona, CampaignPhase, Channel
+from app.models.departments import BuyerPersona, CampaignPhase, Channel, EvidenceItem
 from app.models.state import Department, SharedBusinessState
 
 DEPT = Department.MARKETING
@@ -156,8 +158,8 @@ Build the digital plan and return JSON with these keys:
   "channel_strategy_summary": "3 sentences on the overall channel approach"
 }}
 
-Give 4 to 6 channels whose budget_share_pct values sum to 100.
-Keep total_marketing_budget_inr below the monthly operating cost shown above."""
+Give 4 to 6 channels whose budget_share_pct values sum to EXACTLY 100.
+total_marketing_budget_inr MUST stay below the monthly operating cost shown above."""
 
     def to_patch(self, parsed: DigitalPlanOut, state: SharedBusinessState) -> dict:
         total = parsed.total_marketing_budget_inr
@@ -240,7 +242,8 @@ Plan a 90-day launch campaign and return JSON with these keys:
   "launch_hook": "the single strongest launch offer or hook, in 2 sentences"
 }}
 
-Give exactly 3 phases: pre_launch, launch, post_launch."""
+Give exactly 3 phases: pre_launch, launch, post_launch.
+The three phase budgets together should roughly match 3 months of the marketing budget."""
 
     def to_patch(self, parsed: CampaignOut, state: SharedBusinessState) -> dict:
         phases = [
@@ -308,14 +311,143 @@ Build the SEO and content strategy and return JSON with these keys:
 
 
 # =============================================================================
-# Stage layout
+# F33a - Marketing Consistency & Unit-Economics Agent (stage 3 - synthesis, opt-in)
 # =============================================================================
 
-MARKETING_STAGES: tuple[tuple[Agent, ...], ...] = (
-    (BuyerPersonaAgent(),),
-    (
-        DigitalPlanAgent(),
-        CampaignPlanAgent(),
-        SEOContentAgent(),
-    ),
-)
+
+class EvidenceOut(AgentOutput):
+    claim: str = ""
+    kind: str = "assumption"
+    confidence: float | None = None
+    source: str = ""
+
+
+class MarketingCheckOut(AgentOutput):
+    marketing_summary: str = ""
+    evidence: list[EvidenceOut] = Field(default_factory=list)
+
+
+_EVIDENCE_KINDS = {"fact", "assumption", "inference", "prediction", "unknown"}
+
+
+class MarketingConsistencyAgent(Agent):
+    """F33a. Runs the deterministic marketing checker over the completed marketing
+    and finance sections - channel-share sum, marketing-vs-operating-cost, CAC and
+    customers-needed reconciliation, campaign-budget coherence - then writes a
+    short evidence-tagged summary. The numbers are computed in Python (they must
+    reconcile with Finance), never asserted by the model; the LLM only explains
+    them. Falls back to a deterministic summary if the LLM is down."""
+
+    spec = AgentSpec(
+        agent_id="marketing_consistency",
+        department=DEPT,
+        feature="F33a",
+        schema=MarketingCheckOut,
+        tier=ModelTier.FAST,
+        max_tokens=800,
+    )
+    system = (
+        "You are a growth analyst. You explain computed marketing unit economics "
+        "and consistency results plainly and are explicit about what is verified "
+        "versus assumed."
+    )
+
+    def _result(self, state: SharedBusinessState) -> dict:
+        marketing = state.get(DEPT.value)
+        if marketing is None:
+            return {}
+        return check_marketing(marketing, state)
+
+    def build_prompt(self, state: SharedBusinessState) -> str:
+        result = self._result(state)
+        warnings = result.get("marketing_warnings") or []
+        computed = (
+            f"CHANNEL SHARE TOTAL: {result.get('budget_share_total_pct')}%\n"
+            f"CUSTOMERS NEEDED / MONTH: {result.get('customers_needed_monthly')}\n"
+            f"ALLOWABLE CAC: Rs {result.get('allowable_cac_inr')}\n"
+            f"WARNINGS:\n" + ("\n".join(f"- {w}" for w in warnings) or "- (none)")
+            if result
+            else "No marketing output was available to check."
+        )
+        return f"""{context_block(state)}
+
+{upstream_block(state, "personas", "revenue", "costs")}
+
+A deterministic check produced this marketing unit-economics/consistency result:
+{computed}
+
+Explain it and return JSON with these keys:
+{{
+  "marketing_summary": "2-3 sentences on the plan's unit economics and consistency, citing customers-needed and allowable CAC",
+  "evidence": [
+    {{"claim": "a key marketing claim",
+      "kind": "one of fact, assumption, inference, prediction, unknown",
+      "confidence": 0.0 to 1.0,
+      "source": "share_check / finance / campaign / llm"}}
+  ]
+}}
+
+The share sum and CAC are computed from the plan and Finance - tag them 'fact' or
+'inference'. Tag channel-choice judgements as 'assumption'."""
+
+    def to_patch(self, parsed: MarketingCheckOut, state: SharedBusinessState) -> dict:
+        result = self._result(state)
+        evidence = [
+            EvidenceItem(
+                claim=e.claim.strip(),
+                kind=e.kind.strip().lower()
+                if e.kind.strip().lower() in _EVIDENCE_KINDS
+                else "assumption",
+                confidence=_clamp_confidence(e.confidence),
+                source=e.source.strip()[:40],
+            )
+            for e in parsed.evidence
+            if e.claim and e.claim.strip()
+        ]
+        summary = parsed.marketing_summary.strip() or fallback_summary(result)
+        return {
+            **result,  # budget_share_total_pct, customers_needed_monthly, allowable_cac_inr, marketing_warnings
+            "marketing_summary": summary,
+            "marketing_evidence": evidence,
+        }
+
+
+def _clamp_confidence(value: float | None) -> float | None:
+    if value is None:
+        return None
+    return max(0.0, min(1.0, float(value)))
+
+
+# =============================================================================
+# Stage layout
+# =============================================================================
+#
+# Baseline is 4 agents: persona alone (stage 1), then digital/campaign/seo in
+# parallel (stage 2). When `enable_marketing_synthesis` is on, a third stage adds
+# the consistency/unit-economics agent (F33a), which runs last so it can check the
+# completed channel plan and campaign against Finance's revenue and cost figures.
+
+
+def build_marketing_stages(*, synthesis: bool | None = None) -> tuple[tuple[Agent, ...], ...]:
+    """Assemble the marketing stage tuple, honouring the synthesis flag.
+
+    `synthesis=None` reads `settings.enable_marketing_synthesis`; tests pass an
+    explicit bool to exercise both topologies.
+    """
+    if synthesis is None:
+        synthesis = settings.enable_marketing_synthesis
+
+    stages: list[tuple[Agent, ...]] = [
+        (BuyerPersonaAgent(),),
+        (
+            DigitalPlanAgent(),
+            CampaignPlanAgent(),
+            SEOContentAgent(),
+        ),
+    ]
+    if synthesis:
+        stages.append((MarketingConsistencyAgent(),))
+    return tuple(stages)
+
+
+MARKETING_STAGES: tuple[tuple[Agent, ...], ...] = build_marketing_stages()

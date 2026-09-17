@@ -126,6 +126,26 @@ class Settings(BaseSettings):
     enable_serper_api: bool = True
     enable_chroma_cache: bool = True
     enable_dynamic_routing: bool = True
+    # Strategy synthesis (F17a Strategic Options + F17b Recommendation). OFF by
+    # default so the measured baseline stays at 21 agents / F17-F37 and existing
+    # results remain comparable; ON adds two stage-3 strategy agents (23 total).
+    enable_strategy_synthesis: bool = False
+    # Operations synthesis (F34a Compliance & Licensing + F37a Feasibility). OFF
+    # by default for the same comparability reason; ON adds two stage-3 operations
+    # agents. Independent of strategy synthesis; both on = 25 agents.
+    enable_operations_synthesis: bool = False
+    # Finance synthesis (F25a Cash-Flow & Unit Economics). OFF by default for the
+    # same comparability reason; ON adds one stage-3 finance agent. Independent of
+    # the other flags; all three on = 26 agents.
+    enable_finance_synthesis: bool = False
+    # Branding synthesis (F29a Brand Consistency & Accessibility). OFF by default
+    # for the same comparability reason; ON adds one stage-3 branding agent.
+    # Independent of the other flags; all four on = 27 agents.
+    enable_branding_synthesis: bool = False
+    # Marketing synthesis (F33a Marketing Consistency & Unit Economics). OFF by
+    # default for the same comparability reason; ON adds one stage-3 marketing
+    # agent. Independent of the other flags; all five on = 26 agents.
+    enable_marketing_synthesis: bool = False
 
     # --- Derived helpers -----------------------------------------------------
     @property
