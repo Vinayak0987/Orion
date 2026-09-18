@@ -4,9 +4,10 @@ Phase 2 scope: app wiring, health check (F64), session history endpoints (F51).
 The /generate pipeline lands in Phase 3-4 once the intent classifier and
 orchestrator exist.
 
-SECURITY NOTE: this service has NO authentication. It is intended to run only on
-localhost via Docker Compose for a research project. Do not expose it to a public
-network without adding auth first.
+SECURITY NOTE: the generation/operating/planning routes are OPEN (no auth) and
+are intended to run only on localhost for a research project. Authentication
+(app.auth) currently gates the UI, not these APIs. Do not expose this service to
+a public network without gating the routes first.
 """
 
 from __future__ import annotations
@@ -54,6 +55,11 @@ from app.operating.api import router as operating_router
 # Import the authentication router (user/website data layer — MongoDB Atlas).
 from app.auth.router import router as auth_router
 
+# Planning Report layer (design.md §8) - the pre-execution flow.
+from app.planning import init_planning
+from app.planning.api import router as planning_router
+from app.planning.plan_api import router as plan_router
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
@@ -61,6 +67,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     sqlite.init_db()
     from app.operating import init_all
     init_all()
+    init_planning()
     for warning in settings.warnings():
         log.warning("config.warning", detail=warning)
     log.info(
@@ -95,6 +102,8 @@ app.add_middleware(
 
 app.include_router(operating_router)
 app.include_router(auth_router)
+app.include_router(planning_router)
+app.include_router(plan_router)
 
 
 # =============================================================================

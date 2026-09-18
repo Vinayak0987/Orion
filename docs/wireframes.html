@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orion — Website Wireframes</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #e8ebf0; color: #1f2733; line-height: 1.5; padding: 24px; }
+.wrap { max-width: 1200px; margin: 0 auto; }
+h1 { color: #1f3a5f; font-size: 26px; margin-bottom: 4px; }
+.sub { color: #6b7480; font-size: 14px; margin-bottom: 20px; }
+
+/* screen nav */
+.screen-nav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; position: sticky; top: 0; background: #e8ebf0; padding: 12px 0; z-index: 100; }
+.screen-nav button { padding: 8px 14px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; font-size: 13px; cursor: pointer; color: #475569; }
+.screen-nav button.active { background: #1f3a5f; color: #fff; border-color: #1f3a5f; font-weight: 600; }
+
+/* wireframe screen */
+.screen { display: none; }
+.screen.active { display: block; }
+.screen-title { font-size: 18px; color: #1f3a5f; margin-bottom: 4px; font-weight: 600; }
+.screen-desc { font-size: 13px; color: #6b7480; margin-bottom: 14px; }
+
+/* browser frame */
+.wf { background: #fff; border: 2px solid #94a3b8; border-radius: 8px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+.wf-bar { background: #cbd5e1; padding: 8px 12px; display: flex; align-items: center; gap: 6px; }
+.wf-dot { width: 11px; height: 11px; border-radius: 50%; background: #94a3b8; }
+.wf-addr { flex: 1; margin-left: 12px; background: #fff; border-radius: 4px; padding: 4px 12px; font-size: 12px; color: #64748b; font-family: monospace; }
+
+/* wireframe elements — greyscale boxes */
+.wf-body { padding: 0; background: #fafbfc; }
+.wf-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-bottom: 2px solid #e2e7ee; background: #fff; }
+.wf-logo { font-size: 20px; font-weight: 700; color: #334155; }
+.wf-logo-sub { font-size: 10px; color: #94a3b8; font-weight: 400; }
+.wf-topnav { display: flex; gap: 3px; background: #eef2f7; padding: 3px; border-radius: 6px; }
+.wf-tab { padding: 6px 14px; border-radius: 4px; font-size: 12px; color: #64748b; }
+.wf-tab.on { background: #334155; color: #fff; font-weight: 600; }
+
+.wf-content { padding: 20px; }
+.box { border: 2px dashed #94a3b8; border-radius: 6px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 12px; text-align: center; padding: 12px; }
+.box-solid { border: 2px solid #cbd5e1; background: #fff; }
+.box-dark { background: #64748b; color: #fff; border-color: #64748b; }
+.label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; color: #94a3b8; font-weight: 700; margin-bottom: 6px; }
+.row { display: flex; gap: 12px; margin-bottom: 12px; }
+.col { flex: 1; }
+.mb { margin-bottom: 12px; }
+
+.ph-line { height: 8px; background: #cbd5e1; border-radius: 4px; margin: 5px 0; }
+.ph-line.short { width: 40%; }
+.ph-line.med { width: 65%; }
+.ph-line.long { width: 85%; }
+.ph-title { height: 14px; background: #94a3b8; border-radius: 4px; width: 50%; margin-bottom: 10px; }
+
+.wf-btn { display: inline-block; background: #334155; color: #fff; padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+.wf-btn-ghost { background: #fff; color: #475569; border: 1px solid #cbd5e1; }
+
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+
+.annotation { background: #fef9c3; border: 1px solid #eab308; border-radius: 6px; padding: 8px 12px; font-size: 12px; color: #713f12; margin: 8px 0; }
+.annotation strong { color: #422006; }
+
+.sidebar-wf { width: 200px; background: #334155; padding: 14px 0; border-radius: 6px 0 0 6px; }
+.sidebar-wf-item { padding: 8px 16px; color: #cbd5e1; font-size: 12px; }
+.sidebar-wf-item.on { background: #475569; color: #fff; border-left: 3px solid #93c5fd; }
+.layout-wf { display: flex; }
+.layout-wf .main-wf { flex: 1; padding: 16px; }
+
+.chip { display: inline-block; background: #e2e8f0; border-radius: 99px; padding: 3px 10px; font-size: 10px; color: #475569; margin: 2px; }
+.pill-metric { background: #fff; border: 2px solid #cbd5e1; border-radius: 6px; padding: 10px; text-align: center; }
+.pill-metric .num { height: 16px; background: #64748b; border-radius: 4px; width: 60%; margin: 0 auto 4px; }
+.pill-metric .lbl { font-size: 9px; color: #94a3b8; text-transform: uppercase; }
+
+.flow-note { font-size: 11px; color: #64748b; font-style: italic; margin-top: 6px; }
+table.wf-tbl { width: 100%; border-collapse: collapse; }
+table.wf-tbl th { background: #e2e8f0; padding: 6px; font-size: 10px; text-align: left; color: #64748b; }
+table.wf-tbl td { padding: 6px; border-top: 1px solid #e2e7ee; }
+table.wf-tbl td .ph-line { margin: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Orion — Website Wireframes</h1>
+<p class="sub">Low-fidelity layout blueprints for every screen. Grey boxes = content areas, dashed = containers, yellow notes = annotations.</p>
+
+<div class="screen-nav" id="nav"></div>
+
+<!-- ============ SCREEN 1: GENERATE (landing) ============ -->
+<div class="screen active" id="s-generate">
+<div class="screen-title">Screen 1 — Generate (Landing / Home)</div>
+<div class="screen-desc">First screen the user lands on. One input, generate button, live progress, then the report appears below.</div>
+<div class="wf">
+<div class="wf-bar"><span class="wf-dot"></span><span class="wf-dot"></span><span class="wf-dot"></span><span class="wf-addr">localhost:5173/#/generate</span></div>
+<div class="wf-body">
+<div class="wf-header">
+<div class="wf-logo">Orion <span class="wf-logo-sub">AI Business Operating System</span></div>
+<div class="wf-topnav"><span class="wf-tab on">Generate</span><span class="wf-tab">Business</span><span class="wf-tab">Work</span><span class="wf-tab">Activity</span><span class="wf-tab">Loops</span></div>
+</div>
+<div class="wf-content">
+<div class="row">
+<div class="col" style="flex:3;">
+<div class="box-solid box" style="flex-direction:column;align-items:flex-start;padding:16px;">
+<div class="label">Prompt Input (F47)</div>
+<div class="box" style="width:100%;height:60px;margin:8px 0;">Textarea: "Describe your business idea in one sentence..."</div>
+<div style="display:flex;justify-content:space-between;width:100%;align-items:center;">
+<span class="wf-btn">Generate Business Plan</span>
+<span style="font-size:11px;color:#94a3b8;">0 / 1000 chars</span>
+</div>
+<div style="margin-top:10px;"><span class="chip">bakery near Dadar</span><span class="chip">dental clinic Bandra</span><span class="chip">SaaS for HR</span></div>
+</div>
+<div class="annotation"><strong>Empty state:</strong> Below input shows a hint — "Describe a business and Orion produces strategy, finance, brand, marketing, operations."</div>
+</div>
+<div class="col" style="flex:1;">
+<div class="label">History Sidebar (F51)</div>
+<div class="box-solid box" style="flex-direction:column;height:220px;align-items:stretch;">
+<div class="ph-line med"></div><div class="ph-line short"></div>
+<div class="ph-line med" style="margin-top:12px;"></div><div class="ph-line short"></div>
+<div class="ph-line med" style="margin-top:12px;"></div><div class="ph-line short"></div>
+<div class="flow-note">Past generations, click to reopen</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============ SCREEN 2: GENERATING (progress) ============ -->
+<div class="screen" id="s-progress">
+<div class="screen-title">Screen 2 — Generating (Live Progress)</div>
+<div class="screen-desc">While the 21 agents run. WebSocket streams department status in real-time.</div>
+<div class="wf">
+<div class="wf-bar"><span class="wf-dot"></span><span class="wf-dot"></span><span class="wf-dot"></span><span class="wf-addr">localhost:5173/#/generate</span></div>
+<div class="wf-body">
+<div class="wf-header"><div class="wf-logo">Orion</div><div class="wf-topnav"><span class="wf-tab on">Generate</span><span class="wf-tab">Business</span><span class="wf-tab">Work</span><span class="wf-tab">Activity</span><span class="wf-tab">Loops</span></div></div>
+<div class="wf-content">
+<div class="box-solid box" style="flex-direction:column;align-items:stretch;padding:16px;">
+<div class="label">Progress Panel (F48)</div>
+<div style="display:flex;justify-content:space-between;margin:8px 0;"><strong style="font-size:13px;">GENERATING...</strong><span style="font-size:12px;color:#94a3b8;">38s elapsed</span></div>
+<div style="height:8px;background:#e2e8f0;border-radius:99px;"><div style="width:70%;height:100%;background:#64748b;border-radius:99px;"></div></div>
+<div style="font-size:11px;color:#94a3b8;margin:4px 0 12px;">4 / 5 departments complete</div>
+<div style="font-size:12px;line-height:2;">
+<div>&#10003; Strategy — done (12s)</div>
+<div>&#10003; Finance — done (18s)</div>
+<div>&#10003; Branding — done (14s)</div>
+<div>&#9679; Marketing — running...</div>
+<div style="color:#94a3b8;">&#9675; Operations — waiting</div>
+</div>
+</div>
+<div class="annotation"><strong>Real-time:</strong> Each department updates via WebSocket. Execution order: Strategy first → Finance/Branding/Marketing parallel → Operations last.</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============ SCREEN 3: REPORT ============ -->
+<div class="screen" id="s-report">
+<div class="screen-title">Screen 3 — Report View (F49/F50)</div>
+<div class="screen-desc">The generated plan. KPI cards, view toggle, department tabs, download bar.</div>
+<div class="wf">
+<div class="wf-bar"><span class="wf-dot"></span><span class="wf-dot"></span><span class="wf-dot"></span><span class="wf-addr">localhost:5173/#/generate</span></div>
+<div class="wf-body">
+<div class="wf-header"><div class="wf-logo">Orion</div><div class="wf-topnav"><span class="wf-tab on">Generate</span><span class="wf-tab">Business</span><span class="wf-tab">Work</span><span class="wf-tab">Activity</span><span class="wf-tab">Loops</span></div></div>
+<div class="wf-content">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+<div><div class="ph-title" style="width:200px;"></div><div class="ph-line short"></div></div>
+<div><span class="wf-btn-ghost wf-btn">HTML</span> <span class="wf-btn">PDF</span> <span class="wf-btn-ghost wf-btn">JSON</span></div>
+</div>
+<div class="label">KPI Cards</div>
+<div class="grid-4 mb">
+<div class="pill-metric"><div class="num"></div><div class="lbl">Setup Cost</div></div>
+<div class="pill-metric"><div class="num"></div><div class="lbl">Year-1 Revenue</div></div>
+<div class="pill-metric"><div class="num"></div><div class="lbl">Net Margin</div></div>
+<div class="pill-metric"><div class="num"></div><div class="lbl">Break-even</div></div>
+</div>
+<div class="label">View Toggle (NEW)</div>
+<div class="mb"><span class="wf-btn">Department Report</span> <span class="wf-btn-ghost wf-btn">Input → Processing → Output</span></div>
+<div class="label">Department Tabs</div>
+<div class="mb"><span class="chip" style="background:#334155;color:#fff;">Strategy</span><span class="chip">Finance</span><span class="chip">Branding</span><span class="chip">Marketing</span><span class="chip">Operations</span></div>
+<div class="box-solid box" style="flex-direction:column;align-items:stretch;padding:14px;">
+<div class="ph-title"></div>
+<div class="ph-line long"></div><div class="ph-line med"></div><div class="ph-line long"></div>
+<div class="flow-note">Collapsible section with agent output (tables, bullets, values)</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============ SCREEN 4: PIPELINE VIEW ============ -->
+<div class="screen" id="s-pipeline">
+<div class="screen-title">Screen 4 — Pipeline View (Input → Processing → Output)</div>
+<div class="screen-desc">New view. Shows what each agent received, how it processed, and what it produced.</div>
+<div class="wf">
+<div class="wf-bar"><span class="wf-dot"></span><span class="wf-dot"></span><span class="wf-dot"></span><span class="wf-addr">localhost:5173/#/generate</span></div>
+<div class="wf-body"><div class="wf-content">
+<div class="box-solid box mb" style="flex-direction:column;align-items:stretch;border-left:4px solid #3b82f6;">
+<div class="label">1 — INPUT (blue)</div>
+<div class="grid-3"><div class="box">Business Type</div><div class="box">Location</div><div class="box">Budget</div></div>
+</div>
+<div class="box-solid box mb" style="flex-direction:column;align-items:stretch;border-left:4px solid #22c55e;">
+<div class="label">2 — PROCESSING (green) — 21 agents, click to expand</div>
+<div class="flow-note">Execution: Strategy → Finance | Branding | Marketing → Operations</div>
+<div class="box-solid box" style="justify-content:space-between;padding:8px;margin-top:6px;">
+<span style="font-size:12px;">&#10003; Market Sizing Agent</span>
+<span style="font-size:10px;color:#94a3b8;">groq · llama3.1 · 420 tok · 2.1s ▸</span>
+</div>
+<div class="box-solid box" style="flex-direction:column;align-items:stretch;padding:8px;margin-top:4px;">
+<div class="row" style="margin:0;">
+<div class="box" style="border-left:3px solid #3b82f6;">INPUT: reads intent</div>
+<div style="align-self:center;">→</div>
+<div class="box" style="border-left:3px solid #7c3aed;">PROCESS: LLM call</div>
+<div style="align-self:center;">→</div>
+<div class="box" style="border-left:3px solid #059669;">OUTPUT: JSON result</div>
+</div>
+</div>
+</div>
+<div class="box-solid box" style="flex-direction:column;align-items:stretch;border-left:4px solid #eab308;">
+<div class="label">3 — OUTPUT (amber) — key highlights per department</div>
+<div class="grid-4"><div class="box">SOM</div><div class="box">Setup Cost</div><div class="box">Brand Name</div><div class="box">Break-even</div></div>
+</div>
+</div></div>
+</div>
+</div>
+
+<!-- ============ SCREEN 5: BUSINESS VIEW ============ -->
+<div class="screen" id="s-business">
+<div class="screen-title">Screen 5 — Business View (Operating Layer 1)</div>
+<div class="screen-desc">"Is the company healthy?" — anchor board, trend chart, findings, department strip.</div>
+<div class="wf">
+<div class="wf-bar"><span class="wf-dot"></span><span class="wf-dot"></span><span class="wf-dot"></span><span class="wf-addr">localhost:5173/#/business</span></div>
+<div class="wf-body">
+<div class="wf-header"><div class="wf-logo">Orion</div><div class="wf-topnav"><span class="wf-tab">Generate</span><span class="wf-tab on">Business</span><span class="wf-tab">Work</span><span class="wf-tab">Activity</span><span class="wf-tab">Loops</span></div></div>
+<div class="wf-content">
+<div class="box-solid box mb" style="justify-content:space-between;padding:10px;">
+<span style="font-size:12px;">Company: [ demo-icecream-andheri ]</span>
+<span><span class="wf-btn-ghost wf-btn">Load</span> <span class="wf-btn-ghost wf-btn">⏩ Manual Tick</span></span>
+</div>
+<div class="label">Anchor Board — 19 metrics, grouped (🔒 = computed from ledger)</div>
+<div class="grid-4 mb">
+<div class="pill-metric"><div class="num"></div><div class="lbl">🔒 Revenue</div></div>
+<div class="pill-metric"><div class="num"></div><div class="lbl">🔒 Net Margin</div></div>
+<div class="pill-metric"><div class="num"></div><div class="lbl">🔒 Customers</div></div>
+<div class="pill-metric"><div class="num"></div><div class="lbl">🔒 CAC</div></div>
+</div>
+<div class="row">
+<div class="col box-solid box" style="flex-direction:column;align-items:stretch;height:120px;">
+<div class="label">Anchor Trend (SVG line chart)</div>
+<div class="flow-note">Anchor vs proxy over time — divergence visible</div>
+<div style="flex:1;background:#f1f5f9;border-radius:4px;margin-top:6px;"></div>
+</div>
+<div class="col box-solid box" style="flex-direction:column;align-items:stretch;height:120px;">
+<div class="label">Open Findings (worst first)</div>
+<div style="font-size:11px;"><span class="chip" style="background:#b91c1c;color:#fff;">CRITICAL</span> proxy_divergence</div>
+<div style="font-size:11px;margin-top:4px;"><span class="chip" style="background:#d97706;color:#fff;">HIGH</span> dept_conflict</div>
+</div>
+</div>
+<div class="label">Department Strip — 5 cards (proxy + anchor)</div>
+<div class="grid-5"><div class="box">Strategy</div><div class="box">Finance</div><div class="box">Branding</div><div class="box">Marketing</div><div class="box">Operations</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============ SCREEN 6: WORK VIEW ============ -->
+<div class="screen" id="s-work">
+<div class="screen-title">Screen 6 — Work View (Operating Layer 2)</div>
+<div class="screen-desc">"What needs a decision?" — review queue, decision history, constitution, cadence.</div>
+<div class="wf">
+<div class="wf-bar"><span class="wf-dot"></span><span class="wf-dot"></span><span class="wf-dot"></span><span class="wf-addr">localhost:5173/#/work</span></div>
+<div class="wf-body">
+<div class="wf-header"><div class="wf-logo">Orion</div><div class="wf-topnav"><span class="wf-tab">Generate</span><span class="wf-tab">Business</span><span class="wf-tab on">Work</span><span class="wf-tab">Activity</span><span class="wf-tab">Loops</span></div></div>
+<div class="wf-content">
+<div class="box-solid box mb" style="flex-direction:column;align-items:stretch;border-left:4px solid #d97706;">
+<div class="label">Review Queue (primary)</div>
+<div class="annotation" style="margin:4px 0;">Approving does NOT unlock a hard constraint.</div>
+<div class="box-solid box" style="justify-content:space-between;padding:8px;">
+<span style="font-size:12px;">marketing — large campaign · Rs 8,000</span>
+<span><span class="wf-btn" style="background:#059669;">Approve</span> <span class="wf-btn" style="background:#b91c1c;">Reject</span> <span class="wf-btn-ghost wf-btn">Return</span></span>
+</div>
+<div class="flow-note">Name field required for approve/reject</div>
+</div>
+<div class="row">
+<div class="col box-solid box" style="flex-direction:column;align-items:stretch;height:110px;"><div class="label">Constitution (7 rules, read-only)</div><div class="ph-line long"></div><div class="ph-line med"></div><div class="flow-note">Code, not settings</div></div>
+<div class="col box-solid box" style="flex-direction:column;align-items:stretch;height:110px;"><div class="label">Cadence Status</div><div class="ph-line long"></div><div class="ph-line med"></div><div class="flow-note">Per-loop schedule state</div></div>
+</div>
+<div class="label">Decision History</div>
+<div class="box-solid box" style="height:60px;">Table: state · risk · decided by · blocking rule</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============ SCREEN 7: ACTIVITY VIEW ============ -->
+<div class="screen" id="s-activity">
+<div class="screen-title">Screen 7 — Activity View (Operating Layer 3)</div>
+<div class="screen-desc">"What did that loop do?" — run log, append-only ledger, memory inspector.</div>
+<div class="wf">
+<div class="wf-bar"><span class="wf-dot"></span><span class="wf-dot"></span><span class="wf-dot"></span><span class="wf-addr">localhost:5173/#/activity</span></div>
+<div class="wf-body">
+<div class="wf-header"><div class="wf-logo">Orion</div><div class="wf-topnav"><span class="wf-tab">Generate</span><span class="wf-tab">Business</span><span class="wf-tab">Work</span><span class="wf-tab on">Activity</span><span class="wf-tab">Loops</span></div></div>
+<div class="wf-content">
+<div class="label">Loop Run Log (newest first, expandable JSON)</div>
+<div class="box-solid box mb" style="flex-direction:column;align-items:stretch;">
+<table class="wf-tbl"><tr><th>Loop</th><th>Status</th><th>Duration</th></tr>
+<tr><td>marketing</td><td>&#10003; completed</td><td>12ms</td></tr>
+<tr><td>goodhart_detector</td><td>&#10003; completed</td><td>8ms</td></tr></table>
+</div>
+<div class="label">Ledger Tail (append-only — cannot edit)</div>
+<div class="box-solid box mb" style="flex-direction:column;align-items:stretch;">
+<table class="wf-tbl"><tr><th>Seq</th><th>Kind</th><th>Dept</th><th>Amount</th></tr>
+<tr><td>#486</td><td>marketing_spend</td><td>marketing</td><td>Rs 4,000</td></tr>
+<tr><td>#485</td><td>customer_acquired</td><td>environment</td><td>qty 14</td></tr></table>
+</div>
+<div class="label">Memory Inspector — pick department, see 4 typed stores</div>
+<div class="box-solid box" style="height:60px;">Dropdown + episodic/semantic/procedural/reflective counts</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============ SCREEN 8: LOOPS VIEW ============ -->
+<div class="screen" id="s-loops">
+<div class="screen-title">Screen 8 — Loops View (Control Topology)</div>
+<div class="screen-desc">SVG node-graph showing every cycle terminates at an anchor or human.</div>
+<div class="wf">
+<div class="wf-bar"><span class="wf-dot"></span><span class="wf-dot"></span><span class="wf-dot"></span><span class="wf-addr">localhost:5173/#/loops</span></div>
+<div class="wf-body">
+<div class="wf-header"><div class="wf-logo">Orion</div><div class="wf-topnav"><span class="wf-tab">Generate</span><span class="wf-tab">Business</span><span class="wf-tab">Work</span><span class="wf-tab">Activity</span><span class="wf-tab on">Loops</span></div></div>
+<div class="wf-content">
+<div class="label">Loop Graph (inline SVG)</div>
+<div class="box-solid box" style="height:260px;flex-direction:column;">
+<svg width="90%" height="200" viewBox="0 0 400 200">
+<polygon points="200,20 214,40 186,40" fill="#94a3b8"/><text x="200" y="55" text-anchor="middle" font-size="8" fill="#64748b">anchors 🔒</text>
+<rect x="175" y="150" width="50" height="20" rx="3" fill="#94a3b8"/><text x="200" y="164" text-anchor="middle" font-size="7" fill="#fff">human</text>
+<circle cx="70" cy="100" r="15" fill="#cbd5e1"/><circle cx="150" cy="100" r="15" fill="#cbd5e1"/><circle cx="250" cy="100" r="15" fill="#cbd5e1"/><circle cx="330" cy="100" r="15" fill="#cbd5e1"/>
+<line x1="70" y1="85" x2="195" y2="42" stroke="#cbd5e1"/><line x1="330" y1="85" x2="205" y2="42" stroke="#cbd5e1"/>
+<line x1="185" y1="150" x2="150" y2="115" stroke="#cbd5e1"/><line x1="215" y1="150" x2="250" y2="115" stroke="#cbd5e1"/>
+</svg>
+<div class="flow-note">Legend: Execution / Monitor / Anchor🔒 / Human · solid = work, dashed = monitor</div>
+</div>
+<div class="annotation">&#10003; All cycles terminate at an anchor or human node. Topology is valid.</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============ SCREEN 9: MOBILE ============ -->
+<div class="screen" id="s-mobile">
+<div class="screen-title">Screen 9 — Mobile / Responsive Layout</div>
+<div class="screen-desc">At &lt;768px the sidebar/columns collapse to a single stacked column.</div>
+<div style="display:flex;gap:20px;flex-wrap:wrap;">
+<div class="wf" style="max-width:280px;">
+<div class="wf-bar"><span class="wf-dot"></span><span class="wf-dot"></span><span class="wf-dot"></span><span class="wf-addr">mobile</span></div>
+<div class="wf-body"><div class="wf-content" style="padding:12px;">
+<div class="wf-logo" style="font-size:16px;">Orion</div>
+<div class="box mb" style="height:40px;margin-top:10px;">☰ Menu (nav collapses)</div>
+<div class="box mb" style="height:50px;">Prompt input (full width)</div>
+<div class="wf-btn mb" style="display:block;text-align:center;">Generate</div>
+<div class="box mb" style="height:40px;">KPI 1</div>
+<div class="box mb" style="height:40px;">KPI 2</div>
+<div class="box" style="height:80px;">Report (stacked)</div>
+<div class="flow-note">History sidebar moves below content</div>
+</div></div>
+</div>
+<div class="annotation" style="max-width:400px;align-self:flex-start;">
+<strong>Responsive rules:</strong><br>
+• Sidebar hides, becomes hamburger menu<br>
+• 2-column layout → single column<br>
+• Anchor grid → 1-2 per row<br>
+• Pipeline IO arrows rotate vertical<br>
+• Tables scroll horizontally
+</div>
+</div>
+</div>
+
+</div>
+
+<script>
+var screens = [
+  ["generate","1. Generate"],["progress","2. Progress"],["report","3. Report"],
+  ["pipeline","4. Pipeline"],["business","5. Business"],["work","6. Work"],
+  ["activity","7. Activity"],["loops","8. Loops"],["mobile","9. Mobile"]
+];
+var nav = document.getElementById("nav");
+screens.forEach(function(s, i){
+  var b = document.createElement("button");
+  b.textContent = s[1];
+  if(i===0) b.className="active";
+  b.onclick = function(){
+    document.querySelectorAll(".screen").forEach(function(el){el.classList.remove("active");});
+    document.querySelectorAll("#nav button").forEach(function(el){el.classList.remove("active");});
+    document.getElementById("s-"+s[0]).classList.add("active");
+    b.classList.add("active");
+    window.scrollTo(0,0);
+  };
+  nav.appendChild(b);
+});
+</script>
+</body>
+</html>

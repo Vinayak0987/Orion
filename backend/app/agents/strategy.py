@@ -21,6 +21,7 @@ from app.agents.base import (
     context_block,
     upstream_block,
 )
+from app.agents.strategy_scoring import score_options
 from app.apis.cache import (
     COLLECTION_COMPETITORS,
     COLLECTION_MARKET_RESEARCH,
@@ -29,8 +30,16 @@ from app.apis.cache import (
 )
 from app.apis.places import discover_competitors
 from app.apis.serper import MarketIntelligence, research_market
+from app.config import settings
 from app.llm.base import ModelTier
-from app.models.departments import Competitor, MarketSize, Risk
+from app.models.departments import (
+    Competitor,
+    EvidenceItem,
+    MarketSize,
+    Risk,
+    StrategicOption,
+    Swot,
+)
 from app.models.state import ApiCallTrace, Department, SharedBusinessState
 
 DEPT = Department.STRATEGY
@@ -509,21 +518,283 @@ Establishment, GST) where relevant."""
             for r in parsed.risks
             if r.description and r.description.strip()
         ]
+        # Order by exposure (severity x likelihood) so the most serious risks are
+        # first - the synthesis agent (F17b) cites the top risks, and a reader
+        # sees the worst risks without scanning the whole list.
+        risks.sort(key=_risk_exposure, reverse=True)
         return {"risks": risks}
+
+
+_RISK_WEIGHT = {"high": 3, "medium": 2, "low": 1}
+
+
+def _risk_exposure(risk: Risk) -> int:
+    """severity x likelihood, both mapped high=3/medium=2/low=1."""
+    return _RISK_WEIGHT.get(risk.severity, 2) * _RISK_WEIGHT.get(risk.likelihood, 2)
+
+
+# =============================================================================
+# F17a - Strategic Options Agent (stage 3 - reads all of stages 1 & 2)
+# =============================================================================
+
+
+class OptionOut(AgentOutput):
+    name: str = ""
+    thesis: str = ""
+    pros: list[str] = Field(default_factory=list)
+    cons: list[str] = Field(default_factory=list)
+    est_setup_cost_inr: int | None = None
+    strategic_fit: int | None = None
+    cost_efficiency: int | None = None
+    risk_level: int | None = None
+    reversibility: int | None = None
+    competitive_advantage: int | None = None
+
+
+class StrategicOptionsOut(AgentOutput):
+    options: list[OptionOut] = Field(default_factory=list)
+
+
+class StrategicOptionsAgent(Agent):
+    """F17a. Generates 2-3 distinct candidate strategies and rates each on five
+    1-5 dimensions. The ranking is NOT decided by the model: the deterministic
+    scorer (`strategy_scoring`) weights the ratings into a 0-100 score and picks
+    the recommended option. This is what makes 'which strategy is best' an
+    auditable computation rather than an LLM assertion.
+    """
+
+    spec = AgentSpec(
+        agent_id="strategic_options",
+        department=DEPT,
+        feature="F17a",
+        schema=StrategicOptionsOut,
+        tier=ModelTier.REASONING,
+        max_tokens=1400,
+    )
+    system = (
+        "You are a strategy consultant. You propose genuinely distinct strategic "
+        "options - not variations of one idea - and rate each honestly, including "
+        "its weaknesses."
+    )
+
+    def build_prompt(self, state: SharedBusinessState) -> str:
+        upstream = upstream_block(state, "market", "competitors")
+        return f"""{context_block(state)}
+
+RESEARCH FROM THIS RUN:
+{upstream or "(none available)"}
+
+Propose 2-3 DISTINCT strategic options for this business (e.g. premium-niche vs
+value-volume vs delivery-first). Return JSON with this key:
+{{
+  "options": [
+    {{
+      "name": "short option name",
+      "thesis": "one-line strategic thesis",
+      "pros": ["2-4 concrete advantages"],
+      "cons": ["2-4 honest disadvantages"],
+      "est_setup_cost_inr": rough setup cost for this option as a plain integer,
+      "strategic_fit": 1-5 (how well it fits this business/location/budget),
+      "cost_efficiency": 1-5 (5 = cheapest to run),
+      "risk_level": 1-5 (5 = lowest risk),
+      "reversibility": 1-5 (5 = easiest to undo if it fails),
+      "competitive_advantage": 1-5 (5 = hardest for rivals to copy)
+    }}
+  ]
+}}
+
+Rate honestly on the 1-5 scales; do not give every option 5s. Do NOT declare a
+winner - the scores decide that."""
+
+    def to_patch(self, parsed: StrategicOptionsOut, state: SharedBusinessState) -> dict:
+        options = [
+            StrategicOption(
+                name=o.name.strip(),
+                thesis=o.thesis.strip(),
+                pros=o.pros,
+                cons=o.cons,
+                est_setup_cost_inr=o.est_setup_cost_inr,
+                strategic_fit=_clamp5(o.strategic_fit),
+                cost_efficiency=_clamp5(o.cost_efficiency),
+                risk_level=_clamp5(o.risk_level),
+                reversibility=_clamp5(o.reversibility),
+                competitive_advantage=_clamp5(o.competitive_advantage),
+            )
+            for o in parsed.options
+            if o.name and o.name.strip()
+        ]
+        # Deterministic scoring decides the ranking and the recommendation.
+        ranked = score_options(options)
+        recommended = ranked[0].name if ranked else None
+        return {"strategic_options": ranked, "recommended_option": recommended}
+
+
+def _clamp5(value: int | None) -> int | None:
+    if value is None:
+        return None
+    return max(1, min(5, int(value)))
+
+
+# =============================================================================
+# F17b - Strategy Synthesis / Recommendation Agent (stage 3)
+# =============================================================================
+
+
+class EvidenceOut(AgentOutput):
+    claim: str = ""
+    kind: str = "assumption"
+    confidence: float | None = None
+    source: str = ""
+
+
+class SynthesisOut(AgentOutput):
+    strengths: list[str] = Field(default_factory=list)
+    weaknesses: list[str] = Field(default_factory=list)
+    opportunities: list[str] = Field(default_factory=list)
+    threats: list[str] = Field(default_factory=list)
+    rationale: str = ""
+    evidence: list[EvidenceOut] = Field(default_factory=list)
+    confidence: float | None = None
+
+
+_EVIDENCE_KINDS = {"fact", "assumption", "inference", "prediction", "unknown"}
+
+
+class StrategySynthesisAgent(Agent):
+    """F17b. Synthesises a SWOT and a recommendation rationale, and tags each key
+    claim as FACT / ASSUMPTION / INFERENCE / PREDICTION / UNKNOWN with a
+    confidence. It reads the scored options and the recommended one from the
+    options agent, so the rationale explains a decision the scorer already made
+    rather than inventing its own winner.
+    """
+
+    spec = AgentSpec(
+        agent_id="strategy_synthesis",
+        department=DEPT,
+        feature="F17b",
+        schema=SynthesisOut,
+        tier=ModelTier.REASONING,
+        max_tokens=1300,
+    )
+    system = (
+        "You are a strategy director writing the final recommendation. You are "
+        "explicit about what is a verified fact versus an assumption, and you say "
+        "plainly when something is unknown rather than inventing it."
+    )
+
+    def build_prompt(self, state: SharedBusinessState) -> str:
+        upstream = upstream_block(state, "market", "competitors")
+        strategy = state.get(DEPT.value)
+        options_block = "(no options generated)"
+        recommended = "(none)"
+        if strategy is not None and strategy.strategic_options:
+            recommended = strategy.recommended_option or "(none)"
+            options_block = "\n".join(
+                f"- {o.name} (score {o.score}): {o.thesis}" for o in strategy.strategic_options
+            )
+        risk_block = ""
+        if strategy is not None and strategy.risks:
+            risk_block = "TOP RISKS: " + "; ".join(
+                f"{r.description} ({r.severity})" for r in strategy.risks[:4]
+            )
+
+        return f"""{context_block(state)}
+
+RESEARCH FROM THIS RUN:
+{upstream or "(none available)"}
+
+SCORED STRATEGIC OPTIONS (the scorer already chose the recommendation):
+{options_block}
+RECOMMENDED OPTION: {recommended}
+{risk_block}
+
+Write the strategic synthesis for the RECOMMENDED option and return JSON:
+{{
+  "strengths": ["3-4 internal strengths"],
+  "weaknesses": ["3-4 internal weaknesses"],
+  "opportunities": ["3-4 external opportunities"],
+  "threats": ["3-4 external threats"],
+  "rationale": "3-4 sentences on why the recommended option is best, citing its scores",
+  "evidence": [
+    {{"claim": "a key claim behind the recommendation",
+      "kind": "one of fact, assumption, inference, prediction, unknown",
+      "confidence": 0.0 to 1.0,
+      "source": "serper / places / budget_anchor / llm"}}
+  ],
+  "confidence": overall confidence in the recommendation, 0.0 to 1.0
+}}
+
+Tag anything you did not verify as 'assumption' or 'unknown'. Do not label a
+guess as 'fact'."""
+
+    def to_patch(self, parsed: SynthesisOut, state: SharedBusinessState) -> dict:
+        swot = Swot(
+            strengths=parsed.strengths,
+            weaknesses=parsed.weaknesses,
+            opportunities=parsed.opportunities,
+            threats=parsed.threats,
+        )
+        evidence = [
+            EvidenceItem(
+                claim=e.claim.strip(),
+                kind=e.kind.strip().lower()
+                if e.kind.strip().lower() in _EVIDENCE_KINDS
+                else "assumption",
+                confidence=_clamp_confidence(e.confidence),
+                source=e.source.strip()[:40],
+            )
+            for e in parsed.evidence
+            if e.claim and e.claim.strip()
+        ]
+        return {
+            "swot": swot,
+            "strategic_rationale": parsed.rationale.strip() or None,
+            "strategy_evidence": evidence,
+            "strategy_confidence": _clamp_confidence(parsed.confidence),
+        }
+
+
+def _clamp_confidence(value: float | None) -> float | None:
+    if value is None:
+        return None
+    return max(0.0, min(1.0, float(value)))
 
 
 # =============================================================================
 # Stage layout
 # =============================================================================
+#
+# The baseline department is 5 agents (F17-F21) across two stages. When
+# `enable_strategy_synthesis` is on, a third stage adds the two synthesis agents
+# (F17a options, then F17b recommendation) so they can read everything stages 1
+# and 2 produced. Options runs before synthesis because the recommendation
+# explains the option the scorer chose.
 
-STRATEGY_STAGES: tuple[tuple[Agent, ...], ...] = (
-    (
-        MarketResearchAgent(),
-        CompetitiveAnalysisAgent(),
-        LocationIntelligenceAgent(),
-    ),
-    (
-        BusinessPlanningAgent(),
-        RiskAnalysisAgent(),
-    ),
-)
+
+def build_strategy_stages(*, synthesis: bool | None = None) -> tuple[tuple[Agent, ...], ...]:
+    """Assemble the strategy stage tuple, honouring the synthesis flag.
+
+    `synthesis=None` reads `settings.enable_strategy_synthesis` (the runtime
+    default); tests pass an explicit bool to exercise both topologies.
+    """
+    if synthesis is None:
+        synthesis = settings.enable_strategy_synthesis
+
+    stages: list[tuple[Agent, ...]] = [
+        (
+            MarketResearchAgent(),
+            CompetitiveAnalysisAgent(),
+            LocationIntelligenceAgent(),
+        ),
+        (
+            BusinessPlanningAgent(),
+            RiskAnalysisAgent(),
+        ),
+    ]
+    if synthesis:
+        stages.append((StrategicOptionsAgent(),))
+        stages.append((StrategySynthesisAgent(),))
+    return tuple(stages)
+
+
+STRATEGY_STAGES: tuple[tuple[Agent, ...], ...] = build_strategy_stages()

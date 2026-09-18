@@ -24,13 +24,14 @@ import { ErrorState, HealthBanner } from "./components/Status";
 import ActivityView from "./views/ActivityView";
 import BusinessView from "./views/BusinessView";
 import LoopsView from "./views/LoopsView";
+import PlanView, { takePlanningHandoff } from "./views/PlanView";
 import WorkView from "./views/WorkView";
 
 // ============================================================================
 // Hash routing
 // ============================================================================
 
-const ROUTES = ["generate", "business", "work", "activity", "loops"];
+const ROUTES = ["plan", "generate", "business", "work", "activity", "loops"];
 
 function getRoute() {
   const hash = window.location.hash.replace("#/", "").split("?")[0];
@@ -100,6 +101,21 @@ function GenerateView() {
 
   useEffect(() => { loadHistory(); }, [loadHistory]);
 
+  // A confirmed planning report hands off here: PlanView stored the
+  // confirmed report + prompt, and the run starts immediately carrying
+  // planning_report_id (design.md §4 step 5).
+  useEffect(() => {
+    const handoff = takePlanningHandoff();
+    if (handoff?.prompt) {
+      // Pass forceAll explicitly: the generate closure still holds the
+      // pre-handoff state at this point.
+      setForceAll(Boolean(handoff.forceAll));
+      generate(handoff.prompt, handoff.planningReportId ?? null, Boolean(handoff.forceAll));
+    }
+    // Runs once per mount, straight after a confirm hand-off.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (!running) { clearInterval(timerRef.current); return undefined; }
     const startedAt = Date.now();
@@ -108,11 +124,12 @@ function GenerateView() {
     return () => clearInterval(timerRef.current);
   }, [running]);
 
-  const generate = useCallback((prompt) => {
+  const generate = useCallback((prompt, planningReportId = null, forceAllOverride = null) => {
+    const effectiveForceAll = forceAllOverride ?? forceAll;
     lastPromptRef.current = prompt;
     setRunning(true); setEvents([]); setSummary(null); setFailure(null);
     cancelRef.current = streamGeneration({
-      prompt, forceAllDepartments: forceAll,
+      prompt, forceAllDepartments: effectiveForceAll, planningReportId,
       onEvent: (event) => setEvents((c) => [...c, event]),
       onResult: (result) => { setSummary(result); setRunning(false); loadHistory(); },
       onError: (detail, kind) => { setFailure({ detail, kind }); setRunning(false); loadHistory(); },
@@ -215,6 +232,7 @@ function Dashboard({ onLogout }) {
         </span>
       </header>
 
+      {route === "plan" && <PlanView />}
       {route === "generate" && <GenerateView />}
       {route === "business" && <BusinessView />}
       {route === "work" && <WorkView />}

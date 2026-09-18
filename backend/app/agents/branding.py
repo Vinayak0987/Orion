@@ -24,8 +24,10 @@ from app.agents.base import (
     context_block,
     upstream_block,
 )
+from app.agents.branding_checks import check_brand, fallback_summary
+from app.config import settings
 from app.llm.base import ModelTier
-from app.models.departments import BrandNameCandidate, ColorPalette
+from app.models.departments import BrandNameCandidate, ColorPalette, EvidenceItem
 from app.models.state import Department, SharedBusinessState
 
 DEPT = Department.BRANDING
@@ -146,7 +148,11 @@ Define the visual identity and return JSON with these keys:
   "palette_rationale": "2 sentences on why these colours suit this business and audience",
   "heading_font": "a Google Font name",
   "body_font": "a Google Font name that pairs with it"
-}}"""
+}}
+
+Choose a primary colour dark or saturated enough that WHITE text remains legible
+on it (it is used for coloured headers and buttons). heading_font and body_font
+should differ so there is typographic contrast."""
 
     def to_patch(self, parsed: IdentityOut, state: SharedBusinessState) -> dict:
         primary = _clean_hex(parsed.primary_hex)
@@ -265,14 +271,144 @@ Write the visual direction and return JSON with these keys:
 
 
 # =============================================================================
-# Stage layout
+# F29a - Brand Consistency & Accessibility Agent (stage 3 - synthesis, opt-in)
 # =============================================================================
 
-BRANDING_STAGES: tuple[tuple[Agent, ...], ...] = (
-    (BrandNamingAgent(),),
-    (
-        BrandIdentityAgent(),
-        BrandVoiceAgent(),
-        VisualDesignAgent(),
-    ),
-)
+
+class EvidenceOut(AgentOutput):
+    claim: str = ""
+    kind: str = "assumption"
+    confidence: float | None = None
+    source: str = ""
+
+
+class BrandCheckOut(AgentOutput):
+    brand_summary: str = ""
+    evidence: list[EvidenceOut] = Field(default_factory=list)
+
+
+_EVIDENCE_KINDS = {"fact", "assumption", "inference", "prediction", "unknown"}
+
+
+class BrandConsistencyAgent(Agent):
+    """F29a. Runs the deterministic brand checker over the completed branding
+    section - WCAG colour contrast, name collision, coherence warnings - then
+    writes a short evidence-tagged summary. The checks are computed in Python
+    (real, verifiable properties), never asserted by the model; the LLM only
+    explains them. Falls back to a deterministic summary if the LLM is down."""
+
+    spec = AgentSpec(
+        agent_id="brand_consistency",
+        department=DEPT,
+        feature="F29a",
+        schema=BrandCheckOut,
+        tier=ModelTier.FAST,
+        max_tokens=700,
+    )
+    system = (
+        "You are a brand reviewer. You explain computed accessibility and "
+        "consistency results plainly and are explicit about what is verified "
+        "versus assumed."
+    )
+
+    def _result(self, state: SharedBusinessState) -> dict:
+        branding = state.get(DEPT.value)
+        if branding is None:
+            return {}
+        return check_brand(branding, state)
+
+    def build_prompt(self, state: SharedBusinessState) -> str:
+        result = self._result(state)
+        rating = result.get("contrast_rating")
+        collision = result.get("name_collision")
+        warnings = result.get("brand_warnings") or []
+        computed = (
+            f"COLOUR CONTRAST (white text on primary): {result.get('contrast_ratio')} "
+            f"({rating})\n"
+            f"NAME COLLISION: {'yes' if collision else 'no'}\n"
+            f"WARNINGS:\n" + ("\n".join(f"- {w}" for w in warnings) or "- (none)")
+            if result
+            else "No branding output was available to check."
+        )
+        return f"""{context_block(state)}
+
+{upstream_block(state, "brand")}
+
+A deterministic check produced this brand accessibility/consistency result:
+{computed}
+
+Explain it and return JSON with these keys:
+{{
+  "brand_summary": "2-3 sentences on the brand's accessibility and consistency, citing the contrast rating and any collision",
+  "evidence": [
+    {{"claim": "a key brand claim",
+      "kind": "one of fact, assumption, inference, prediction, unknown",
+      "confidence": 0.0 to 1.0,
+      "source": "contrast_check / name_check / palette / llm"}}
+  ]
+}}
+
+Contrast and collision results are computed facts - tag them 'fact'. Tag taste
+judgements as 'assumption'."""
+
+    def to_patch(self, parsed: BrandCheckOut, state: SharedBusinessState) -> dict:
+        result = self._result(state)
+        evidence = [
+            EvidenceItem(
+                claim=e.claim.strip(),
+                kind=e.kind.strip().lower()
+                if e.kind.strip().lower() in _EVIDENCE_KINDS
+                else "assumption",
+                confidence=_clamp_confidence(e.confidence),
+                source=e.source.strip()[:40],
+            )
+            for e in parsed.evidence
+            if e.claim and e.claim.strip()
+        ]
+        summary = parsed.brand_summary.strip() or fallback_summary(result)
+        return {
+            **result,  # contrast_ratio, contrast_rating, name_collision, brand_warnings
+            "brand_summary": summary,
+            "brand_evidence": evidence,
+        }
+
+
+def _clamp_confidence(value: float | None) -> float | None:
+    if value is None:
+        return None
+    return max(0.0, min(1.0, float(value)))
+
+
+# =============================================================================
+# Stage layout
+# =============================================================================
+#
+# Baseline is 4 agents: naming alone (stage 1), then identity/voice/visual in
+# parallel (stage 2). When `enable_branding_synthesis` is on, a third stage adds
+# the consistency/accessibility agent (F29a), which runs last so it can check the
+# completed palette, name and voice.
+
+
+def build_branding_stages(*, synthesis: bool | None = None) -> tuple[tuple[Agent, ...], ...]:
+    """Assemble the branding stage tuple, honouring the synthesis flag.
+
+    `synthesis=None` reads `settings.enable_branding_synthesis`; tests pass an
+    explicit bool to exercise both topologies.
+    """
+    if synthesis is None:
+        synthesis = settings.enable_branding_synthesis
+
+    stages: list[tuple[Agent, ...]] = [
+        (BrandNamingAgent(),),
+        (
+            BrandIdentityAgent(),
+            BrandVoiceAgent(),
+            VisualDesignAgent(),
+        ),
+    ]
+    if synthesis:
+        stages.append((BrandConsistencyAgent(),))
+    return tuple(stages)
+
+
+BRANDING_STAGES: tuple[tuple[Agent, ...], ...] = build_branding_stages()

@@ -30,8 +30,10 @@ from app.agents.base import (
     upstream_block,
 )
 from app.agents.benchmarks import gross_margin_benchmark, net_margin_benchmark
+from app.agents.finance_cashflow import compute_cash_position, fallback_summary
+from app.config import settings
 from app.llm.base import ModelTier
-from app.models.departments import CostItem, PLPeriod, RevenueStream
+from app.models.departments import CostItem, EvidenceItem, PLPeriod, RevenueStream
 from app.models.intent import Sector
 from app.models.state import Department, SharedBusinessState
 
@@ -656,16 +658,143 @@ def _build_pl(
 
 
 # =============================================================================
-# Stage layout
+# F25a - Cash-Flow & Unit-Economics Agent (stage 3 - synthesis, opt-in)
 # =============================================================================
 
-FINANCE_STAGES: tuple[tuple[Agent, ...], ...] = (
-    (
-        RevenueModelAgent(),
-        CostStructureAgent(),
-    ),
-    (
-        FundingStrategyAgent(),
-        PLForecastAgent(),
-    ),
-)
+
+class EvidenceOut(AgentOutput):
+    claim: str = ""
+    kind: str = "assumption"
+    confidence: float | None = None
+    source: str = ""
+
+
+class CashFlowSummaryOut(AgentOutput):
+    finance_summary: str = ""
+    evidence: list[EvidenceOut] = Field(default_factory=list)
+
+
+_EVIDENCE_KINDS = {"fact", "assumption", "inference", "prediction", "unknown"}
+
+
+class CashFlowAgent(Agent):
+    """F25a. Derives the year-1 monthly CASH position, lowest-cash month, runway
+    and contribution margin deterministically from the P&L (compute_cash_position),
+    then writes a short evidence-tagged summary of the biggest cash risk. Falls
+    back to a deterministic summary if the LLM is unavailable. The numbers are
+    computed in Python, never asserted by the model."""
+
+    spec = AgentSpec(
+        agent_id="cash_flow",
+        department=DEPT,
+        feature="F25a",
+        schema=CashFlowSummaryOut,
+        tier=ModelTier.FAST,
+        max_tokens=800,
+    )
+    system = (
+        "You are a cash-flow analyst. You explain a computed cash position plainly "
+        "and are explicit about what is assumed versus known."
+    )
+
+    def _position(self, state: SharedBusinessState) -> dict:
+        finance = state.get(DEPT.value)
+        if finance is None:
+            return {}
+        return compute_cash_position(finance, state.get("intent"))
+
+    def build_prompt(self, state: SharedBusinessState) -> str:
+        position = self._position(state)
+        low_month = position.get("lowest_cash_month")
+        low_inr = position.get("lowest_cash_inr")
+        runway = position.get("runway_months")
+        cm = position.get("contribution_margin_pct")
+        computed = (
+            f"LOWEST CASH: Rs {low_inr:,} in month {low_month}\n"
+            f"RUNWAY: {'cash stays positive through year 1' if runway is None else f'cash turns negative around month {runway + 1}'}\n"
+            f"CONTRIBUTION MARGIN: {cm if cm is not None else 'n/a'}%"
+            if position.get("cash_flow")
+            else "No cash-flow could be computed (no P&L available)."
+        )
+        return f"""{context_block(state)}
+
+{upstream_block(state, "revenue", "costs")}
+
+A deterministic model produced this year-1 cash position:
+{computed}
+
+Explain it and return JSON with these keys:
+{{
+  "finance_summary": "2-3 sentences on the biggest cash risk and what to do about it, citing the lowest-cash month and runway",
+  "evidence": [
+    {{"claim": "a key cash/unit-economics claim",
+      "kind": "one of fact, assumption, inference, prediction, unknown",
+      "confidence": 0.0 to 1.0,
+      "source": "pl_forecast / cost_structure / funding / budget / llm"}}
+  ]
+}}
+
+Tag anything you did not verify as 'assumption' or 'prediction'."""
+
+    def to_patch(self, parsed: CashFlowSummaryOut, state: SharedBusinessState) -> dict:
+        position = self._position(state)
+        evidence = [
+            EvidenceItem(
+                claim=e.claim.strip(),
+                kind=e.kind.strip().lower()
+                if e.kind.strip().lower() in _EVIDENCE_KINDS
+                else "assumption",
+                confidence=_clamp_confidence(e.confidence),
+                source=e.source.strip()[:40],
+            )
+            for e in parsed.evidence
+            if e.claim and e.claim.strip()
+        ]
+        summary = parsed.finance_summary.strip() or fallback_summary(position)
+        return {
+            **position,  # cash_flow, lowest_cash_month/inr, runway_months, contribution_margin_pct
+            "finance_summary": summary,
+            "finance_evidence": evidence,
+        }
+
+
+def _clamp_confidence(value: float | None) -> float | None:
+    if value is None:
+        return None
+    return max(0.0, min(1.0, float(value)))
+
+
+# =============================================================================
+# Stage layout
+# =============================================================================
+#
+# Baseline is 4 agents across two stages (F22-F25). When
+# `enable_finance_synthesis` is on, a third stage adds the cash-flow agent
+# (F25a), which runs last so it can read the completed P&L, costs and funding.
+
+
+def build_finance_stages(*, synthesis: bool | None = None) -> tuple[tuple[Agent, ...], ...]:
+    """Assemble the finance stage tuple, honouring the synthesis flag.
+
+    `synthesis=None` reads `settings.enable_finance_synthesis`; tests pass an
+    explicit bool to exercise both topologies.
+    """
+    if synthesis is None:
+        synthesis = settings.enable_finance_synthesis
+
+    stages: list[tuple[Agent, ...]] = [
+        (
+            RevenueModelAgent(),
+            CostStructureAgent(),
+        ),
+        (
+            FundingStrategyAgent(),
+            PLForecastAgent(),
+        ),
+    ]
+    if synthesis:
+        stages.append((CashFlowAgent(),))
+    return tuple(stages)
+
+
+FINANCE_STAGES: tuple[tuple[Agent, ...], ...] = build_finance_stages()
