@@ -12,8 +12,15 @@ import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 
 import { api, streamGeneration } from "./api";
 import AuthScreen from "./auth/AuthScreen";
-import { logout as doLogout, markIntroSeen, restoreSession } from "./auth/session";
+import {
+  hasSeenLanding,
+  logout as doLogout,
+  markIntroSeen,
+  markLandingSeen,
+  restoreSession,
+} from "./auth/session";
 import IntroScreen from "./intro/IntroScreen";
+import LandingPage from "./landing/LandingPage";
 import FadeIn from "./components/FadeIn";
 import Loader from "./components/Loader";
 import HistoryList from "./components/HistoryList";
@@ -26,6 +33,7 @@ import BusinessView from "./views/BusinessView";
 import LoopsView from "./views/LoopsView";
 import PlanView, { takePlanningHandoff } from "./views/PlanView";
 import WorkView from "./views/WorkView";
+import PlatformApp from "./PlatformApp";
 
 // ============================================================================
 // Hash routing
@@ -277,6 +285,8 @@ function AuthRoute({ mode, isAuthed, onLogin }) {
 // ============================================================================
 
 export default function App() {
+  const navigate = useNavigate();
+
   // Intro splash plays once per browser session, before any route renders.
   const [showIntro, setShowIntro] = useState(
     () => sessionStorage.getItem("orion.introSeen") !== "1"
@@ -284,6 +294,15 @@ export default function App() {
   const finishIntro = useCallback(() => {
     markIntroSeen();
     setShowIntro(false);
+  }, []);
+
+  // Landing page shows once per session after the intro, before the login
+  // screen — but only for logged-out visitors. Skipped entirely if the session
+  // was already restored (returning user) or already seen this session.
+  const [showLanding, setShowLanding] = useState(() => !hasSeenLanding());
+  const dismissLanding = useCallback(() => {
+    markLandingSeen();
+    setShowLanding(false);
   }, []);
 
   // Auth state. `authReady` guards against redirecting to /login before we have
@@ -317,6 +336,26 @@ export default function App() {
 
   const isAuthed = user !== null;
 
+  // Landing page — shown to logged-out visitors once per session, after the
+  // intro and before the login screen. A returning user (session restored) or
+  // anyone deep-linking straight to /login|/signup skips it. Its CTAs mark it
+  // seen and route to the real auth screens.
+  const onAuthPath =
+    window.location.pathname === "/login" ||
+    window.location.pathname === "/signup";
+  if (authReady && !isAuthed && showLanding && !onAuthPath) {
+    const goAuth = (path) => {
+      dismissLanding();
+      navigate(path);
+    };
+    return (
+      <LandingPage
+        onGetStarted={() => goAuth("/signup")}
+        onSignIn={() => goAuth("/login")}
+      />
+    );
+  }
+
   return (
     <Routes>
       <Route
@@ -328,12 +367,36 @@ export default function App() {
         element={<AuthRoute mode="signup" isAuthed={isAuthed} onLogin={handleLogin} />}
       />
       <Route
-        path="/*"
+        path="/orion"
+        element={
+          !authReady ? (
+            <AuthLoading />
+          ) : isAuthed ? (
+            <PlatformApp onLogout={handleLogout} />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+      <Route
+        path="/legacy"
         element={
           !authReady ? (
             <AuthLoading />
           ) : isAuthed ? (
             <FadeIn><Dashboard onLogout={handleLogout} /></FadeIn>
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+      <Route
+        path="/*"
+        element={
+          !authReady ? (
+            <AuthLoading />
+          ) : isAuthed ? (
+            <PlatformApp onLogout={handleLogout} />
           ) : (
             <Navigate to="/login" replace />
           )

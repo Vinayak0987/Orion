@@ -27,7 +27,7 @@ const PARTICLE_LIFE_MS = 2600; // grain drift + fade after breaking free
 const REST_MS = 1000; // pause on empty frame before looping
 const TOTAL_MS = HOLD_MS + EROSION_SPAN_MS + PARTICLE_LIFE_MS + REST_MS;
 
-const EMBER_COLORS = ["#ffffff", "#d8d8de", "#b9b0ff", "#8f8f96"];
+const EMBER_COLORS = ["#7a18f2", "#9855f7", "#5c10b8", "#11182e", "#b388ff"];
 const SPRITE_SIZE = 24;
 
 function buildSprites() {
@@ -40,7 +40,7 @@ function buildSprites() {
     const grad = g.createRadialGradient(r, r, 0, r, r, r);
     grad.addColorStop(0, color);
     grad.addColorStop(0.45, color);
-    grad.addColorStop(1, "rgba(0,0,0,0)");
+    grad.addColorStop(1, "rgba(255,255,255,0)");
     g.fillStyle = grad;
     g.beginPath();
     g.arc(r, r, r, 0, Math.PI * 2);
@@ -101,9 +101,11 @@ export default function useBrandDust(canvasRef, options = {}) {
       const fullW = targetCtx.measureText(text).width;
       const startX = x - fullW / 2;
       targetCtx.textAlign = "left";
+      targetCtx.fillStyle = "#11182e";
       targetCtx.globalAlpha = 1;
       targetCtx.fillText(text.slice(0, split), startX, y);
-      targetCtx.globalAlpha = 0.58;
+      targetCtx.fillStyle = "#7a18f2";
+      targetCtx.globalAlpha = 0.95;
       targetCtx.fillText(text.slice(split), startX + w1, y);
       targetCtx.globalAlpha = 1;
       return startX;
@@ -115,7 +117,7 @@ export default function useBrandDust(canvasRef, options = {}) {
       off.width = CSS_W;
       off.height = CSS_H;
       const octx = off.getContext("2d");
-      octx.fillStyle = "#fff";
+      octx.fillStyle = "#11182e";
       paintBrand(octx, CSS_W / 2, TEXT_Y);
 
       const img = octx.getImageData(0, 0, CSS_W, CSS_H).data;
@@ -187,11 +189,9 @@ export default function useBrandDust(canvasRef, options = {}) {
 
     function drawSolidText(frac) {
       ctx.save();
-      // A light shadow reads as a soft glow without the heavy per-frame cost of
-      // a large blur radius (shadowBlur is one of the most expensive canvas ops).
-      ctx.shadowColor = "rgba(185,176,255,0.35)";
+      // A soft purple shadow reads as a gentle glow on light mode.
+      ctx.shadowColor = "rgba(122, 24, 242, 0.22)";
       ctx.shadowBlur = 8;
-      ctx.fillStyle = "#ffffff";
       if (frac > 0) {
         const span = Math.max(1, textBounds.maxX - textBounds.minX);
         const buffer = 0.14;
@@ -232,7 +232,7 @@ export default function useBrandDust(canvasRef, options = {}) {
         }
 
         ctx.save();
-        ctx.globalCompositeOperation = "lighter";
+        ctx.globalCompositeOperation = "source-over";
         for (const p of particles) {
           if (erosionElapsed < p.trigger) continue;
           const age = erosionElapsed - p.trigger;

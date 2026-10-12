@@ -8,6 +8,7 @@
 import { authApi, clearAccessToken, getAccessToken } from "./authApi";
 
 const INTRO_KEY = "orion.introSeen";
+const LANDING_KEY = "orion.landingSeen";
 
 // Try to re-establish a session from the refresh cookie. Returns the user on
 // success, or null if there is no valid session. Safe to call on app start.
@@ -40,6 +41,22 @@ export function hasSeenIntro() {
 export function markIntroSeen() {
   try {
     sessionStorage.setItem(INTRO_KEY, "1");
+  } catch (e) {
+    /* ignore */
+  }
+}
+
+export function hasSeenLanding() {
+  try {
+    return sessionStorage.getItem(LANDING_KEY) === "1";
+  } catch (e) {
+    return false;
+  }
+}
+
+export function markLandingSeen() {
+  try {
+    sessionStorage.setItem(LANDING_KEY, "1");
   } catch (e) {
     /* ignore */
   }

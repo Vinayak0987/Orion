@@ -1,0 +1,111 @@
+import { ChevronDown, UserCheck, Briefcase, GraduationCap, FileText, ShieldCheck, Calendar, CircleCheck } from "lucide-react";
+import { DirectoryLocation } from "../ui/DirectoryLocation.jsx";
+
+const STATS = [
+  { value: "8", label: "Total Hires", sub: "+20%", subColor: "text-emerald-500" },
+  { value: "6", label: "Completed", sub: "+15%", subColor: "text-emerald-500" },
+  { value: "92%", label: "Success Rate", sub: "+5%", subColor: "text-emerald-500" },
+  { value: "4.8h", label: "Avg. Execution Time", sub: "-15%", subColor: "text-emerald-500" },
+  { value: "$1.8K", label: "Total Cost", sub: "+10%", subColor: "text-rose-500" },
+];
+const TABS = ["Activity Feed","Performance","Missions","Agent Activity","Tool Usage"];
+
+const TODAY = [
+  { Icon: UserCheck, tint: "text-rose-500 bg-rose-50", t: "Recruitment Agent completed task", d: "Screened 15 candidates for senior role", time: "10:30 AM", done: true },
+  { Icon: Briefcase, tint: "text-blue-600 bg-blue-50", t: "HR Operations Agent updated", d: "Updated employee records", time: "09:15 AM", done: true },
+  { Icon: GraduationCap, tint: "text-violet-600 bg-violet-50", t: "New mission started", d: "Employee training program", time: "08:45 AM", done: false },
+  { Icon: FileText, tint: "text-rose-500 bg-rose-50", t: "Recruitment Agent completed task", d: "Generated interview questions", time: "09:00 AM", done: true },
+  { Icon: ShieldCheck, tint: "text-emerald-600 bg-emerald-50", t: "Human approval received", d: "Job offer approved for candidate", time: "08:00 AM", done: true },
+];
+const YEST = [
+  { Icon: Calendar, tint: "text-orange-500 bg-orange-50", t: "Performance Agent generated report", d: "Quarterly performance review analysis", time: "4:30 PM", done: true },
+  { Icon: UserCheck, tint: "text-rose-500 bg-rose-50", t: "Recruitment Agent completed task", d: "Conducted 8 candidate interviews", time: "2:15 PM", done: true },
+];
+
+const WORKLOAD = [
+  { n: "Recruitment Agent", pct: 75 }, { n: "HR Operations Agent", pct: 68 }, { n: "Training Agent", pct: 72 },
+  { n: "Benefits Agent", pct: 60 }, { n: "Performance Agent", pct: 55 },
+];
+const OUTCOMES = [
+  { t: "Hired 3 new employees", time: "2h ago" },
+  { t: "Training completion rate up 25%", time: "5h ago" },
+  { t: "Employee satisfaction up 15%", time: "1d ago" },
+];
+
+const FeedRow = ({ e, last }) => (
+  <div className="flex gap-3 relative">
+    {!last && <span className="absolute left-[15px] top-9 bottom-0 w-px bg-slate-100" />}
+    <span className={`w-8 h-8 rounded-full grid place-items-center shrink-0 z-10 ${e.tint}`}><e.Icon size={15} /></span>
+    <div className="flex-1 pb-5">
+      <div className="flex items-center justify-between"><p className="text-sm font-semibold text-slate-800">{e.t}</p><span className="text-[11px] text-slate-400">{e.time}</span></div>
+      <p className="text-xs text-slate-400 mt-0.5">{e.d}</p>
+    </div>
+  </div>
+);
+
+export const ViewHRActivity = () => (
+  <div className="h-full p-6 overflow-y-auto scrollbar-hide bg-white">
+    <DirectoryLocation items={[{ label: "Departments" }, { label: "HR" }, { label: "Activity" }]} />
+
+    <div className="flex items-start justify-between mb-5">
+      <div><h1 className="text-2xl font-extrabold text-[#17143f] tracking-tight">HR Activity</h1><p className="text-xs text-slate-500 mt-1">Track HR operations, recruitment and recent work.</p></div>
+      <button className="px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-medium text-slate-600 flex items-center gap-2">Last 30 days <ChevronDown size={15}/></button>
+    </div>
+
+    {/* Stats */}
+    <div className="grid grid-cols-5 gap-4 mb-6">
+      {STATS.map(s=>(
+        <div key={s.label} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><p className="text-3xl font-extrabold text-slate-800 leading-none">{s.value}</p><p className="text-xs text-slate-500 mt-1.5">{s.label}</p><p className={`text-[11px] font-semibold mt-0.5 ${s.subColor}`}>{s.sub}</p></div>
+      ))}
+    </div>
+
+    {/* Tabs */}
+    <div className="flex items-center gap-6 border-b border-slate-200 mb-5">
+      {TABS.map((t,i)=><button key={t} className={`pb-3 text-sm font-semibold border-b-2 -mb-px ${i===0?"text-indigo-600 border-indigo-600":"text-slate-500 border-transparent hover:text-slate-700"}`}>{t}</button>)}
+    </div>
+
+    <div className="grid grid-cols-[1.5fr_1fr] gap-6">
+      {/* Feed */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p className="text-xs font-bold text-slate-700 mb-3">Today</p>
+        <div>{TODAY.map((e,i)=><FeedRow key={i} e={e} last={i===TODAY.length-1}/>)}</div>
+        <p className="text-xs font-bold text-slate-700 mb-3 mt-2">Yesterday</p>
+        <div>{YEST.map((e,i)=><FeedRow key={i} e={e} last={i===YEST.length-1}/>)}</div>
+      </div>
+
+      {/* Right column */}
+      <div className="space-y-5">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h3 className="text-sm font-bold text-slate-900 mb-3">Agent Workload</h3>
+          <div className="space-y-2.5">
+            {WORKLOAD.map(w=>(
+              <div key={w.n} className="flex items-center gap-3"><span className="text-xs text-slate-600 w-28 shrink-0">{w.n}</span><div className="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden"><div className="h-2 rounded-full bg-indigo-500" style={{width:`${w.pct}%`}}/></div><span className="text-[11px] font-semibold text-slate-500 w-8 text-right">{w.pct}%</span></div>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-3"><h3 className="text-sm font-bold text-slate-900">Mission Execution</h3><span className="text-[10px] text-slate-400 flex items-center gap-2"><span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-indigo-500"/>Completed</span><span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-indigo-200"/>In Progress</span></span></div>
+          <div className="flex items-end justify-between gap-1.5 h-28">
+            {[[55,30],[70,25],[65,45],[75,20],[60,30],[80,35],[50,40],[85,20],[45,55],[90,25],[65,30],[70,25]].map(([a,b],i)=>(
+              <div key={i} className="flex-1 flex flex-col items-center justify-end gap-0.5 h-full">
+                <div className="w-full rounded-t bg-indigo-500" style={{height:`${a}%`}}/>
+                <div className="w-full rounded-t bg-indigo-200" style={{height:`${b/3}%`}}/>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-between text-[9px] text-slate-400 px-1 mt-1.5"><span>Sep 1</span><span>Sep 7</span><span>Sep 14</span><span>Sep 21</span><span>Sep 30</span></div>
+        </div>
+
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h3 className="text-sm font-bold text-slate-900 mb-3">Recent Outcomes</h3>
+          <div className="space-y-3">
+            {OUTCOMES.map(o=>(
+              <div key={o.t} className="flex items-center gap-2.5"><CircleCheck size={16} className="text-emerald-500 shrink-0"/><p className="text-xs text-slate-600 flex-1">{o.t}</p><span className="text-[10px] text-slate-400">{o.time}</span></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);

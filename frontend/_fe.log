@@ -1,0 +1,93 @@
+
+> mabgp-frontend@0.2.0 dev
+> vite --host 0.0.0.0 --port 5173
+
+
+  [32m[1mVITE[22m v5.4.11[39m  [2mready in [0m[1m629[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5173[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.29.31:[1m5173[22m/[39m
+[2m12:40:54 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m12:41:13 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m12:41:32 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m12:41:55 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m12:42:13 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m12:42:34 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m12:43:01 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m12:43:24 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m12:43:45 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m12:44:31 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landingVisuals.jsx[22m
+[2m12:44:31 am[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/landing/landingVisuals.jsx[22m Could not Fast Refresh (new export)
+[2m12:44:31 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m12:44:47 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m12:45:03 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m12:45:22 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m1:12:03 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m1:13:18 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landingVisuals.jsx[22m
+[2m1:13:19 am[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/landing/landingVisuals.jsx[22m Could not Fast Refresh (export removed)
+[2m1:13:19 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m1:14:42 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m1:15:02 am[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mindex.html[22m
+[2m1:21:23 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx[22m
+[2m1:21:46 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m1:25:56 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m1:27:01 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m1:29:07 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m1:31:32 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m1:35:44 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landingVisuals.jsx[22m
+[2m1:35:44 am[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/landing/landingVisuals.jsx[22m Could not Fast Refresh (new export)
+[2m1:35:44 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m1:36:08 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m1:36:31 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m1:36:52 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m1:37:14 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m1:37:36 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m1:37:58 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m1:38:21 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m1:41:44 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m1:42:06 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m1:42:28 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m1:43:05 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m1:43:27 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m1:43:51 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m1:44:14 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m1:45:39 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landingVisuals.jsx[22m
+[2m1:57:06 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:02:00 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:02:26 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:02:52 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:09:41 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:11:56 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:12:24 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:12:54 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:13:21 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m2:13:45 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m2:14:15 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m2:14:41 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m2:15:09 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m2:15:35 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m2:16:01 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m2:16:29 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m2:16:57 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m2:17:24 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingPage.jsx[22m
+[2m2:21:25 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingCircuit.jsx[22m
+[2m2:21:52 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:26:44 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingCircuit.jsx[22m
+[2m2:32:48 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingCircuit.jsx[22m
+[2m2:33:15 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:33:42 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:34:09 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:37:27 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:37:53 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:38:33 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingCircuit.jsx[22m
+[2m2:39:04 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:39:33 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:44:39 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingCircuit.jsx[22m
+[2m2:45:31 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:50:42 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:51:05 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:51:27 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:52:07 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/LandingCircuit.jsx[22m
+[2m2:56:00 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:57:04 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m
+[2m2:57:50 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/landing/landing.css[22m

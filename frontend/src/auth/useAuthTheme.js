@@ -11,11 +11,15 @@ import { useCallback, useEffect, useState } from "react";
 
 export const THEMES = ["light", "dark-purple", "dark-black", "dark-gray"];
 const STORAGE_KEY = "orion-theme";
+const EXPLICIT_KEY = "orion-theme-explicit";
 
 function initialTheme() {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved && THEMES.includes(saved)) return saved;
+    const isExplicit = localStorage.getItem(EXPLICIT_KEY);
+    if (isExplicit) {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved && THEMES.includes(saved)) return saved;
+    }
   } catch (e) {
     /* localStorage unavailable */
   }
@@ -25,8 +29,8 @@ function initialTheme() {
     const applied = document.documentElement.getAttribute("data-theme");
     if (applied && THEMES.includes(applied)) return applied;
   }
-  // Default is dark.
-  return "dark-black";
+  // Default is light.
+  return "light";
 }
 
 export default function useAuthTheme() {
@@ -51,7 +55,14 @@ export default function useAuthTheme() {
   }, [theme]);
 
   const setTheme = useCallback((name) => {
-    if (THEMES.includes(name)) setThemeState(name);
+    if (THEMES.includes(name)) {
+      try {
+        localStorage.setItem(EXPLICIT_KEY, "1");
+      } catch (e) {
+        /* ignore */
+      }
+      setThemeState(name);
+    }
   }, []);
 
   return { theme, setTheme };

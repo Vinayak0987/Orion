@@ -21,10 +21,10 @@ html[data-theme="light"] .auth-page,
   --label-color:#50576c;
   --input-text:#26304a;
   --input-placeholder:#64718d;
-  --focus-ring: rgba(109,119,170,.24);
+  --focus-ring: rgba(122,24,242,.24);
   --eye-color:#566078;
-  --primary-bg:#121a31;
-  --primary-bg-hover:#0e162a;
+  --primary-bg: rgb(122, 24, 242);
+  --primary-bg-hover: #6a13d4;
   --primary-text:#fff;
   --or-color:#26314b;
   --or-line:#d9ddea;
@@ -33,14 +33,14 @@ html[data-theme="light"] .auth-page,
   --oauth-text:#202941;
   --github-color:#182039;
   --switch-color:#697188;
-  --link-color:#273149;
+  --link-color: rgb(122, 24, 242);
   --legal-color:#777f95;
   --legal-link:#5f6880;
-  --forgot-color:#7a8193;
-  --grad-stop-a:#d8ddff;
-  --grad-stop-b:#8b7cff;
-  --accent-purple:#8175ff;
-  --pulse-color:#7c5cff;
+  --forgot-color: rgb(122, 24, 242);
+  --grad-stop-a:#e3dcff;
+  --grad-stop-b: rgb(122, 24, 242);
+  --accent-purple: rgb(122, 24, 242);
+  --pulse-color: rgb(122, 24, 242);
   --pulse-core:#ffffff;
   --toggle-bg:#e0e3f1;
   --toggle-border:#dbe0ee;
@@ -344,7 +344,7 @@ html[data-theme^="dark-"] .auth-page input {
     inset 0 -1px 0 rgba(255,255,255,.045);
 }
 .auth-page input:focus {
-  border-color: rgba(129,117,255,.46);
+  border-color: rgba(122,24,242,.46);
   box-shadow: 0 0 0 2px var(--focus-ring), inset 0 1px 2px rgba(0,0,0,.08);
 }
 .auth-page input::placeholder { color: var(--input-placeholder); opacity: 1; }

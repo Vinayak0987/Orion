@@ -9,9 +9,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap');
 
 .intro-page {
-  --intro-grid-line: rgba(255, 255, 255, 0.045);
-  --intro-logo-color: #f3f3f5;
-  --intro-pulse-color: #00e1ff;
+  --intro-grid-line: rgba(95, 101, 160, 0.055);
+  --intro-logo-color: #11182e;
+  --intro-pulse-color: rgb(122, 24, 242);
 
   position: fixed;
   inset: 0;
@@ -21,7 +21,7 @@
   color: var(--intro-logo-color);
   background:
     repeating-linear-gradient(118deg, var(--intro-grid-line) 0 1px, transparent 1px 4px),
-    radial-gradient(ellipse at 50% 35%, #000000 0%, #000000 65%);
+    linear-gradient(135deg, #f8f8ff 0%, #f9f9ff 50%, #f5f6ff 100%);
 }
 
 /* --------------------------------------------------------------- background */
@@ -35,8 +35,8 @@
 .intro-bg svg { display: block; width: 100%; height: 100%; }
 
 .intro-page #grad-stop-1,
-.intro-page #grad-stop-3 { stop-color: #0a5a6e; }
-.intro-page #grad-stop-2 { stop-color: #0cb5ed; }
+.intro-page #grad-stop-3 { stop-color: #e3dcff; }
+.intro-page #grad-stop-2 { stop-color: rgb(122, 24, 242); }
 
 .intro-page .pulse-path {
   fill: none;
@@ -49,12 +49,12 @@
   animation: introFormLine 8s ease-in-out infinite;
 }
 .intro-page .pulse-core {
-  stroke: #09bfec;
+  stroke: #ffffff;
   stroke-width: 0.2;
   opacity: 0.95;
   filter: url(#coreGlow);
 }
-.intro-page .accent-line { stroke: #00e1ff; }
+.intro-page .accent-line { stroke: rgb(122, 24, 242); }
 
 @keyframes introFormLine {
   0% { stroke-dashoffset: var(--len, 1000); opacity: 0.05; }
@@ -100,7 +100,7 @@
   width: 260px;
   height: 120px;
   border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(130, 115, 255, 0.12), transparent 68%);
+  background: radial-gradient(ellipse, rgba(122, 24, 242, 0.14), transparent 68%);
   filter: blur(18px);
   animation: introGlowPulse 2.2s ease-in-out infinite;
   pointer-events: none;
@@ -111,7 +111,7 @@
   height: 2px;
   overflow: hidden;
   border-radius: 99px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(122, 24, 242, 0.12);
   opacity: 0;
   animation: introFadeIn 0.5s ease 1.05s forwards;
 }
@@ -121,7 +121,7 @@
   width: 42%;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, transparent, #b9b0ff, #fff, transparent);
+  background: linear-gradient(90deg, transparent, rgb(122, 24, 242), #a855f7, transparent);
   animation: introLoad 1.25s ease-in-out infinite;
 }
 
@@ -130,7 +130,7 @@
   font-size: 11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(235, 235, 240, 0.48);
+  color: #50576c;
   opacity: 0;
   animation: introFadeIn 0.5s ease 1.05s forwards;
 }

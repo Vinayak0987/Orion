@@ -89,18 +89,17 @@ function RangeRow({ label, value, display, ...rangeProps }) {
   );
 }
 
-// First-time defaults. The circuit (glow + base lines) defaults to cyan so a
-// brand-new user sees a cyan circuit regardless of the active theme; the nebula
-// keeps the violet accent. Once the user tweaks + we persist, their saved
-// values take over; "Reset to theme" clears back to these.
+// First-time defaults. The circuit (glow + base lines) defaults to rgb(122, 24, 242) (#7a18f2);
+// the nebula keeps the matching purple accent. Once the user tweaks + we persist,
+// their saved values take over; "Reset to theme" clears back to these.
 const DEFAULT_STATE = {
-  glow: "#00e1ff", // pulse line — cyan
+  glow: "#7a18f2", // pulse line — rgb(122, 24, 242)
   shine: "#ffffff", // bright pulse core
-  base: "#00e1ff", // static circuit gradient — cyan
+  base: "#7a18f2", // static circuit gradient — rgb(122, 24, 242)
   lineWidth: 1,
-  neb1: "#8175ff",
+  neb1: "#7a18f2",
   neb2: "#8b7cff",
-  neb3: "#7c5cff",
+  neb3: "#7a18f2",
   nebSize: 560,
   nebOpacity: 0.55,
   nebBlur: 65,
@@ -116,6 +115,9 @@ function loadSaved() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
+    // Upgrade legacy cyan defaults if present
+    if (parsed.glow === "#00e1ff") parsed.glow = DEFAULT_STATE.glow;
+    if (parsed.base === "#00e1ff") parsed.base = DEFAULT_STATE.base;
     // Merge over defaults so a partial/old payload still yields a full state.
     return { ...DEFAULT_STATE, ...parsed };
   } catch (e) {

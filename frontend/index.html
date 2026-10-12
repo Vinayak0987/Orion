@@ -4,28 +4,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MABGP — Business Plan Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <script>
-      // Set the theme BEFORE first paint to avoid a flash of the wrong theme
-      // (the intro + auth screens are dark; without this the page briefly shows
-      // the light base theme before React mounts and applies the real theme).
-      // Honour the user's previously saved choice; otherwise default to dark.
+      // Set the theme BEFORE first paint to avoid a flash of the wrong theme.
+      // Default to light mode; honour the user's previously saved explicit choice.
       (function () {
         try {
+          var isExplicit = localStorage.getItem("orion-theme-explicit");
           var saved = localStorage.getItem("orion-theme");
           var valid = ["light", "dark-purple", "dark-black", "dark-gray"];
-          var theme = valid.indexOf(saved) !== -1 ? saved : "dark-black";
+          var theme = (isExplicit && valid.indexOf(saved) !== -1) ? saved : "light";
           document.documentElement.setAttribute("data-theme", theme);
         } catch (e) {
-          document.documentElement.setAttribute("data-theme", "dark-black");
+          document.documentElement.setAttribute("data-theme", "light");
         }
       })();
     </script>
     <style>
-      /* Dark base so the very first paint (before any React/CSS module loads)
-         is never light. The intro and auth screens paint their own dark
-         backgrounds on top; this just prevents a white flash underneath. */
-      html { background: #0a0a0b; }
+      /* Light base by default */
+      html { background: #f5f7fa; }
       html[data-theme="light"] { background: #f5f7fa; }
+      html[data-theme="dark-purple"] { background: #0a0b16; }
+      html[data-theme="dark-black"] { background: #0a0a0b; }
+      html[data-theme="dark-gray"] { background: #1a1a1f; }
     </style>
   </head>
   <body>
