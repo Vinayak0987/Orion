@@ -4,9 +4,10 @@ Phase 2 scope: app wiring, health check (F64), session history endpoints (F51).
 The /generate pipeline lands in Phase 3-4 once the intent classifier and
 orchestrator exist.
 
-SECURITY NOTE: this service has NO authentication. It is intended to run only on
-localhost via Docker Compose for a research project. Do not expose it to a public
-network without adding auth first.
+SECURITY NOTE: the generation/operating/planning routes are OPEN (no auth) and
+are intended to run only on localhost for a research project. Authentication
+(app.auth) currently gates the UI, not these APIs. Do not expose this service to
+a public network without gating the routes first.
 """
 
 from __future__ import annotations
@@ -51,6 +52,9 @@ log = structlog.get_logger(__name__)
 # Import the operating-layer router (added for §5.5)
 from app.operating.api import router as operating_router
 
+# Import the authentication router (user/website data layer — MongoDB Atlas).
+from app.auth.router import router as auth_router
+
 # Planning Report layer (design.md §8) - the pre-execution flow.
 from app.planning import init_planning
 from app.planning.api import router as planning_router
@@ -85,15 +89,19 @@ app = FastAPI(
 )
 
 # Local-only CORS: the Vite dev server and the compose frontend.
+# allow_credentials=True is required so the browser sends/receives the httpOnly
+# refresh-token cookie used by the auth flow. With credentials enabled, origins
+# must be explicit (no "*"), which is already the case here.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://localhost:3000"],
-    allow_credentials=False,
+    allow_credentials=True,
     allow_methods=["GET", "POST", "DELETE"],
     allow_headers=["*"],
 )
 
 app.include_router(operating_router)
+app.include_router(auth_router)
 app.include_router(planning_router)
 app.include_router(plan_router)
 

@@ -48,7 +48,17 @@ matplotlib==3.9.2             # paper figures in scripts/make_figures.py
 
 # NOTE: chromadb pulls onnxruntime + tokenizers (~120 MB). Verified on Python 3.13.
 
+# --- Authentication / user data layer ----------------------------------------
+# The user/website data layer is a MongoDB Atlas cluster, kept SEPARATE from the
+# agent data stores (SQLite mabgp.db + ChromaDB). Auth tokens are JWTs; passwords
+# are hashed with Argon2id.
+argon2-cffi==23.1.0           # Argon2id password hashing
+PyJWT==2.10.1                 # access + refresh token signing/verification
+pymongo[srv]==4.10.1          # MongoDB Atlas driver; [srv] pulls dnspython for mongodb+srv
+email-validator==2.2.0        # backs pydantic EmailStr in signup validation
+
 # --- Testing -----------------------------------------------------------------
 pytest==8.3.4
 pytest-asyncio==0.25.0
 respx==0.22.0                 # mock httpx calls in tests (no live API keys needed)
+mongomock==4.3.0              # in-process MongoDB fake; auth tests stay fully offline

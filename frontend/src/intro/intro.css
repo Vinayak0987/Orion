@@ -1,0 +1,164 @@
+/* intro.css — styles scoped to the OrionAI intro splash.
+   All selectors are prefixed `intro-` so they never collide with the light
+   theme in styles.css. The SVG helper classes (pulse-path, accent-line,
+   grad-stop-*) are scoped under .intro-page for the same reason.
+
+   Space Grotesk is requested from Google Fonts for the wordmark. If the font
+   fails to load (offline), the canvas and CSS both fall back to sans-serif —
+   the animation still runs, just in the system font. */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap');
+
+.intro-page {
+  --intro-grid-line: rgba(95, 101, 160, 0.055);
+  --intro-logo-color: #11182e;
+  --intro-pulse-color: rgb(122, 24, 242);
+
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  height: 100vh;
+  overflow: hidden;
+  color: var(--intro-logo-color);
+  background:
+    repeating-linear-gradient(118deg, var(--intro-grid-line) 0 1px, transparent 1px 4px),
+    linear-gradient(135deg, #f8f8ff 0%, #f9f9ff 50%, #f5f6ff 100%);
+}
+
+/* --------------------------------------------------------------- background */
+.intro-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.92;
+}
+.intro-bg svg { display: block; width: 100%; height: 100%; }
+
+.intro-page #grad-stop-1,
+.intro-page #grad-stop-3 { stop-color: #e3dcff; }
+.intro-page #grad-stop-2 { stop-color: rgb(122, 24, 242); }
+
+.intro-page .pulse-path {
+  fill: none;
+  stroke: var(--intro-pulse-color);
+  stroke-width: 1;
+  stroke-linecap: round;
+  opacity: 0.72;
+  filter: url(#pulseGlow);
+  stroke-dasharray: var(--len, 1000);
+  animation: introFormLine 8s ease-in-out infinite;
+}
+.intro-page .pulse-core {
+  stroke: #ffffff;
+  stroke-width: 0.2;
+  opacity: 0.95;
+  filter: url(#coreGlow);
+}
+.intro-page .accent-line { stroke: rgb(122, 24, 242); }
+
+@keyframes introFormLine {
+  0% { stroke-dashoffset: var(--len, 1000); opacity: 0.05; }
+  42% { stroke-dashoffset: 0; opacity: 0.75; }
+  58% { stroke-dashoffset: 0; opacity: 0.75; }
+  100% { stroke-dashoffset: calc(-1 * var(--len, 1000)); opacity: 0.05; }
+}
+
+/* ------------------------------------------------------------------- splash */
+.intro-splash {
+  position: relative;
+  z-index: 3;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.intro-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  opacity: 0;
+  transform: translateY(6px) scale(0.985);
+  animation: introBrandIn 1.1s cubic-bezier(0.22, 0.61, 0.36, 1) 0.15s forwards;
+  will-change: opacity, transform;
+}
+
+.intro-brand-canvas {
+  display: block;
+  width: min(94vw, calc((100vh - 80px) * 1.65), 1200px);
+  height: auto;
+  aspect-ratio: 1500 / 900;
+  overflow: visible;
+  will-change: opacity, transform;
+}
+
+.intro-orbit-glow {
+  position: absolute;
+  width: 260px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(122, 24, 242, 0.14), transparent 68%);
+  filter: blur(18px);
+  animation: introGlowPulse 2.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.intro-loader {
+  width: 150px;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: rgba(122, 24, 242, 0.12);
+  opacity: 0;
+  animation: introFadeIn 0.5s ease 1.05s forwards;
+}
+.intro-loader::after {
+  content: "";
+  display: block;
+  width: 42%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, rgb(122, 24, 242), #a855f7, transparent);
+  animation: introLoad 1.25s ease-in-out infinite;
+}
+
+.intro-loading-text {
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #50576c;
+  opacity: 0;
+  animation: introFadeIn 0.5s ease 1.05s forwards;
+}
+
+.intro-fade-out {
+  animation: introSplashOut 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+}
+
+@keyframes introBrandIn {
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes introFadeIn { to { opacity: 1; } }
+@keyframes introGlowPulse {
+  0%, 100% { transform: scale(0.92); opacity: 0.65; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+@keyframes introLoad {
+  0% { transform: translateX(-130px); }
+  100% { transform: translateX(260px); }
+}
+@keyframes introSplashOut {
+  to { opacity: 0; transform: scale(1.025); filter: blur(3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-brand,
+  .intro-loader,
+  .intro-loading-text { animation: none; opacity: 1; transform: none; }
+  .intro-orbit-glow { animation: none; }
+  .intro-page .pulse-path { animation: none; stroke-dashoffset: 0; }
+}

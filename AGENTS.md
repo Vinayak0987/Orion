@@ -34,14 +34,42 @@ say so rather than working around it.
 
 - Stack is LOCKED: LangGraph, Groq/Gemini/Ollama via `app/llm/` only, FastAPI,
   SQLite, ChromaDB, React 18 + Vite. Free tiers only ? flag anything costing money.
+- **Two data layers, kept separate.** SQLite (`data/mabgp.db`) + ChromaDB hold
+  the AGENT data only ? generation sessions, evaluation results, the operating
+  ledger, vector memory. The USER / website data layer is **MongoDB Atlas**
+  (free M0 tier), reached only through `app/auth/store.py`. Never put user/account
+  data in the agent stores, and never put agent data in Mongo.
+  - Auth: JWT (short-lived access token in the client's memory + a revocable
+    refresh token in an httpOnly cookie), Argon2id password hashing. Code in
+    `app/auth/` (self-contained: imports only `app.config` + libs, so it can't
+    regress the agent suite). Endpoints: `/auth/signup|login|refresh|logout|me`.
+  - Config reads `MONGODB_URI`, `MONGODB_USERNAME`, `MONGODB_PASSWORD`,
+    `MONGO_DB_NAME`, `JWT_SECRET` from `.env` (see `.env.example`). `JWT_SECRET`
+    has a dev default that `settings.warnings()` flags outside development.
+  - Existing routes (`/generate`, `/sessions`, `/operating/*`) stay OPEN; auth
+    currently gates the UI, not the API.
+  - **Auth tests stay offline** via `mongomock` (in-process, no socket) ?
+    `tests/test_auth.py`. The real Atlas client is used only at runtime; a live
+    smoke test must be run by a human with a populated `.env`. OAuth buttons are
+    stubbed (no provider flow yet).
 - Every LLM call goes through `app.llm.llm_client`.
 - Every generation-layer state write goes through `apply_department_patch`.
 - Field names in `app/models/departments.py` are FROZEN. Add optional fields, never
   rename ? the metrics depend on them.
 - The test suite must stay fully offline. `conftest.py` fails any outbound socket.
 - Add a regression test for every change. Runnable code only. Pinned versions.
-- Frontend depends on `react` and `react-dom` ONLY, 162 kB bundle. No router, no
-  chart library. Charts are inline SVG.
+- Frontend depends on `react`, `react-dom`, and `react-router-dom` (pinned
+  6.28.0). No chart library ? charts are inline SVG. The router was added when
+  the auth flow moved to real routes (`/login`, `/signup`); the app is wrapped
+  in `<BrowserRouter>` in `main.jsx`. The authenticated dashboard still uses its
+  own internal hash sub-routing (`#/generate`, `#/business`, ?) at `/`.
+  - New feature modules: `src/intro/` (session-once splash screen) and
+    `src/auth/` (glassmorphism sign-in/sign-up, theme switcher, Visual Lab,
+    shared validation in `auth/validation.js`, session flags in
+    `auth/session.js`). Both are self-contained and CSS-scoped so they do not
+    affect the light-themed dashboard.
+  - Static hosting must send unknown paths to `index.html` (SPA fallback) or
+    deep links like `/login` will 404. `vite dev` and `vite preview` already do.
 
 ## Environment
 

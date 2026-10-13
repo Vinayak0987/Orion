@@ -1,11 +1,28 @@
 // MABGP / Orion frontend (F47-F52 + three-layer operating interface).
 //
-// Hash-based routing: #/generate, #/business, #/work, #/activity, #/loops.
-// No router package — hand-rolled from window.location.hash + useState.
+// Routing:
+//   • Auth uses real React Router paths: /login (Sign In) and /signup (Sign Up).
+//   • The authenticated dashboard lives at / and keeps its own long-standing
+//     hash sub-routing (#/generate, #/business, …) for its internal views.
+//
+// Auth gating is enforced with router redirects (see App below).
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 
 import { api, streamGeneration } from "./api";
+import AuthScreen from "./auth/AuthScreen";
+import {
+  hasSeenLanding,
+  logout as doLogout,
+  markIntroSeen,
+  markLandingSeen,
+  restoreSession,
+} from "./auth/session";
+import IntroScreen from "./intro/IntroScreen";
+import LandingPage from "./landing/LandingPage";
+import FadeIn from "./components/FadeIn";
+import Loader from "./components/Loader";
 import HistoryList from "./components/HistoryList";
 import ProgressPanel from "./components/ProgressPanel";
 import PromptForm from "./components/PromptForm";
@@ -16,6 +33,7 @@ import BusinessView from "./views/BusinessView";
 import LoopsView from "./views/LoopsView";
 import PlanView, { takePlanningHandoff } from "./views/PlanView";
 import WorkView from "./views/WorkView";
+import PlatformApp from "./PlatformApp";
 
 // ============================================================================
 // Hash routing
@@ -181,7 +199,11 @@ function GenerateView() {
 // App shell
 // ============================================================================
 
-export default function App() {
+// ============================================================================
+// Authenticated dashboard shell (unchanged internal hash routing)
+// ============================================================================
+
+function Dashboard({ onLogout }) {
   const [route, setRoute] = useState(getRoute);
 
   useEffect(() => {
@@ -203,7 +225,19 @@ export default function App() {
           <p className="subtitle">AI Business Operating System</p>
         </div>
         <Nav route={route} onChange={navigate} />
-        <span className="meta">{api.base}</span>
+        <span className="meta">
+          {api.base}
+          {onLogout && (
+            <button
+              type="button"
+              className="nav-link"
+              style={{ marginLeft: 12, cursor: "pointer", background: "none", border: 0 }}
+              onClick={onLogout}
+            >
+              Log out
+            </button>
+          )}
+        </span>
       </header>
 
       {route === "plan" && <PlanView />}
@@ -218,4 +252,162 @@ export default function App() {
       </footer>
     </div>
   );
+}
+
+// ============================================================================
+// Auth route wrapper — renders AuthScreen in a fixed mode. On success it lifts
+// the authenticated user up (onLogin) and navigates into the app. If already
+// authenticated, it bounces to /.
+// ============================================================================
+
+function AuthRoute({ mode, isAuthed, onLogin }) {
+  const navigate = useNavigate();
+
+  if (isAuthed) {
+    return <Navigate to="/" replace />;
+  }
+
+  const handleAuthenticated = (user) => {
+    onLogin(user);
+    navigate("/", { replace: true });
+  };
+
+  // key on mode so switching /login <-> /signup remounts and re-runs the fade.
+  return (
+    <FadeIn key={mode}>
+      <AuthScreen mode={mode} onAuthenticated={handleAuthenticated} />
+    </FadeIn>
+  );
+}
+
+// ============================================================================
+// App root — intro gate, restore session, then route table with auth guard.
+// ============================================================================
+
+export default function App() {
+  const navigate = useNavigate();
+
+  // Intro splash plays once per browser session, before any route renders.
+  const [showIntro, setShowIntro] = useState(
+    () => sessionStorage.getItem("orion.introSeen") !== "1"
+  );
+  const finishIntro = useCallback(() => {
+    markIntroSeen();
+    setShowIntro(false);
+  }, []);
+
+  // Landing page shows once per session after the intro, before the login
+  // screen — but only for logged-out visitors. Skipped entirely if the session
+  // was already restored (returning user) or already seen this session.
+  const [showLanding, setShowLanding] = useState(() => !hasSeenLanding());
+  const dismissLanding = useCallback(() => {
+    markLandingSeen();
+    setShowLanding(false);
+  }, []);
+
+  // Auth state. `authReady` guards against redirecting to /login before we have
+  // tried to restore a session from the refresh cookie on a fresh load.
+  const [user, setUser] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    restoreSession().then((restored) => {
+      if (!cancelled) {
+        setUser(restored);
+        setAuthReady(true);
+      }
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  const handleLogin = useCallback((loggedInUser) => {
+    setUser(loggedInUser ?? { authenticated: true });
+  }, []);
+
+  const handleLogout = useCallback(async () => {
+    await doLogout();
+    setUser(null);
+  }, []);
+
+  if (showIntro) {
+    return <IntroScreen onComplete={finishIntro} />;
+  }
+
+  const isAuthed = user !== null;
+
+  // Landing page — shown to logged-out visitors once per session, after the
+  // intro and before the login screen. A returning user (session restored) or
+  // anyone deep-linking straight to /login|/signup skips it. Its CTAs mark it
+  // seen and route to the real auth screens.
+  const onAuthPath =
+    window.location.pathname === "/login" ||
+    window.location.pathname === "/signup";
+  if (authReady && !isAuthed && showLanding && !onAuthPath) {
+    const goAuth = (path) => {
+      dismissLanding();
+      navigate(path);
+    };
+    return (
+      <LandingPage
+        onGetStarted={() => goAuth("/signup")}
+        onSignIn={() => goAuth("/login")}
+      />
+    );
+  }
+
+  return (
+    <Routes>
+      <Route
+        path="/login"
+        element={<AuthRoute mode="signin" isAuthed={isAuthed} onLogin={handleLogin} />}
+      />
+      <Route
+        path="/signup"
+        element={<AuthRoute mode="signup" isAuthed={isAuthed} onLogin={handleLogin} />}
+      />
+      <Route
+        path="/orion"
+        element={
+          !authReady ? (
+            <AuthLoading />
+          ) : isAuthed ? (
+            <PlatformApp onLogout={handleLogout} />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+      <Route
+        path="/legacy"
+        element={
+          !authReady ? (
+            <AuthLoading />
+          ) : isAuthed ? (
+            <FadeIn><Dashboard onLogout={handleLogout} /></FadeIn>
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+      <Route
+        path="/*"
+        element={
+          !authReady ? (
+            <AuthLoading />
+          ) : isAuthed ? (
+            <PlatformApp onLogout={handleLogout} />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+    </Routes>
+  );
+}
+
+// Brief neutral screen shown only while the initial session restore is in
+// flight, so a logged-in user isn't flashed to /login on reload.
+function AuthLoading() {
+  return <Loader label="Loading" />;
 }
