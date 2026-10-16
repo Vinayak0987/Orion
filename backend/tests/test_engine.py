@@ -10,7 +10,7 @@ import json
 
 import pytest
 
-from app.agents.defaults import seed_defaults
+from app.engine.agents.defaults import seed_defaults
 
 
 class ScriptedLLM:
@@ -56,8 +56,8 @@ def scripted(monkeypatch):
     llm = ScriptedLLM()
 
     # Patch the LLMClient constructor everywhere the engine/executor builds one.
-    import app.missions.engine as engine_mod
-    import app.missions.executor as exec_mod
+    import app.engine.missions.engine as engine_mod
+    import app.engine.missions.executor as exec_mod
     monkeypatch.setattr(engine_mod, "LLMClient", lambda user_keys=None: llm)
     monkeypatch.setattr(exec_mod, "LLMClient", lambda user_keys=None: llm)
 
@@ -70,7 +70,7 @@ def scripted(monkeypatch):
 
 
 async def test_full_mission_runs_offline(scripted):
-    from app.missions import engine, store
+    from app.engine.missions import engine, store
 
     mission_id = store.create_mission("Analyze my competitors", "default-user")
     await engine.run_mission(mission_id)
@@ -91,8 +91,8 @@ async def test_full_mission_runs_offline(scripted):
 
 
 async def test_traces_recorded(scripted):
-    from app.missions import engine, store
-    from app.traces.store import list_traces
+    from app.engine.missions import engine, store
+    from app.engine.traces.store import list_traces
 
     mission_id = store.create_mission("Analyze my competitors", "default-user")
     await engine.run_mission(mission_id)
@@ -103,7 +103,7 @@ async def test_traces_recorded(scripted):
 
 
 async def test_empty_plan_fails_cleanly(scripted, monkeypatch):
-    from app.missions import engine, store
+    from app.engine.missions import engine, store
 
     scripted.plan_json = []  # planner returns no tasks
     mission_id = store.create_mission("vague", "default-user")

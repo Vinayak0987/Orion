@@ -23,7 +23,7 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from app.chat import store
+from app.stores.chat import store
 
 router = APIRouter(tags=["chat"])
 DEFAULT_USER = "default-user"

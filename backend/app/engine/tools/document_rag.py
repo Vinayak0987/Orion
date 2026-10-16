@@ -33,7 +33,7 @@ async def document_rag(tool_input: dict, user_keys: dict | None = None,
             import chromadb  # noqa: F401
         except ImportError:
             # No ChromaDB — use the local keyword fallback store.
-            from app.knowledge import fallback
+            from app.stores.knowledge import fallback
 
             user_id = collection.replace("documents_", "", 1) or "default-user"
             passages = fallback.search(user_id, query)

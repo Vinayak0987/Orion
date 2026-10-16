@@ -1,6 +1,6 @@
 """Settings API — user API keys.
 
-Keys are encrypted at rest (app.settings.store) and only ever returned masked.
+Keys are encrypted at rest (app.stores.settings.store) and only ever returned masked.
 The decrypted values are loaded directly by the mission key-loader, never
 exposed over this API.
 """
@@ -10,7 +10,7 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from app.settings import store
+from app.stores.settings import store
 
 router = APIRouter(prefix="/settings", tags=["settings"])
 

@@ -7,7 +7,7 @@ agents in Phase 2 that override these.
 
 from __future__ import annotations
 
-from app.agents.store import create_agent, get_agent
+from app.engine.agents.store import create_agent, get_agent
 
 _TOOL_HINT = (
     "\n\nTo use a tool, reply with ONLY a JSON object and nothing else:\n"

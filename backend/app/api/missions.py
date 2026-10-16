@@ -7,7 +7,7 @@ import asyncio
 from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel, Field
 
-from app.missions import engine, events, store
+from app.engine.missions import engine, events, store
 
 router = APIRouter(tags=["missions"])
 

@@ -37,7 +37,7 @@ def test_crypto_empty():
 # --- settings store ----------------------------------------------------------
 
 def test_store_set_and_decrypt():
-    from app.settings import store
+    from app.stores.settings import store
 
     store.set_keys({"groq_api_key": "gsk_secret9999"})
     plain = store.decrypted_keys()
@@ -45,7 +45,7 @@ def test_store_set_and_decrypt():
 
 
 def test_store_masks_keys():
-    from app.settings import store
+    from app.stores.settings import store
 
     store.set_keys({"serper_api_key": "srp_abcd1234"})
     masked = store.masked_keys()
@@ -57,7 +57,7 @@ def test_store_stored_encrypted_not_plaintext():
     import json
 
     from app.db.sqlite import connection
-    from app.settings import store
+    from app.stores.settings import store
 
     store.set_keys({"gemini_api_key": "AIza_plaintext_xyz"})
     with connection() as conn:
@@ -70,7 +70,7 @@ def test_store_stored_encrypted_not_plaintext():
 
 
 def test_store_delete_key():
-    from app.settings import store
+    from app.stores.settings import store
 
     store.set_keys({"groq_api_key": "gsk_todelete"})
     assert store.delete_key("groq") is True
@@ -105,7 +105,7 @@ def test_settings_api_delete_unknown_provider_404():
 async def test_user_keys_flow_into_mission(monkeypatch):
     """The engine must load the user's stored keys onto the mission so the
     LLMClient receives them."""
-    from app.settings import store as settings_store
+    from app.stores.settings import store as settings_store
 
     settings_store.set_keys({"groq_api_key": "gsk_mission_key"})
 
@@ -122,10 +122,10 @@ async def test_user_keys_flow_into_mission(monkeypatch):
             from app.llm.providers import LLMResult
             return LLMResult(text="t", provider="x", model="x")
 
-    import app.missions.engine as engine_mod
+    import app.engine.missions.engine as engine_mod
     monkeypatch.setattr(engine_mod, "LLMClient", FakeLLM)
 
-    from app.missions import engine, store
+    from app.engine.missions import engine, store
 
     mid = store.create_mission("do something", "default-user")
     await engine.run_mission(mid)

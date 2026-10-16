@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from app.agents.defaults import seed_defaults
+from app.engine.agents.defaults import seed_defaults
 
 
 # --- planner validation ------------------------------------------------------
 
 def test_planner_validate_drops_bad_depends_and_types():
-    from app.missions.planner import _validate
+    from app.engine.missions.planner import _validate
 
     raw = [
         {"title": "A", "agent_type": "research", "tools_needed": ["web_search"], "depends_on": []},
@@ -26,7 +26,7 @@ def test_planner_validate_drops_bad_depends_and_types():
 # --- router ------------------------------------------------------------------
 
 def test_router_returns_system_default():
-    from app.missions.router import route
+    from app.engine.missions.router import route
 
     seed_defaults()
     mission = {"created_by": "default-user", "department_id": None}
@@ -35,7 +35,7 @@ def test_router_returns_system_default():
 
 
 def test_router_falls_back_to_general_for_unknown_type():
-    from app.missions.router import route
+    from app.engine.missions.router import route
 
     seed_defaults()
     mission = {"created_by": "default-user", "department_id": None}
@@ -46,7 +46,7 @@ def test_router_falls_back_to_general_for_unknown_type():
 # --- agents store ------------------------------------------------------------
 
 def test_seed_defaults_idempotent():
-    from app.agents.store import list_agents
+    from app.engine.agents.store import list_agents
 
     seed_defaults()
     seed_defaults()

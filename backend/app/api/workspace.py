@@ -7,7 +7,7 @@ from pydantic import BaseModel, EmailStr, Field
 
 from app.auth.deps import get_current_user
 from app.auth.models import UserPublic
-from app.workspace import store
+from app.stores.workspace import store
 
 router = APIRouter(prefix="/workspace", tags=["workspace"])
 

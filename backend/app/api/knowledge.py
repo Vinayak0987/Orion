@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
-from app.knowledge.store import IngestError, ingest_document
+from app.stores.knowledge.store import IngestError, ingest_document
 
 router = APIRouter(tags=["knowledge"])
 

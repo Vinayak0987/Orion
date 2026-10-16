@@ -24,7 +24,7 @@ log = logging.getLogger("orion")
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     init_db()
     # Seed the 7 default agents (idempotent).
-    from app.agents.defaults import seed_defaults
+    from app.engine.agents.defaults import seed_defaults
 
     seed_defaults()
 

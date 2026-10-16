@@ -6,7 +6,7 @@ Never returns None (seed_defaults guarantees a 'general' system agent exists).
 
 from __future__ import annotations
 
-from app.agents.store import find_agents_by_type, get_system_default
+from app.engine.agents.store import find_agents_by_type, get_system_default
 
 
 def route(task: dict, mission: dict) -> str:

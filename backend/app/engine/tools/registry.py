@@ -6,8 +6,8 @@ an error dict (not an exception) so a mis-planned tool name degrades gracefully.
 
 from __future__ import annotations
 
-from app.tools.document_rag import document_rag
-from app.tools.web_search import web_search
+from app.engine.tools.document_rag import document_rag
+from app.engine.tools.web_search import web_search
 
 # Built-in tools available to every agent (subject to the agent's allowed list).
 BUILTIN_TOOLS = {

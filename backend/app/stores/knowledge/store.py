@@ -109,7 +109,7 @@ def ingest_document(
     except ImportError:
         # ChromaDB not installed (native wheel unavailable) — use the local
         # keyword fallback so ingestion still works end-to-end.
-        from app.knowledge import fallback
+        from app.stores.knowledge import fallback
 
         document_id = fallback.add_chunks(user_id, filename, chunks)
     except IngestError:

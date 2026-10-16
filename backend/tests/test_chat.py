@@ -22,7 +22,7 @@ def client(monkeypatch):
     importlib.reload(config_mod)
     from app.db import sqlite as sqlite_mod
     importlib.reload(sqlite_mod)
-    from app.chat import store as store_mod
+    from app.stores.chat import store as store_mod
     importlib.reload(store_mod)
 
     sqlite_mod.init_db()

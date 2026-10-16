@@ -13,7 +13,7 @@ import json
 
 import pytest
 
-from app.agents.defaults import seed_defaults
+from app.engine.agents.defaults import seed_defaults
 
 
 class ScriptedLLM:
@@ -49,15 +49,15 @@ class ScriptedLLM:
 
 
 def _patch(monkeypatch, llm):
-    import app.missions.engine as engine_mod
-    import app.missions.executor as exec_mod
+    import app.engine.missions.engine as engine_mod
+    import app.engine.missions.executor as exec_mod
     monkeypatch.setattr(engine_mod, "LLMClient", lambda user_keys=None: llm)
     monkeypatch.setattr(exec_mod, "LLMClient", lambda user_keys=None: llm)
 
 
 async def _collect_events(mission_id):
     """Drain the mission's event stream into a list after it finished."""
-    from app.missions import events
+    from app.engine.missions import events
     out = []
     async for ev in events.subscribe(mission_id):
         out.append(ev)
@@ -70,7 +70,7 @@ def _seed():
 
 
 async def test_clarifying_question_pauses_mission(monkeypatch):
-    from app.missions import engine, store
+    from app.engine.missions import engine, store
 
     llm = ScriptedLLM(needs_clarification=True)
     _patch(monkeypatch, llm)
@@ -92,7 +92,7 @@ async def test_clarifying_question_pauses_mission(monkeypatch):
 
 
 async def test_skip_clarify_runs_full_mission(monkeypatch):
-    from app.missions import engine, store
+    from app.engine.missions import engine, store
 
     llm = ScriptedLLM(needs_clarification=True)  # would ask, but we skip
     _patch(monkeypatch, llm)
@@ -108,7 +108,7 @@ async def test_skip_clarify_runs_full_mission(monkeypatch):
 
 
 async def test_answer_is_streamed_in_chunks(monkeypatch):
-    from app.missions import engine, store
+    from app.engine.missions import engine, store
 
     llm = ScriptedLLM()
     _patch(monkeypatch, llm)
@@ -126,8 +126,8 @@ async def test_answer_is_streamed_in_chunks(monkeypatch):
 
 
 async def test_long_term_memory_auto_extracted(monkeypatch):
-    from app.chat import store as chat_store
-    from app.missions import engine, store
+    from app.stores.chat import store as chat_store
+    from app.engine.missions import engine, store
 
     facts = [{"key": "company", "value": "Acme"}, {"key": "tone", "value": "concise"}]
     llm = ScriptedLLM(facts=facts)
@@ -147,8 +147,8 @@ async def test_long_term_memory_auto_extracted(monkeypatch):
 
 
 async def test_short_term_memory_reaches_planner(monkeypatch):
-    from app.chat import store as chat_store
-    from app.missions import engine, store
+    from app.stores.chat import store as chat_store
+    from app.engine.missions import engine, store
 
     llm = ScriptedLLM()
     _patch(monkeypatch, llm)
@@ -163,5 +163,5 @@ async def test_short_term_memory_reaches_planner(monkeypatch):
 
 
 def _new_conv():
-    from app.chat import store as chat_store
+    from app.stores.chat import store as chat_store
     return chat_store.create_conversation("default-user")["id"]

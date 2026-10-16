@@ -11,9 +11,9 @@ import asyncio
 
 from app.config import settings
 from app.llm.client import LLMClient
-from app.missions import events, planner, store
-from app.missions.executor import run_task
-from app.missions.router import route
+from app.engine.missions import events, planner, store
+from app.engine.missions.executor import run_task
+from app.engine.missions.router import route
 
 
 async def run_mission(mission_id: str, skip_clarify: bool = False) -> None:
@@ -37,7 +37,7 @@ async def _run(mission_id: str, emit, skip_clarify: bool = False) -> None:
 
     # Load the user's decrypted API keys and attach to the mission so the
     # Executor's LLMClient and tool dispatch use them (Settings → mission flow).
-    from app.settings.store import decrypted_keys
+    from app.stores.settings.store import decrypted_keys
 
     mission["user_keys"] = decrypted_keys(user_id)
 
@@ -47,7 +47,7 @@ async def _run(mission_id: str, emit, skip_clarify: bool = False) -> None:
     short_term = _short_term_memory(conversation_id, mission_id)
     mission["short_term_memory"] = short_term
     # --- Long-term memory + global context: durable facts across ALL chats ---
-    from app.chat.store import context_block
+    from app.stores.chat.store import context_block
 
     long_term = context_block(user_id)
 
@@ -55,7 +55,7 @@ async def _run(mission_id: str, emit, skip_clarify: bool = False) -> None:
     if not skip_clarify:
         store.set_mission(mission_id, status="planning")
         await emit("planning_started")  # show feedback immediately
-        from app.missions import planner as _planner
+        from app.engine.missions import planner as _planner
 
         try:
             clar = await asyncio.wait_for(
@@ -198,7 +198,7 @@ def _short_term_memory(conversation_id: str | None, mission_id: str) -> str:
     if not conversation_id:
         return ""
     try:
-        from app.chat.store import list_messages
+        from app.stores.chat.store import list_messages
 
         msgs = list_messages(conversation_id)
         # exclude the just-created running assistant placeholder / empty content
@@ -236,8 +236,8 @@ async def _learn_memory(mission_id, conversation_id, user_id, llm, emit) -> None
     if not conversation_id:
         return
     try:
-        from app.chat.store import list_messages, set_context
-        from app.missions import planner as _planner
+        from app.stores.chat.store import list_messages, set_context
+        from app.engine.missions import planner as _planner
 
         msgs = list_messages(conversation_id)
         convo = "\n".join(f"{m['role']}: {m['content']}" for m in msgs if m.get("content"))
@@ -253,7 +253,7 @@ async def _learn_memory(mission_id, conversation_id, user_id, llm, emit) -> None
 
 
 def _agent_name(agent_id: str) -> str:
-    from app.agents.store import get_agent
+    from app.engine.agents.store import get_agent
     a = get_agent(agent_id)
     return a["name"] if a else agent_id
 

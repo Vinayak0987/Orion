@@ -12,12 +12,12 @@ from __future__ import annotations
 
 import json
 
-from app.agents.store import get_agent
+from app.engine.agents.store import get_agent
 from app.config import settings
 from app.llm.client import LLMClient
 from app.llm.repair import extract_json
-from app.tools import registry
-from app.traces import store as traces
+from app.engine.tools import registry
+from app.engine.traces import store as traces
 
 
 def _tier_for(agent: dict) -> str:
