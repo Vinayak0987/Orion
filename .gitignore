@@ -14,6 +14,7 @@ venv/
 # Data / generated
 backend/_out/
 backend/data/
+backend2/data/
 *.db
 *.db-wal
 *.db-shm
@@ -21,6 +22,19 @@ evaluation/results/*.csv
 evaluation/results/*.json
 evaluation/results/*.md
 backend/data/chroma/
+backend2/data/chroma2/
+
+# Run logs (dev servers / ad-hoc runs)
+_run.log
+_run.err
+_vite.log
+_fe.log
+_fe.err
+_fe_dev.log
+_fe_dev.err
+
+# Git worktrees
+.worktrees/
 
 # Node
 node_modules/

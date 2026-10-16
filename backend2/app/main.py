@@ -47,8 +47,17 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     else:
         log.warning("orion.auth MONGODB_URI not set — auth endpoints disabled until configured")
 
+    # Boot the v1 generation + operating engine (merged under app.generation).
+    from app.generation.lifecycle import init_generation
+
+    init_generation()
+    log.info("orion.generation engine initialised")
+
     log.info("orion.started env=%s sqlite=%s", settings.app_env, settings.sqlite_file)
     yield
+    from app.generation.lifecycle import shutdown_generation
+
+    await shutdown_generation()
     log.info("orion.stopped")
 
 
@@ -85,3 +94,14 @@ app.include_router(workspace_router)
 app.include_router(knowledge_router)
 app.include_router(chat_router)
 app.include_router(auth_router)
+
+# v1 generation + operating + planning engine (merged under app.generation).
+from app.generation.app_routes import router as generation_router  # noqa: E402
+from app.generation.operating.api import router as gen_operating_router  # noqa: E402
+from app.generation.planning.api import router as gen_planning_router  # noqa: E402
+from app.generation.planning.plan_api import router as gen_plan_router  # noqa: E402
+
+app.include_router(generation_router)
+app.include_router(gen_operating_router)
+app.include_router(gen_planning_router)
+app.include_router(gen_plan_router)

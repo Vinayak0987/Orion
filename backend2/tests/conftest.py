@@ -11,8 +11,17 @@ import pytest
 
 
 @pytest.fixture(autouse=True)
-def temp_db(monkeypatch):
-    """Point the app at a throwaway SQLite file for the duration of each test."""
+def temp_db(monkeypatch, request):
+    """Point the app at a throwaway SQLite file for the duration of each test.
+
+    Generation-engine tests live under ``tests/generation/`` and manage their
+    own namespaced database via that package's ``gen_temp_db`` fixture, so this
+    v2 fixture steps aside for them.
+    """
+    if "tests/generation/" in request.node.nodeid or "tests\\generation\\" in request.node.nodeid:
+        yield
+        return
+
     tmpdir = tempfile.mkdtemp()
     db_path = os.path.join(tmpdir, "test.db")
     chroma_path = os.path.join(tmpdir, "chroma")

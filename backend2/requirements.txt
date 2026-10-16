@@ -33,3 +33,19 @@ pytest==8.3.4
 pytest-asyncio==0.25.0
 respx==0.22.0                 # mock httpx in tests (fully offline)
 mongomock==4.3.0              # in-process MongoDB fake; auth tests stay offline
+
+# --- Merged v1 generation + operating engine (app.generation) ----------------
+# These back the v1 generation/operating/planning layer that was merged in under
+# the app.generation namespace. Shared deps above (fastapi, pydantic, httpx,
+# chromadb, auth stack) are reused.
+langgraph==0.2.62             # department sub-graph orchestration
+langchain-core==0.3.29
+groq==0.13.1                  # Groq provider (generation llm chain)
+google-generativeai==0.8.3    # Gemini provider
+jinja2==3.1.5                 # HTML report rendering (app.generation.output)
+xhtml2pdf==0.2.16             # PDF export
+tenacity==9.0.0               # provider fallback retry/backoff
+structlog==24.4.0             # structured logging used across the engine
+# Evaluation-only (not on the request path): used by scripts/ + evaluation/.
+scipy==1.14.1
+matplotlib==3.9.2
