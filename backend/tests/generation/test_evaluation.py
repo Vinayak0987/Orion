@@ -11,6 +11,10 @@ from datetime import UTC, datetime
 
 import pytest
 
+# Research / evaluation harness — not the deployed app. Skipped by default;
+# run with:  pytest -m research
+pytestmark = pytest.mark.research
+
 from app.generation.config import settings
 from app.generation.agents.benchmarks import (
     BENCHMARKS,

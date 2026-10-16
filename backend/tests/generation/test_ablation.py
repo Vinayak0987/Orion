@@ -13,6 +13,10 @@ import pathlib
 import tempfile
 
 import pytest
+
+# Research / evaluation harness — not the deployed app. Skipped by default;
+# run with:  pytest -m research
+pytestmark = pytest.mark.research
 from datetime import UTC, datetime
 
 from app.generation.operating.ablation import (

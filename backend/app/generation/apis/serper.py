@@ -105,7 +105,9 @@ def build_queries(intent: BusinessIntent) -> list[str]:
 
 class SerperClient:
     def __init__(self, client: httpx.AsyncClient | None = None) -> None:
-        self._client = client or httpx.AsyncClient(timeout=httpx.Timeout(25.0))
+        from app.net_timeouts import client_timeout
+
+        self._client = client or httpx.AsyncClient(timeout=client_timeout(25.0))
         self._owns_client = client is None
 
     def available(self) -> bool:

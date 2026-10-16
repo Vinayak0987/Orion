@@ -13,6 +13,7 @@ from dataclasses import dataclass
 import httpx
 
 from app.config import settings
+from app.net_timeouts import client_timeout
 
 
 @dataclass(slots=True)
@@ -64,7 +65,7 @@ class GroqProvider:
         model = self.model_for(tier)
         started = time.monotonic()
         try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
+            async with httpx.AsyncClient(timeout=client_timeout(30.0)) as client:
                 resp = await client.post(
                     self.BASE,
                     headers={"Authorization": f"Bearer {self.api_key}"},
@@ -117,7 +118,7 @@ class GeminiProvider:
 
         started = time.monotonic()
         try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
+            async with httpx.AsyncClient(timeout=client_timeout(30.0)) as client:
                 resp = await client.post(
                     f"{self.BASE}/{model}:generateContent?key={self.api_key}", json=body
                 )
@@ -161,7 +162,7 @@ class OllamaProvider:
     async def call(self, messages: list[dict], tier: str, temperature: float = 0.7) -> LLMResult:
         started = time.monotonic()
         try:
-            async with httpx.AsyncClient(timeout=180.0) as client:
+            async with httpx.AsyncClient(timeout=client_timeout(180.0)) as client:
                 resp = await client.post(
                     f"{self.base_url}/api/chat",
                     json={"model": self.model, "messages": messages, "stream": False,

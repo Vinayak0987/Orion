@@ -31,6 +31,7 @@ cryptography==44.0.0          # Fernet encryption for API keys at rest
 # --- Testing -----------------------------------------------------------------
 pytest==8.3.4
 pytest-asyncio==0.25.0
+pytest-xdist==3.6.1           # parallel test execution (-n auto)
 respx==0.22.0                 # mock httpx in tests (fully offline)
 mongomock==4.3.0              # in-process MongoDB fake; auth tests stay offline
 

@@ -36,7 +36,9 @@ class GroqProvider(LLMProvider):
             daily_request_limit=settings.groq_daily_request_limit,
         )
         self._api_key = settings.groq_api_key
-        self._client = httpx.AsyncClient(timeout=httpx.Timeout(60.0))
+        from app.net_timeouts import client_timeout
+
+        self._client = httpx.AsyncClient(timeout=client_timeout(60.0))
 
     def model_for(self, tier: ModelTier) -> str:
         if tier is ModelTier.REASONING:

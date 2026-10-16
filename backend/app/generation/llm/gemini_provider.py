@@ -62,7 +62,9 @@ class GeminiProvider(LLMProvider):
         self._api_key = settings.gemini_api_key
         self._model = settings.gemini_model
         self._api_version = settings.gemini_api_version
-        self._client = httpx.AsyncClient(timeout=httpx.Timeout(60.0))
+        from app.net_timeouts import client_timeout
+
+        self._client = httpx.AsyncClient(timeout=client_timeout(60.0))
 
     def model_for(self, tier: ModelTier) -> str:  # noqa: ARG002 - single free model
         return self._model

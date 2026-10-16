@@ -179,7 +179,9 @@ class GooglePlacesProvider:
     name = "google_places"
 
     def __init__(self, client: httpx.AsyncClient | None = None) -> None:
-        self._client = client or httpx.AsyncClient(timeout=httpx.Timeout(20.0))
+        from app.net_timeouts import client_timeout
+
+        self._client = client or httpx.AsyncClient(timeout=client_timeout(20.0))
         self._owns_client = client is None
 
     def available(self) -> bool:
@@ -300,8 +302,10 @@ class OverpassProvider:
     name = "openstreetmap"
 
     def __init__(self, client: httpx.AsyncClient | None = None) -> None:
+        from app.net_timeouts import client_timeout
+
         self._client = client or httpx.AsyncClient(
-            timeout=httpx.Timeout(OVERPASS_CLIENT_TIMEOUT_S),
+            timeout=client_timeout(OVERPASS_CLIENT_TIMEOUT_S),
             headers={"User-Agent": USER_AGENT},
         )
         self._owns_client = client is None

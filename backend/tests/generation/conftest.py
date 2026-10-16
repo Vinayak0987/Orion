@@ -18,7 +18,16 @@ from pathlib import Path
 
 import pytest
 
+# Fail fast instead of hanging on unmocked network calls (see app.net_timeouts).
+os.environ.setdefault("ORION_TEST_FAST_TIMEOUTS", "1")
+
 _ALLOWED_HOSTS = {"localhost", "127.0.0.1", "::1", ""}
+
+# Ports that must NOT be reachable even on localhost: a test hitting a real
+# local service (e.g. Ollama on 11434) would otherwise wait out the full client
+# timeout. Blocking turns that into an instant, mockable failure. A test that
+# genuinely needs one can mark itself with @pytest.mark.allow_network.
+_BLOCKED_LOCAL_PORTS = {11434}  # Ollama
 
 
 @pytest.fixture(autouse=True)
@@ -72,20 +81,35 @@ def block_outbound_network(monkeypatch, request):
     real_connect = socket.socket.connect
     real_connect_ex = socket.socket.connect_ex
 
+    def _port_of(address):
+        return address[1] if isinstance(address, tuple) and len(address) > 1 else None
+
     def guard(self, address, *args, **kwargs):
         host = address[0] if isinstance(address, tuple) and address else ""
+        port = _port_of(address)
         if str(host) not in _ALLOWED_HOSTS:
             raise NetworkAccessAttempted(
                 f"Test attempted an outbound connection to {host}. "
                 f"Mock it with respx or disable the feature flag - the suite must "
                 f"consume no API quota."
             )
+        if port in _BLOCKED_LOCAL_PORTS:
+            raise NetworkAccessAttempted(
+                f"Test attempted to reach a real local service on port {port} "
+                f"(e.g. Ollama). Mock the provider or mark the test "
+                f"@pytest.mark.allow_network."
+            )
         return real_connect(self, address, *args, **kwargs)
 
     def guard_ex(self, address, *args, **kwargs):
         host = address[0] if isinstance(address, tuple) and address else ""
+        port = _port_of(address)
         if str(host) not in _ALLOWED_HOSTS:
             raise NetworkAccessAttempted(f"Test attempted an outbound connection to {host}")
+        if port in _BLOCKED_LOCAL_PORTS:
+            raise NetworkAccessAttempted(
+                f"Test attempted to reach a real local service on port {port}"
+            )
         return real_connect_ex(self, address, *args, **kwargs)
 
     monkeypatch.setattr(socket.socket, "connect", guard)

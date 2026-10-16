@@ -86,7 +86,9 @@ async def upload_bytes(
     files = {"file": (filename, data)}
 
     try:
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        from app.net_timeouts import client_timeout
+
+        async with httpx.AsyncClient(timeout=client_timeout(60.0)) as client:
             resp = await client.post(url, data=form, files=files)
     except httpx.HTTPError as e:
         raise UploadError(f"Cloudinary transport error: {e}") from e

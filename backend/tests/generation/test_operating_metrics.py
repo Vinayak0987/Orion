@@ -5,6 +5,10 @@ Each metric is tested with fixture data of known answer. No LLM, no network.
 
 import pytest
 
+# Research / evaluation harness — not the deployed app. Skipped by default;
+# run with:  pytest -m research
+pytestmark = pytest.mark.research
+
 from evaluation.operating_metrics import (
     ALL_OPERATING_METRICS,
     CONFLICT_INCIDENT_RATE,

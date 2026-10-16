@@ -37,15 +37,22 @@ class OllamaProvider(LLMProvider):
         self.tracker = FreeTierTracker(name="ollama")
         self._base_url = settings.ollama_base_url.rstrip("/")
         self._model = settings.ollama_model
-        # Local inference on 8 GB RAM is slow; allow a generous timeout.
-        self._client = httpx.AsyncClient(timeout=httpx.Timeout(300.0))
+        # Local inference on 8 GB RAM is slow; allow a generous timeout
+        # (capped automatically under tests via ORION_TEST_FAST_TIMEOUTS).
+        from app.net_timeouts import client_timeout
+
+        self._client = httpx.AsyncClient(timeout=client_timeout(300.0))
 
     def model_for(self, tier: ModelTier) -> str:  # noqa: ARG002 - one local model
         return self._model
 
     async def is_available(self) -> bool:
+        from app.net_timeouts import client_timeout
+
         try:
-            response = await self._client.get(f"{self._base_url}/api/tags", timeout=5.0)
+            response = await self._client.get(
+                f"{self._base_url}/api/tags", timeout=client_timeout(5.0)
+            )
         except httpx.HTTPError:
             return False
         return response.status_code == 200

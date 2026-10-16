@@ -16,6 +16,10 @@ from pathlib import Path
 
 import pytest
 
+# Research / evaluation harness — not the deployed app. Skipped by default;
+# run with:  pytest -m research
+pytestmark = pytest.mark.research
+
 from app.generation.db import sqlite as sq
 from app.generation.operating import init_all
 from evaluation.ablation_harness import (

@@ -11,6 +11,10 @@ import csv
 
 import pytest
 
+# Research / evaluation harness — not the deployed app. Skipped by default;
+# run with:  pytest -m research
+pytestmark = pytest.mark.research
+
 matplotlib = pytest.importorskip("matplotlib")
 
 from scripts import make_figures as mf  # noqa: E402

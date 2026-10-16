@@ -13,6 +13,10 @@ import statistics
 
 import pytest
 
+# Research / evaluation harness — not the deployed app. Skipped by default;
+# run with:  pytest -m research
+pytestmark = pytest.mark.research
+
 from evaluation import significance as sig
 from evaluation.metrics import (
     CONSISTENCY,

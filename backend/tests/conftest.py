@@ -9,6 +9,9 @@ from pathlib import Path
 
 import pytest
 
+# Fail fast instead of hanging on unmocked network calls (see app.net_timeouts).
+os.environ.setdefault("ORION_TEST_FAST_TIMEOUTS", "1")
+
 
 @pytest.fixture(autouse=True)
 def temp_db(monkeypatch, request):

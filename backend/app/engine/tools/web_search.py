@@ -28,7 +28,9 @@ async def web_search(tool_input: dict, user_keys: dict | None = None) -> dict:
         }
 
     try:
-        async with httpx.AsyncClient(timeout=15.0) as client:
+        from app.net_timeouts import client_timeout
+
+        async with httpx.AsyncClient(timeout=client_timeout(15.0)) as client:
             resp = await client.post(
                 SERPER_URL,
                 headers={"X-API-KEY": key, "Content-Type": "application/json"},

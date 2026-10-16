@@ -12,6 +12,9 @@ from __future__ import annotations
 
 import pytest
 
+# End-to-end operating-layer run — slower. Skipped by default; run with: pytest -m slow
+pytestmark = pytest.mark.slow
+
 from app.generation.operating import governance as G
 from app.generation.operating import ledger, monitors
 from app.generation.operating.anchors import AnchorSet
