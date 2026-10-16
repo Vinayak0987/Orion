@@ -61,10 +61,12 @@ import { ViewObsEvaluations } from "./components/views/observability/ViewObsEval
 import { ViewObsAudit } from "./components/views/observability/ViewObsAudit.jsx";
 import { ViewObsWebsite } from "./components/views/observability/ViewObsWebsite.jsx";
 import { SettingsSection } from "./components/SettingsSection.jsx";
+import { ToastProvider } from "./components/ui/Toast.jsx";
 
 export default function PlatformApp({ onLogout }) {
   const [activeView, setActiveView] = useState("dashboard");
   const [viewingDetails, setViewingDetails] = useState(false);
+  const [detailMissionId, setDetailMissionId] = useState(null);
   const [agentsTab, setAgentsTab] = useState("overview");
   const [toolsTab, setToolsTab] = useState("overview");
   const [settingsTab, setSettingsTab] = useState("settings");
@@ -110,7 +112,7 @@ export default function PlatformApp({ onLogout }) {
   };
 
   const renderContent = () => {
-    if (viewingDetails) return <ViewMissionDetails />;
+    if (viewingDetails) return <ViewMissionDetails missionId={detailMissionId} onBack={() => setViewingDetails(false)} />;
 
     // Settings opened via Orion Workspace — in-page sidebar handles sub-pages
     if (activeView === "settings") {
@@ -123,7 +125,7 @@ export default function PlatformApp({ onLogout }) {
       case "command-center":
         return <ViewCommandCenter />;
       case "missions":
-        return <ViewMissions onViewDetails={() => setViewingDetails(true)} />;
+        return <ViewMissions onViewDetails={(id) => { setDetailMissionId(id); setViewingDetails(true); }} />;
       case "approvals":
         return <ViewApprovals />;
       case "notifications":
@@ -271,21 +273,23 @@ export default function PlatformApp({ onLogout }) {
   };
 
   return (
-    <div className="flex h-screen bg-[#F8FAFC]">
-      <Sidebar
-        activeView={activeView}
-        viewingDetails={viewingDetails}
-        onNavClick={handleNavClick}
-        agentsTab={agentsTab}
-        onAgentsTabClick={handleAgentsTabClick}
-        toolsTab={toolsTab}
-        onToolsTabClick={handleToolsTabClick}
-        settingsOpen={activeView === "settings"}
-      />
-      <main className="flex-1 flex flex-col h-full min-w-0 bg-[#F8FAFC]">
-        <Topbar onLogout={onLogout} />
-        <div className="flex-1 overflow-auto bg-[#F8FAFC]">{renderContent()}</div>
-      </main>
-    </div>
+    <ToastProvider>
+      <div className="flex h-screen bg-[#F8FAFC]">
+        <Sidebar
+          activeView={activeView}
+          viewingDetails={viewingDetails}
+          onNavClick={handleNavClick}
+          agentsTab={agentsTab}
+          onAgentsTabClick={handleAgentsTabClick}
+          toolsTab={toolsTab}
+          onToolsTabClick={handleToolsTabClick}
+          settingsOpen={activeView === "settings"}
+        />
+        <main className="flex-1 flex flex-col h-full min-w-0 bg-[#F8FAFC]">
+          <Topbar onLogout={onLogout} onNavigate={handleNavClick} />
+          <div className="flex-1 overflow-auto bg-[#F8FAFC]">{renderContent()}</div>
+        </main>
+      </div>
+    </ToastProvider>
   );
 }

@@ -1,122 +1,69 @@
-import { CreditCard } from "lucide-react";
-import { Tabs, SettingsHeader, PrimaryButton, pageShellCls, cardCls } from "./SettingsShared.jsx";
+import { Check, KeyRound, Infinity as InfinityIcon } from "lucide-react";
 
-const UsageBar = ({ label, value, pct }) => (
-  <div>
-    <div className="flex items-center justify-between mb-1.5">
-      <span className="text-[14px] font-medium text-[#64748b]">{label}</span>
-      <span className="text-[13px] font-semibold text-[#64748b]">{value}</span>
-    </div>
-    <div className="h-2 rounded-full bg-[#eef2f8] overflow-hidden">
-      <div className="h-full rounded-full bg-[#4f46e5]" style={{ width: `${pct}%` }} />
-    </div>
-  </div>
-);
+import {
+  neuShellCls,
+  SettingsHeader,
+  NeuSectionTitle,
+  NeuPrimaryButton,
+  NeuChip,
+} from "./SettingsShared.jsx";
 
-const invoices = [
-  { id: "INV-2026-001", date: "Sep 1, 2026", amount: "₹1,999", status: "Paid", action: "Download" },
-  { id: "INV-2026-002", date: "Aug 1, 2026", amount: "₹1,999", status: "Paid", action: "Download" },
-  { id: "INV-2026-003", date: "Jul 1, 2026", amount: "₹1,999", status: "Paid", action: "Download" },
-  { id: "INV-2026-004", date: "Jun 1, 2026", amount: "₹1,999", status: "Failed", action: "Retry" },
+const included = [
+  "Unlimited missions — run as many as you like",
+  "All built-in agents and tools",
+  "Bring your own LLM keys (Groq, Gemini, OpenAI)",
+  "Local Ollama fallback — zero cost",
+  "Full observability and history",
 ];
 
-export const ViewBilling = () => (
-  <div className={pageShellCls}>
-    <div className="max-w-[1100px]">
-      <SettingsHeader
-        title="Billing & Subscription"
-        subtitle="Manage your plan, usage and invoices."
-      />
+export const ViewBilling = ({ onManageKeys }) => (
+  <div className={neuShellCls}>
+    <div className="max-w-[820px]">
+      <SettingsHeader title="Billing" subtitle="Orion is free — you bring your own API keys." />
 
-      <Tabs tabs={["Overview", "Invoices", "Payment Methods", "Usage"]} active={0} />
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <section className={`${cardCls} p-6`}>
-          <div className="flex items-center gap-3 mb-4">
-            <span className="w-12 h-12 rounded-xl bg-[#eef2ff] text-[#4f46e5] grid place-items-center shrink-0">
-              <CreditCard size={22} strokeWidth={2} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-7">
+        <div className="neu-card p-7">
+          <div className="flex items-center gap-3.5 mb-5">
+            <span className="neu-circle w-12 h-12 rounded-2xl grid place-items-center text-[#4f46e5]">
+              <InfinityIcon size={22} strokeWidth={2} />
             </span>
             <div>
-              <p className="text-[12px] text-[#64748b] font-semibold uppercase tracking-wide">
-                Current Plan
-              </p>
-              <p className="text-[18px] font-extrabold text-[#0b1220]">Orion Pro</p>
+              <div className="flex items-center gap-2">
+                <p className="text-[15px] font-semibold text-[#334155]">Free</p>
+                <NeuChip className="!text-[#16a34a]">Active</NeuChip>
+              </div>
+              <p className="text-[11.5px] text-[#9aa6b8] font-medium uppercase tracking-wide mt-0.5">Current Plan</p>
             </div>
           </div>
-          <p className="text-[14px] text-[#64748b] mb-4">Full access to all agents and automations</p>
-          <p className="text-[32px] font-extrabold text-[#0b1220] mb-5 tracking-[-0.5px]">
-            ₹1,999 <span className="text-[15px] font-medium text-[#94a3b8]">/ month</span>
+          <p className="text-[30px] font-semibold text-[#334155] mb-2 tracking-[-0.5px]">
+            ₹0 <span className="text-[14px] font-medium text-[#9aa6b8]">/ forever</span>
           </p>
-          <PrimaryButton className="w-full">Upgrade Plan</PrimaryButton>
-        </section>
+          <p className="text-[13px] text-[#8792a6] mb-6 leading-relaxed">
+            Orion runs on free-tier LLM providers. Add your own API keys, or run a local model with Ollama.
+          </p>
+          <NeuPrimaryButton className="w-full" onClick={onManageKeys}>
+            <KeyRound size={16} /> Manage API Keys
+          </NeuPrimaryButton>
+        </div>
 
-        <section className={`${cardCls} p-6`}>
-          <h2 className="text-[18px] font-extrabold text-[#0b1220] mb-5">Usage This Month</h2>
-          <div className="flex flex-col gap-4">
-            <UsageBar label="Agent Runs" value="12 / 50" pct={24} />
-            <UsageBar label="API Calls" value="2,480 / 10K" pct={25} />
-            <UsageBar label="Storage" value="14.2 GB / 100 GB" pct={14} />
-            <UsageBar label="Team Members" value="12 / 50" pct={24} />
-          </div>
-        </section>
+        <div className="neu-card p-7">
+          <NeuSectionTitle className="mb-5">What's included</NeuSectionTitle>
+          <ul className="flex flex-col gap-3.5">
+            {included.map((item) => (
+              <li key={item} className="flex items-start gap-3">
+                <span className="neu-circle w-6 h-6 rounded-full grid place-items-center text-[#16a34a] shrink-0 mt-0.5">
+                  <Check size={12} strokeWidth={3} />
+                </span>
+                <span className="text-[13.5px] text-[#5b6678] leading-snug">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
-      <section className={`${cardCls} mt-5 overflow-hidden`}>
-        <div className="flex items-center justify-between px-6 py-5">
-          <h2 className="text-[18px] font-extrabold text-[#0b1220]">Recent Invoices</h2>
-          <button className="text-[14px] font-semibold text-[#4f46e5] hover:text-[#4338ca]">
-            View All
-          </button>
-        </div>
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-y border-[#eef2f8] bg-[#f8fafc]">
-              {["Invoice #", "Date", "Amount", "Status", "Action"].map((h) => (
-                <th
-                  key={h}
-                  className="px-6 py-3 text-[12px] font-bold text-[#64748b] uppercase tracking-wide"
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {invoices.map((inv, i) => (
-              <tr
-                key={inv.id}
-                className={i < invoices.length - 1 ? "border-b border-[#eef2f8]" : ""}
-              >
-                <td className="px-6 py-4 text-[14px] font-semibold text-[#0b1220]">{inv.id}</td>
-                <td className="px-6 py-4 text-[14px] text-[#64748b]">{inv.date}</td>
-                <td className="px-6 py-4 text-[14px] text-[#64748b]">{inv.amount}</td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`inline-flex items-center px-3 py-1 rounded-full text-[13px] font-semibold ${
-                      inv.status === "Paid"
-                        ? "bg-[#e7f8ef] text-[#16a34a]"
-                        : "bg-[#fdeaea] text-[#ef4444]"
-                    }`}
-                  >
-                    {inv.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <button
-                    className={`text-[14px] font-semibold ${
-                      inv.action === "Retry"
-                        ? "text-[#ef4444]"
-                        : "text-[#4f46e5] hover:text-[#4338ca]"
-                    }`}
-                  >
-                    {inv.action}
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+      <p className="text-[12.5px] text-[#9aa6b8] mt-5 leading-relaxed">
+        No credit card, no subscription, no invoices. Usage is limited only by your own API providers' free tiers.
+      </p>
     </div>
   </div>
 );

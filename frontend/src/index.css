@@ -4520,3 +4520,276 @@ body {
   .tools-page .ak-secure { flex-wrap: wrap; }
   .tools-page .ak-secure-btn { width: 100%; justify-content: center; }
 }
+
+/* Toast entrance animation (used by components/ui/Toast.jsx) */
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+
+/* Modal entrance (components/ui/Modal.jsx) */
+@keyframes modalPop {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Indeterminate task-progress bar (Command Center task list) */
+@keyframes progressSlide {
+  0%   { transform: translateX(-70%); }
+  50%  { transform: translateX(10%); }
+  100% { transform: translateX(70%); }
+}
+
+/* Task row entrance — each agent row slides in as it is created */
+@keyframes rowIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* SVG connector draw-in for the Live Agent Tree circuit */
+.om-draw {
+  stroke-dasharray: 240;
+  stroke-dashoffset: 240;
+  animation: omDraw .6s ease-out forwards;
+}
+@keyframes omDraw { to { stroke-dashoffset: 0; } }
+
+/* Agent/sub-agent node pop-in for the live tree */
+@keyframes treePop {
+  from { opacity: 0; transform: scale(0.9) translateY(6px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Flowing dashes along an active edge in the expanded workflow canvas */
+.om-flow { animation: omFlow 1s linear infinite; }
+@keyframes omFlow { to { stroke-dashoffset: -22; } }
+
+/* Blinking typewriter cursor at the end of streaming markdown output */
+.om-streaming > .om-md > :last-child::after {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: #4f46e5;
+  animation: omCaret 1s steps(1) infinite;
+}
+@keyframes omCaret { 50% { opacity: 0; } }
+
+/* Subtle visible scrollbar for the capped task-list area */
+.om-scroll::-webkit-scrollbar { width: 7px; }
+.om-scroll::-webkit-scrollbar-track { background: transparent; }
+.om-scroll::-webkit-scrollbar-thumb {
+  background: #cfd5e2;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.om-scroll::-webkit-scrollbar-thumb:hover { background: #b7bfd0; background-clip: content-box; }
+.om-scroll { scrollbar-width: thin; scrollbar-color: #cfd5e2 transparent; }
+
+
+/* ============================================================
+   Neumorphic surfaces (Settings profile/workspace)
+   Base surface tone: #eef1f6. Light = #ffffff, Dark = #c8cdd9.
+   ============================================================ */
+
+.neu-surface { background: #eef1f6; }
+
+/* Raised card — soft extruded panel */
+.neu-card {
+  background: #eef1f6;
+  border-radius: 22px;
+  box-shadow: 10px 10px 24px #d2d7e2, -10px -10px 24px #ffffff;
+}
+
+/* Smaller raised block */
+.neu-raised {
+  background: #eef1f6;
+  border-radius: 16px;
+  box-shadow: 6px 6px 14px #d4d9e4, -6px -6px 14px #ffffff;
+}
+
+/* Inset / pressed-in — for inputs and wells */
+.neu-inset {
+  background: #eef1f6;
+  border-radius: 12px;
+  box-shadow: inset 5px 5px 10px #d4d9e4, inset -5px -5px 10px #ffffff;
+}
+
+.neu-input {
+  background: #eef1f6;
+  border: none;
+  border-radius: 12px;
+  box-shadow: inset 4px 4px 9px #d4d9e4, inset -4px -4px 9px #ffffff;
+  transition: box-shadow .18s ease;
+}
+.neu-input::placeholder { color: #9aa6b8; }
+.neu-input:focus {
+  outline: none;
+  box-shadow: inset 4px 4px 9px #d4d9e4, inset -4px -4px 9px #ffffff,
+              0 0 0 2px rgba(79,70,229,0.35);
+}
+
+/* Raised button — presses in on click */
+.neu-btn {
+  background: #eef1f6;
+  border-radius: 13px;
+  box-shadow: 5px 5px 12px #d4d9e4, -5px -5px 12px #ffffff;
+  transition: box-shadow .15s ease, transform .1s ease;
+}
+.neu-btn:hover { box-shadow: 6px 6px 14px #d0d5e1, -6px -6px 14px #ffffff; }
+.neu-btn:active {
+  box-shadow: inset 4px 4px 9px #d4d9e4, inset -4px -4px 9px #ffffff;
+  transform: translateY(1px);
+}
+
+/* Indigo accent button, raised with colored glow */
+.neu-btn-primary {
+  background: linear-gradient(145deg, #635bf7, #4338ca);
+  color: #fff;
+  border-radius: 13px;
+  box-shadow:
+    6px 6px 14px rgba(67,56,202,0.28),
+    -5px -5px 12px #ffffff,
+    inset 1px 1px 1px rgba(255,255,255,0.35),
+    inset -1px -1px 2px rgba(39,33,120,0.4);
+  transition: box-shadow .15s ease, transform .1s ease, filter .15s ease;
+}
+.neu-btn-primary:hover {
+  filter: brightness(1.06);
+  box-shadow:
+    7px 7px 18px rgba(67,56,202,0.38),
+    -6px -6px 14px #ffffff,
+    inset 1px 1px 1px rgba(255,255,255,0.4),
+    inset -1px -1px 2px rgba(39,33,120,0.4);
+}
+.neu-btn-primary:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 3px 3px 7px rgba(39,33,120,0.55),
+    inset -2px -2px 5px rgba(255,255,255,0.25);
+}
+
+/* Circular raised control (camera, icon buttons) */
+.neu-circle {
+  background: #eef1f6;
+  box-shadow: 4px 4px 9px #d4d9e4, -4px -4px 9px #ffffff;
+  transition: box-shadow .15s ease, transform .1s ease;
+}
+.neu-circle:hover { box-shadow: 5px 5px 11px #d0d5e1, -5px -5px 11px #ffffff; }
+.neu-circle:active { box-shadow: inset 3px 3px 6px #d4d9e4, inset -3px -3px 6px #ffffff; transform: translateY(1px); }
+
+/* Avatar well — inset ring that frames a photo */
+.neu-avatar-well {
+  background: #eef1f6;
+  box-shadow: inset 4px 4px 9px #d4d9e4, inset -4px -4px 9px #ffffff;
+}
+
+
+/* ============================================================
+   Neumorphic system — extended set (whole Settings page)
+   ============================================================ */
+
+/* Outline/ghost raised button (neutral text) */
+.neu-btn-ghost {
+  background: #eef1f6;
+  border-radius: 13px;
+  color: #4a5568;
+  box-shadow: 5px 5px 12px #d4d9e4, -5px -5px 12px #ffffff;
+  transition: box-shadow .15s ease, transform .1s ease;
+}
+.neu-btn-ghost:hover { box-shadow: 6px 6px 14px #d0d5e1, -6px -6px 14px #ffffff; color:#4f46e5; }
+.neu-btn-ghost:active { box-shadow: inset 4px 4px 9px #d4d9e4, inset -4px -4px 9px #ffffff; transform: translateY(1px); }
+
+/* Danger raised button */
+.neu-btn-danger {
+  background: #eef1f6;
+  border-radius: 13px;
+  color: #e11d48;
+  box-shadow: 5px 5px 12px #d4d9e4, -5px -5px 12px #ffffff;
+  transition: box-shadow .15s ease, transform .1s ease;
+}
+.neu-btn-danger:hover { box-shadow: 6px 6px 14px #d0d5e1, -6px -6px 14px #ffffff; }
+.neu-btn-danger:active { box-shadow: inset 4px 4px 9px #d4d9e4, inset -4px -4px 9px #ffffff; transform: translateY(1px); }
+
+/* Solid rose danger (sign out) */
+.neu-btn-danger-solid {
+  background: linear-gradient(135deg, #f43f5e, #be123c);
+  color: #fff;
+  border-radius: 13px;
+  box-shadow: 6px 6px 14px #d0d5e1, -6px -6px 14px #ffffff;
+  transition: box-shadow .15s ease, transform .1s ease;
+}
+.neu-btn-danger-solid:hover { box-shadow: 7px 7px 16px #ccd1dd, -7px -7px 16px #ffffff; }
+.neu-btn-danger-solid:active { box-shadow: inset 3px 3px 7px rgba(120,20,45,.5), inset -3px -3px 7px rgba(255,255,255,.15); transform: translateY(1px); }
+
+/* Toggle track (inset) + knob (raised) */
+.neu-toggle {
+  background: #eef1f6;
+  border-radius: 999px;
+  box-shadow: inset 3px 3px 6px #d4d9e4, inset -3px -3px 6px #ffffff;
+  transition: box-shadow .2s ease;
+}
+.neu-toggle-on { box-shadow: inset 3px 3px 6px #3b32c4, inset -3px -3px 6px #6a5ff5; }
+.neu-toggle-knob {
+  background: #f3f5f9;
+  box-shadow: 2px 2px 4px #c9ced8, -1px -1px 3px #ffffff;
+  transition: all .2s ease;
+}
+.neu-toggle-on .neu-toggle-knob { background: #ffffff; }
+
+/* Segmented control: inset track, raised active pill */
+.neu-seg {
+  background: #eef1f6;
+  border-radius: 13px;
+  box-shadow: inset 4px 4px 8px #d4d9e4, inset -4px -4px 8px #ffffff;
+}
+.neu-seg-item { color: #7b8699; border-radius: 10px; transition: all .15s ease; }
+.neu-seg-item:hover { color: #4a5568; }
+.neu-seg-item-active {
+  color: #4f46e5;
+  background: #eef1f6;
+  box-shadow: 3px 3px 7px #d4d9e4, -3px -3px 7px #ffffff;
+}
+
+/* Chip (soft raised pill) */
+.neu-chip {
+  background: #eef1f6;
+  border-radius: 999px;
+  box-shadow: 2px 2px 5px #d4d9e4, -2px -2px 5px #ffffff;
+}
+
+/* Native select arrow room on neu-input */
+.neu-select { appearance: none; -webkit-appearance: none; padding-right: 2.25rem; cursor: pointer; }
+
+/* Sidebar nav item (soft hover + inset active) */
+.neu-nav {
+  background: transparent;
+  border-radius: 13px;
+  transition: box-shadow .15s ease, background .15s ease;
+}
+.neu-nav:hover { box-shadow: 4px 4px 9px #d7dbe6, -4px -4px 9px #ffffff; }
+.neu-nav-active {
+  background: #eef1f6;
+  box-shadow: inset 4px 4px 9px #d4d9e4, inset -4px -4px 9px #ffffff;
+}
+
+/* Modal surface (raised panel floating over blurred backdrop) */
+.neu-modal {
+  background: #eef1f6;
+  border-radius: 22px;
+  box-shadow: 14px 14px 34px #c6cbd6, -14px -14px 34px #ffffff;
+}
+
+/* Card that lifts further on hover (clickable neu cards) */
+.neu-card-hover {
+  background: #eef1f6;
+  border-radius: 18px;
+  box-shadow: 6px 6px 14px #d4d9e4, -6px -6px 14px #ffffff;
+  transition: box-shadow .2s ease, transform .15s ease;
+}
+.neu-card-hover:hover { box-shadow: 9px 9px 22px #cfd4e0, -9px -9px 22px #ffffff; transform: translateY(-2px); }
+.neu-card-hover:active { transform: translateY(0); }
