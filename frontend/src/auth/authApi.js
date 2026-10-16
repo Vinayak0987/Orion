@@ -11,7 +11,10 @@
 // authFetch() attaches the bearer token and, on a 401, transparently tries a
 // single refresh-then-retry before giving up.
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
+const API_BASE =
+  import.meta.env.VITE_V2_API_BASE_URL ??
+  import.meta.env.VITE_API_BASE_URL ??
+  "http://localhost:8081";
 
 let accessToken = null;
 
@@ -85,6 +88,72 @@ export const authApi = {
 
   async me() {
     return authFetch("/auth/me");
+  },
+
+  async updateMe({ fullName, email, jobTitle, bio }) {
+    const body = {};
+    if (fullName !== undefined) body.full_name = fullName;
+    if (email !== undefined) body.email = email;
+    if (jobTitle !== undefined) body.job_title = jobTitle;
+    if (bio !== undefined) body.bio = bio;
+    return authFetch("/auth/me", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  },
+
+  async uploadFile(file) {
+    const form = new FormData();
+    form.append("file", file);
+    return authFetch("/uploads", { method: "POST", body: form });
+  },
+
+  async changePassword({ currentPassword, newPassword }) {
+    return authFetch("/auth/password", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
+    });
+  },
+
+  async uploadAvatar(file) {
+    const form = new FormData();
+    form.append("file", file);
+    // Note: do NOT set Content-Type — the browser sets the multipart boundary.
+    return authFetch("/auth/avatar", { method: "POST", body: form });
+  },
+
+  // --- Workspace ---------------------------------------------------------
+  getWorkspace() {
+    return authFetch("/workspace");
+  },
+  updateWorkspace(fields) {
+    return authFetch("/workspace", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(fields),
+    });
+  },
+  getMembers() {
+    return authFetch("/workspace/members");
+  },
+  addMember({ name, email, role }) {
+    return authFetch("/workspace/members", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, role }),
+    });
+  },
+  updateMember(id, fields) {
+    return authFetch(`/workspace/members/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(fields),
+    });
+  },
+  removeMember(id) {
+    return authFetch(`/workspace/members/${id}`, { method: "DELETE" });
   },
 };
 

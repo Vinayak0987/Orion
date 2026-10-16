@@ -1,0 +1,1087 @@
+
+> mabgp-frontend@0.2.0 dev
+> vite --host 0.0.0.0 --port 5173
+
+
+  [32m[1mVITE[22m v5.4.11[39m  [2mready in [0m[1m302[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5173[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.29.31:[1m5173[22m/[39m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m
+[2m7:10:54 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css, /src/auth/AuthScreen.jsx[22m
+[2m7:11:11 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSettingsProfile.jsx, /src/index.css[22m
+[2m7:11:33 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSecurity.jsx, /src/index.css[22m
+[2m7:12:11 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewPreferences.jsx, /src/index.css[22m
+[2m7:12:27 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewWorkspaceSettings.jsx, /src/index.css[22m
+[2m7:12:41 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewBilling.jsx, /src/index.css[22m
+[2m7:12:57 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewHelpSupport.jsx, /src/index.css[22m
+[2m7:13:03 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SettingsSection.jsx, /src/index.css[22m
+[2m7:13:07 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewLogout.jsx, /src/index.css[22m
+[2m7:13:12 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewLogout.jsx, /src/index.css[22m
+[2m7:13:18 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SettingsSection.jsx, /src/index.css[22m
+[2m7:13:22 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewBilling.jsx, /src/index.css[22m
+[2m7:13:27 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewBilling.jsx, /src/index.css[22m
+[2m7:15:53 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewHelpSupport.jsx, /src/index.css[22m
+[2m7:15:58 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewHelpSupport.jsx, /src/index.css[22m
+[2m7:24:27 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css, /src/auth/AuthScreen.jsx, /src/components/views/settings/ViewSettingsProfile.jsx, /src/components/views/settings/ViewSecurity.jsx[22m
+[2m7:24:50 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSettingsProfile.jsx, /src/index.css[22m
+[2m7:34:33 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSettingsProfile.jsx, /src/index.css[22m
+[2m7:35:04 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css, /src/auth/AuthScreen.jsx, /src/components/views/settings/ViewSettingsProfile.jsx, /src/components/views/settings/ViewSecurity.jsx[22m
+[2m7:35:13 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css, /src/auth/AuthScreen.jsx, /src/components/views/settings/ViewSettingsProfile.jsx, /src/components/views/settings/ViewSecurity.jsx[22m
+[2m7:35:56 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewWorkspaceSettings.jsx, /src/index.css[22m
+[2m7:41:07 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m7:41:27 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/PlatformApp.jsx, /src/index.css[22m
+[2m7:41:37 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/PlatformApp.jsx, /src/index.css[22m
+[2m7:42:03 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSettingsProfile.jsx, /src/index.css[22m
+[2m7:42:23 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSettingsProfile.jsx, /src/index.css[22m
+[2m7:42:30 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewApiAccess.jsx, /src/index.css[22m
+[2m7:42:44 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewApiAccess.jsx, /src/index.css[22m
+[2m7:42:50 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSecurity.jsx, /src/index.css[22m
+[2m7:42:59 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSecurity.jsx, /src/index.css[22m
+[2m7:43:20 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewPreferences.jsx, /src/index.css[22m
+[2m7:43:31 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewPreferences.jsx, /src/index.css[22m
+[2m7:43:39 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewWorkspaceSettings.jsx, /src/index.css[22m
+[2m7:43:54 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewWorkspaceSettings.jsx, /src/index.css[22m
+[2m7:44:06 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewWorkspaceSettings.jsx, /src/index.css[22m
+[2m7:50:17 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/SettingsShared.jsx, /src/index.css[22m
+[2m7:50:17 pm[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/views/settings/SettingsShared.jsx[22m Could not Fast Refresh (new export)
+[2m7:50:17 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css, /src/components/views/settings/ViewSettingsProfile.jsx, /src/components/views/settings/ViewApiAccess.jsx, /src/components/views/settings/ViewSecurity.jsx, /src/components/views/settings/ViewHelpSupport.jsx, /src/components/views/settings/ViewPreferences.jsx, /src/components/views/settings/ViewLogout.jsx, /src/components/views/settings/ViewBilling.jsx, /src/components/views/settings/ViewWorkspaceSettings.jsx[22m
+[2m7:50:53 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewHelpSupport.jsx, /src/index.css[22m
+[2m7:51:22 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSettingsProfile.jsx, /src/index.css[22m
+[2m7:51:35 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewApiAccess.jsx, /src/index.css[22m
+[2m7:51:49 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewApiAccess.jsx, /src/index.css[22m
+[2m7:52:01 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSecurity.jsx, /src/index.css[22m
+[2m7:52:01 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: E:\AgenticSystem\Orion\frontend\src\components\views\settings\ViewSecurity.jsx: Identifier 'SoonBadge' has already been declared. (31:6)
+
+[0m [90m 29 |[31m )[33m;[31m
+ [90m 30 |[31m
+[31m[1m>[22m[31m[90m 31 |[31m [36mconst[31m [33mSoonBadge[31m [33m=[31m () [33m=>[31m (
+ [90m    |[31m       [31m[1m^[22m[31m
+ [90m 32 |[31m   [33m<[31m[33mspan[31m className[33m=[31m[32m"text-[12px] font-semibold text-[#94a3b8] bg-[#f1f4fb] rounded-full px-3 py-1"[31m[33m>[31m
+ [90m 33 |[31m     [33mNot[31m available yet
+ [90m 34 |[31m   [33m<[31m[33m/[31m[33mspan[31m[33m>[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mE:/AgenticSystem/Orion/frontend/src/components/views/settings/ViewSecurity.jsx[39m:31:6
+[33m  29 |  );
+  30 |  
+  31 |  const SoonBadge = () => (
+     |        ^
+  32 |    <span className="text-[12px] font-semibold text-[#94a3b8] bg-[#f1f4fb] rounded-full px-3 py-1">
+  33 |      Not available yet[39m
+      at constructor (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:6616:19)
+      at ScopeHandler.checkRedeclarationInScope (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+      at ScopeHandler.declareName (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+      at JSXParserMixin.declareNameFromIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7584:16)
+      at JSXParserMixin.checkIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7580:12)
+      at JSXParserMixin.checkLVal (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7517:12)
+      at JSXParserMixin.parseVarId (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13429:10)
+      at JSXParserMixin.parseVar (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13400:12)
+      at JSXParserMixin.parseVarStatement (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13247:10)
+      at JSXParserMixin.parseStatementContent (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12868:23)
+      at JSXParserMixin.parseStatementLike (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12784:17)
+      at JSXParserMixin.parseModuleItem (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12761:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13333:36)
+      at JSXParserMixin.parseBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13326:10)
+      at JSXParserMixin.parseProgram (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12639:10)
+      at JSXParserMixin.parseTopLevel (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12629:25)
+      at JSXParserMixin.parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14505:25)
+      at parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:261:32)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:189:28
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:113:33
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:287:14)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+[2m7:52:07 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSecurity.jsx, /src/index.css[22m
+[2m7:52:21 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSecurity.jsx, /src/index.css[22m
+[2m7:52:51 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewPreferences.jsx, /src/index.css[22m
+[2m7:53:01 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewPreferences.jsx, /src/index.css[22m
+[2m7:53:19 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewWorkspaceSettings.jsx, /src/index.css[22m
+[2m7:53:31 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewWorkspaceSettings.jsx, /src/index.css[22m
+[2m7:57:49 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/SettingsShared.jsx, /src/index.css[22m
+[2m7:57:49 pm[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/views/settings/SettingsShared.jsx[22m Could not Fast Refresh (new export)
+[2m7:57:49 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css, /src/components/views/settings/ViewSettingsProfile.jsx, /src/components/views/settings/ViewApiAccess.jsx, /src/components/views/settings/ViewSecurity.jsx, /src/components/views/settings/ViewHelpSupport.jsx, /src/components/views/settings/ViewPreferences.jsx, /src/components/views/settings/ViewLogout.jsx, /src/components/views/settings/ViewBilling.jsx, /src/components/views/settings/ViewWorkspaceSettings.jsx[22m
+[2m7:58:09 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m7:58:44 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewHelpSupport.jsx, /src/index.css[22m
+[2m7:59:39 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewBilling.jsx, /src/index.css[22m
+[2m7:59:45 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSettingsProfile.jsx, /src/index.css[22m
+[2m7:59:50 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSettingsProfile.jsx, /src/index.css[22m
+[2m7:59:55 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSettingsProfile.jsx, /src/index.css[22m
+[2m8:00:01 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewPreferences.jsx, /src/index.css[22m
+[2m8:00:08 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewPreferences.jsx, /src/index.css[22m
+[2m8:00:13 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSecurity.jsx, /src/index.css[22m
+[2m8:00:18 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSecurity.jsx, /src/index.css[22m
+[2m8:00:23 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewWorkspaceSettings.jsx, /src/index.css[22m
+[2m8:00:28 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewLogout.jsx, /src/index.css[22m
+[2m8:03:33 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/SettingsShared.jsx, /src/index.css[22m
+[2m8:03:33 pm[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/views/settings/SettingsShared.jsx[22m Could not Fast Refresh (export removed)
+[2m8:03:33 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css, /src/components/views/settings/ViewSettingsProfile.jsx, /src/components/views/settings/ViewApiAccess.jsx, /src/components/views/settings/ViewSecurity.jsx, /src/components/views/settings/ViewHelpSupport.jsx, /src/components/views/settings/ViewPreferences.jsx, /src/components/views/settings/ViewLogout.jsx, /src/components/views/settings/ViewBilling.jsx, /src/components/views/settings/ViewWorkspaceSettings.jsx[22m
+[2m8:03:56 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SettingsSection.jsx, /src/index.css[22m
+[2m8:04:41 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSettingsProfile.jsx, /src/index.css[22m
+[2m8:05:04 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewApiAccess.jsx, /src/index.css[22m
+[2m8:05:22 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSecurity.jsx, /src/index.css[22m
+[2m8:05:57 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewPreferences.jsx, /src/index.css[22m
+[2m8:06:34 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewWorkspaceSettings.jsx, /src/index.css[22m
+[2m8:06:48 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewBilling.jsx, /src/index.css[22m
+[2m8:07:18 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewHelpSupport.jsx, /src/index.css[22m
+[2m8:07:30 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewLogout.jsx, /src/index.css[22m
+[2m8:09:03 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSettingsProfile.jsx, /src/index.css[22m
+[2m8:09:11 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSettingsProfile.jsx, /src/index.css[22m
+[2m8:09:16 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSettingsProfile.jsx, /src/index.css[22m
+[2m8:09:45 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewWorkspaceSettings.jsx, /src/index.css[22m
+[2m8:09:52 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewWorkspaceSettings.jsx, /src/index.css[22m
+[2m8:12:15 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m8:12:28 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/SettingsShared.jsx, /src/index.css[22m
+[2m8:12:28 pm[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/views/settings/SettingsShared.jsx[22m Could not Fast Refresh (new export)
+[2m8:12:28 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css, /src/components/views/settings/ViewSettingsProfile.jsx, /src/components/views/settings/ViewApiAccess.jsx, /src/components/views/settings/ViewSecurity.jsx, /src/components/views/settings/ViewHelpSupport.jsx, /src/components/views/settings/ViewPreferences.jsx, /src/components/views/settings/ViewLogout.jsx, /src/components/views/settings/ViewBilling.jsx, /src/components/views/settings/ViewWorkspaceSettings.jsx[22m
+[2m8:13:13 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSettingsProfile.jsx, /src/index.css[22m
+[2m8:13:48 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewWorkspaceSettings.jsx, /src/index.css[22m
+[2m8:14:06 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewWorkspaceSettings.jsx, /src/index.css[22m
+[2m8:14:14 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewWorkspaceSettings.jsx, /src/index.css[22m
+[2m8:16:41 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m8:17:00 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/SettingsShared.jsx, /src/index.css[22m
+[2m8:17:00 pm[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/components/views/settings/SettingsShared.jsx[22m Could not Fast Refresh (new export)
+[2m8:17:00 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css, /src/components/views/settings/ViewSettingsProfile.jsx, /src/components/views/settings/ViewApiAccess.jsx, /src/components/views/settings/ViewSecurity.jsx, /src/components/views/settings/ViewHelpSupport.jsx, /src/components/views/settings/ViewPreferences.jsx, /src/components/views/settings/ViewLogout.jsx, /src/components/views/settings/ViewBilling.jsx, /src/components/views/settings/ViewWorkspaceSettings.jsx[22m
+[2m8:17:22 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SettingsSection.jsx, /src/index.css[22m
+[2m8:18:05 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewApiAccess.jsx, /src/index.css[22m
+[2m8:18:23 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewSecurity.jsx, /src/index.css[22m
+[2m8:18:38 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ui/Modal.jsx, /src/index.css[22m
+[2m8:19:13 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewPreferences.jsx, /src/index.css[22m
+[2m8:19:27 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewBilling.jsx, /src/index.css[22m
+[2m8:19:56 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewHelpSupport.jsx, /src/index.css[22m
+[2m8:20:07 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewLogout.jsx, /src/index.css[22m
+[2m8:20:24 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewWorkspaceSettings.jsx, /src/index.css[22m
+[2m8:20:46 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewWorkspaceSettings.jsx, /src/index.css[22m
+[2m8:20:55 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/settings/ViewWorkspaceSettings.jsx, /src/index.css[22m
+[2m8:23:12 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m8:23:23 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m8:23:29 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ui/Modal.jsx, /src/index.css[22m
+[2m8:23:29 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: E:\AgenticSystem\Orion\frontend\src\components\ui\Modal.jsx: Identifier 'useEffect' has already been declared. (2:9)
+
+[0m [90m 1 |[31m [36mimport[31m { useEffect } [36mfrom[31m [32m"react"[31m[33m;[31m
+[31m[1m>[22m[31m[90m 2 |[31m [36mimport[31m { useEffect } [36mfrom[31m [32m"react"[31m[33m;[31m
+ [90m   |[31m          [31m[1m^[22m[31m
+ [90m 3 |[31m [36mimport[31m { [33mX[31m } [36mfrom[31m [32m"lucide-react"[31m[33m;[31m
+ [90m 4 |[31m
+ [90m 5 |[31m [90m// Reusable modal. Backdrop blur, scale-in animation, Esc to close, click-outside[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mE:/AgenticSystem/Orion/frontend/src/components/ui/Modal.jsx[39m:2:9
+[33m  1  |  import { useEffect } from "react";
+  2  |  import { useEffect } from "react";
+     |           ^
+  3  |  import { X } from "lucide-react";
+  4  |  [39m
+      at constructor (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:6616:19)
+      at ScopeHandler.checkRedeclarationInScope (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+      at ScopeHandler.declareName (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+      at JSXParserMixin.declareNameFromIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7584:16)
+      at JSXParserMixin.checkIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7580:12)
+      at JSXParserMixin.checkLVal (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7517:12)
+      at JSXParserMixin.finishImportSpecifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14283:10)
+      at JSXParserMixin.parseImportSpecifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14436:17)
+      at JSXParserMixin.parseNamedImportSpecifiers (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14415:36)
+      at JSXParserMixin.parseImportSpecifiersAndAfter (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14259:37)
+      at JSXParserMixin.parseImport (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14252:17)
+      at JSXParserMixin.parseStatementContent (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12893:27)
+      at JSXParserMixin.parseStatementLike (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12784:17)
+      at JSXParserMixin.parseModuleItem (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12761:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13333:36)
+      at JSXParserMixin.parseBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13326:10)
+      at JSXParserMixin.parseProgram (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12639:10)
+      at JSXParserMixin.parseTopLevel (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12629:25)
+      at JSXParserMixin.parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14505:25)
+      at parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:261:32)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:189:28
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:113:33
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:287:14)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+[2m8:23:47 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ui/Modal.jsx, /src/index.css[22m
+[2m8:23:47 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: E:\AgenticSystem\Orion\frontend\src\components\ui\Modal.jsx: Identifier 'useEffect' has already been declared. (2:9)
+
+[0m [90m 1 |[31m [36mimport[31m { useEffect } [36mfrom[31m [32m"react"[31m[33m;[31m
+[31m[1m>[22m[31m[90m 2 |[31m [36mimport[31m { useEffect } [36mfrom[31m [32m"react"[31m[33m;[31m
+ [90m   |[31m          [31m[1m^[22m[31m
+ [90m 3 |[31m [36mimport[31m { [33mX[31m } [36mfrom[31m [32m"lucide-react"[31m[33m;[31m
+ [90m 4 |[31m
+ [90m 5 |[31m [90m// Reusable modal. Backdrop blur, scale-in animation, Esc to close, click-outside[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mE:/AgenticSystem/Orion/frontend/src/components/ui/Modal.jsx[39m:2:9
+[33m  1  |  import { useEffect } from "react";
+  2  |  import { useEffect } from "react";
+     |           ^
+  3  |  import { X } from "lucide-react";
+  4  |  [39m
+      at constructor (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:6616:19)
+      at ScopeHandler.checkRedeclarationInScope (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+      at ScopeHandler.declareName (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+      at JSXParserMixin.declareNameFromIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7584:16)
+      at JSXParserMixin.checkIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7580:12)
+      at JSXParserMixin.checkLVal (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7517:12)
+      at JSXParserMixin.finishImportSpecifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14283:10)
+      at JSXParserMixin.parseImportSpecifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14436:17)
+      at JSXParserMixin.parseNamedImportSpecifiers (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14415:36)
+      at JSXParserMixin.parseImportSpecifiersAndAfter (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14259:37)
+      at JSXParserMixin.parseImport (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14252:17)
+      at JSXParserMixin.parseStatementContent (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12893:27)
+      at JSXParserMixin.parseStatementLike (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12784:17)
+      at JSXParserMixin.parseModuleItem (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12761:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13333:36)
+      at JSXParserMixin.parseBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13326:10)
+      at JSXParserMixin.parseProgram (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12639:10)
+      at JSXParserMixin.parseTopLevel (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12629:25)
+      at JSXParserMixin.parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14505:25)
+      at parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:261:32)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:189:28
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:113:33
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:287:14)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+[2m8:24:00 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ui/Modal.jsx, /src/index.css[22m
+[2m8:24:00 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: E:\AgenticSystem\Orion\frontend\src\components\ui\Modal.jsx: Identifier 'useEffect' has already been declared. (2:9)
+
+[0m [90m 1 |[31m [36mimport[31m { useEffect } [36mfrom[31m [32m"react"[31m[33m;[31m
+[31m[1m>[22m[31m[90m 2 |[31m [36mimport[31m { useEffect } [36mfrom[31m [32m"react"[31m[33m;[31m
+ [90m   |[31m          [31m[1m^[22m[31m
+ [90m 3 |[31m [36mimport[31m { [33mX[31m } [36mfrom[31m [32m"lucide-react"[31m[33m;[31m
+ [90m 4 |[31m
+ [90m 5 |[31m [90m// Reusable modal. Backdrop blur, scale-in animation, Esc to close, click-outside[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mE:/AgenticSystem/Orion/frontend/src/components/ui/Modal.jsx[39m:2:9
+[33m  1  |  import { useEffect } from "react";
+  2  |  import { useEffect } from "react";
+     |           ^
+  3  |  import { X } from "lucide-react";
+  4  |  [39m
+      at constructor (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:6616:19)
+      at ScopeHandler.checkRedeclarationInScope (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+      at ScopeHandler.declareName (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+      at JSXParserMixin.declareNameFromIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7584:16)
+      at JSXParserMixin.checkIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7580:12)
+      at JSXParserMixin.checkLVal (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7517:12)
+      at JSXParserMixin.finishImportSpecifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14283:10)
+      at JSXParserMixin.parseImportSpecifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14436:17)
+      at JSXParserMixin.parseNamedImportSpecifiers (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14415:36)
+      at JSXParserMixin.parseImportSpecifiersAndAfter (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14259:37)
+      at JSXParserMixin.parseImport (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14252:17)
+      at JSXParserMixin.parseStatementContent (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12893:27)
+      at JSXParserMixin.parseStatementLike (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12784:17)
+      at JSXParserMixin.parseModuleItem (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12761:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13333:36)
+      at JSXParserMixin.parseBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13326:10)
+      at JSXParserMixin.parseProgram (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12639:10)
+      at JSXParserMixin.parseTopLevel (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12629:25)
+      at JSXParserMixin.parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14505:25)
+      at parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:261:32)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:189:28
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:113:33
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:287:14)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+[2m8:24:25 pm[22m [31m[1m[vite][22m[39m Pre-transform error: E:\AgenticSystem\Orion\frontend\src\components\ui\Modal.jsx: Identifier 'useEffect' has already been declared. (2:9)
+
+[0m [90m 1 |[39m [36mimport[39m { useEffect } [36mfrom[39m [32m"react"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 2 |[39m [36mimport[39m { useEffect } [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m   |[39m          [31m[1m^[22m[39m
+ [90m 3 |[39m [36mimport[39m { [33mX[39m } [36mfrom[39m [32m"lucide-react"[39m[33m;[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [90m// Reusable modal. Backdrop blur, scale-in animation, Esc to close, click-outside[39m[0m
+[2m8:24:25 pm[22m [31m[1m[vite][22m[39m Pre-transform error: E:\AgenticSystem\Orion\frontend\src\components\ui\Modal.jsx: Identifier 'useEffect' has already been declared. (2:9)
+
+[0m [90m 1 |[39m [36mimport[39m { useEffect } [36mfrom[39m [32m"react"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 2 |[39m [36mimport[39m { useEffect } [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m   |[39m          [31m[1m^[22m[39m
+ [90m 3 |[39m [36mimport[39m { [33mX[39m } [36mfrom[39m [32m"lucide-react"[39m[33m;[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [90m// Reusable modal. Backdrop blur, scale-in animation, Esc to close, click-outside[39m[0m
+[2m8:24:25 pm[22m [31m[1m[vite][22m[39m Pre-transform error: E:\AgenticSystem\Orion\frontend\src\components\ui\Modal.jsx: Identifier 'useEffect' has already been declared. (2:9)
+
+[0m [90m 1 |[39m [36mimport[39m { useEffect } [36mfrom[39m [32m"react"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 2 |[39m [36mimport[39m { useEffect } [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m   |[39m          [31m[1m^[22m[39m
+ [90m 3 |[39m [36mimport[39m { [33mX[39m } [36mfrom[39m [32m"lucide-react"[39m[33m;[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [90m// Reusable modal. Backdrop blur, scale-in animation, Esc to close, click-outside[39m[0m
+[2m8:24:26 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: E:\AgenticSystem\Orion\frontend\src\components\ui\Modal.jsx: Identifier 'useEffect' has already been declared. (2:9)
+
+[0m [90m 1 |[31m [36mimport[31m { useEffect } [36mfrom[31m [32m"react"[31m[33m;[31m
+[31m[1m>[22m[31m[90m 2 |[31m [36mimport[31m { useEffect } [36mfrom[31m [32m"react"[31m[33m;[31m
+ [90m   |[31m          [31m[1m^[22m[31m
+ [90m 3 |[31m [36mimport[31m { [33mX[31m } [36mfrom[31m [32m"lucide-react"[31m[33m;[31m
+ [90m 4 |[31m
+ [90m 5 |[31m [90m// Reusable modal. Backdrop blur, scale-in animation, Esc to close, click-outside[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mE:/AgenticSystem/Orion/frontend/src/components/ui/Modal.jsx[39m:2:9
+[33m  1  |  import { useEffect } from "react";
+  2  |  import { useEffect } from "react";
+     |           ^
+  3  |  import { X } from "lucide-react";
+  4  |  [39m
+      at constructor (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:6616:19)
+      at ScopeHandler.checkRedeclarationInScope (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+      at ScopeHandler.declareName (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+      at JSXParserMixin.declareNameFromIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7584:16)
+      at JSXParserMixin.checkIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7580:12)
+      at JSXParserMixin.checkLVal (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7517:12)
+      at JSXParserMixin.finishImportSpecifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14283:10)
+      at JSXParserMixin.parseImportSpecifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14436:17)
+      at JSXParserMixin.parseNamedImportSpecifiers (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14415:36)
+      at JSXParserMixin.parseImportSpecifiersAndAfter (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14259:37)
+      at JSXParserMixin.parseImport (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14252:17)
+      at JSXParserMixin.parseStatementContent (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12893:27)
+      at JSXParserMixin.parseStatementLike (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12784:17)
+      at JSXParserMixin.parseModuleItem (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12761:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13333:36)
+      at JSXParserMixin.parseBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13326:10)
+      at JSXParserMixin.parseProgram (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12639:10)
+      at JSXParserMixin.parseTopLevel (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12629:25)
+      at JSXParserMixin.parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14505:25)
+      at parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:261:32)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:189:28
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:113:33
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:287:14)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+[2m8:24:39 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: E:\AgenticSystem\Orion\frontend\src\components\ui\Modal.jsx: Identifier 'useEffect' has already been declared. (2:9)
+
+[0m [90m 1 |[31m [36mimport[31m { useEffect } [36mfrom[31m [32m"react"[31m[33m;[31m
+[31m[1m>[22m[31m[90m 2 |[31m [36mimport[31m { useEffect } [36mfrom[31m [32m"react"[31m[33m;[31m
+ [90m   |[31m          [31m[1m^[22m[31m
+ [90m 3 |[31m [36mimport[31m { [33mX[31m } [36mfrom[31m [32m"lucide-react"[31m[33m;[31m
+ [90m 4 |[31m
+ [90m 5 |[31m [90m// Reusable modal. Backdrop blur, scale-in animation, Esc to close, click-outside[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mE:/AgenticSystem/Orion/frontend/src/components/ui/Modal.jsx[39m:2:9
+[33m  1  |  import { useEffect } from "react";
+  2  |  import { useEffect } from "react";
+     |           ^
+  3  |  import { X } from "lucide-react";
+  4  |  [39m
+      at constructor (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:6616:19)
+      at ScopeHandler.checkRedeclarationInScope (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+      at ScopeHandler.declareName (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+      at JSXParserMixin.declareNameFromIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7584:16)
+      at JSXParserMixin.checkIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7580:12)
+      at JSXParserMixin.checkLVal (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7517:12)
+      at JSXParserMixin.finishImportSpecifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14283:10)
+      at JSXParserMixin.parseImportSpecifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14436:17)
+      at JSXParserMixin.parseNamedImportSpecifiers (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14415:36)
+      at JSXParserMixin.parseImportSpecifiersAndAfter (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14259:37)
+      at JSXParserMixin.parseImport (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14252:17)
+      at JSXParserMixin.parseStatementContent (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12893:27)
+      at JSXParserMixin.parseStatementLike (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12784:17)
+      at JSXParserMixin.parseModuleItem (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12761:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13333:36)
+      at JSXParserMixin.parseBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13326:10)
+      at JSXParserMixin.parseProgram (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12639:10)
+      at JSXParserMixin.parseTopLevel (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12629:25)
+      at JSXParserMixin.parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14505:25)
+      at parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:261:32)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:189:28
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:113:33
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:287:14)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+[2m8:24:47 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: E:\AgenticSystem\Orion\frontend\src\components\ui\Modal.jsx: Identifier 'useEffect' has already been declared. (2:9)
+
+[0m [90m 1 |[31m [36mimport[31m { useEffect } [36mfrom[31m [32m"react"[31m[33m;[31m
+[31m[1m>[22m[31m[90m 2 |[31m [36mimport[31m { useEffect } [36mfrom[31m [32m"react"[31m[33m;[31m
+ [90m   |[31m          [31m[1m^[22m[31m
+ [90m 3 |[31m [36mimport[31m { [33mX[31m } [36mfrom[31m [32m"lucide-react"[31m[33m;[31m
+ [90m 4 |[31m
+ [90m 5 |[31m [90m// Reusable modal. Backdrop blur, scale-in animation, Esc to close, click-outside[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mE:/AgenticSystem/Orion/frontend/src/components/ui/Modal.jsx[39m:2:9
+[33m  1  |  import { useEffect } from "react";
+  2  |  import { useEffect } from "react";
+     |           ^
+  3  |  import { X } from "lucide-react";
+  4  |  [39m
+      at constructor (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:6616:19)
+      at ScopeHandler.checkRedeclarationInScope (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+      at ScopeHandler.declareName (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+      at JSXParserMixin.declareNameFromIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7584:16)
+      at JSXParserMixin.checkIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7580:12)
+      at JSXParserMixin.checkLVal (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7517:12)
+      at JSXParserMixin.finishImportSpecifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14283:10)
+      at JSXParserMixin.parseImportSpecifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14436:17)
+      at JSXParserMixin.parseNamedImportSpecifiers (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14415:36)
+      at JSXParserMixin.parseImportSpecifiersAndAfter (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14259:37)
+      at JSXParserMixin.parseImport (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14252:17)
+      at JSXParserMixin.parseStatementContent (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12893:27)
+      at JSXParserMixin.parseStatementLike (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12784:17)
+      at JSXParserMixin.parseModuleItem (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12761:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13333:36)
+      at JSXParserMixin.parseBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13326:10)
+      at JSXParserMixin.parseProgram (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12639:10)
+      at JSXParserMixin.parseTopLevel (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12629:25)
+      at JSXParserMixin.parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14505:25)
+      at parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:261:32)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:189:28
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:113:33
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:287:14)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+[2m8:24:57 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: E:\AgenticSystem\Orion\frontend\src\components\ui\Modal.jsx: Identifier 'useEffect' has already been declared. (2:9)
+
+[0m [90m 1 |[31m [36mimport[31m { useEffect } [36mfrom[31m [32m"react"[31m[33m;[31m
+[31m[1m>[22m[31m[90m 2 |[31m [36mimport[31m { useEffect } [36mfrom[31m [32m"react"[31m[33m;[31m
+ [90m   |[31m          [31m[1m^[22m[31m
+ [90m 3 |[31m [36mimport[31m { [33mX[31m } [36mfrom[31m [32m"lucide-react"[31m[33m;[31m
+ [90m 4 |[31m
+ [90m 5 |[31m [90m// Reusable modal. Backdrop blur, scale-in animation, Esc to close, click-outside[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mE:/AgenticSystem/Orion/frontend/src/components/ui/Modal.jsx[39m:2:9
+[33m  1  |  import { useEffect } from "react";
+  2  |  import { useEffect } from "react";
+     |           ^
+  3  |  import { X } from "lucide-react";
+  4  |  [39m
+      at constructor (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:6616:19)
+      at ScopeHandler.checkRedeclarationInScope (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+      at ScopeHandler.declareName (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+      at JSXParserMixin.declareNameFromIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7584:16)
+      at JSXParserMixin.checkIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7580:12)
+      at JSXParserMixin.checkLVal (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7517:12)
+      at JSXParserMixin.finishImportSpecifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14283:10)
+      at JSXParserMixin.parseImportSpecifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14436:17)
+      at JSXParserMixin.parseNamedImportSpecifiers (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14415:36)
+      at JSXParserMixin.parseImportSpecifiersAndAfter (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14259:37)
+      at JSXParserMixin.parseImport (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14252:17)
+      at JSXParserMixin.parseStatementContent (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12893:27)
+      at JSXParserMixin.parseStatementLike (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12784:17)
+      at JSXParserMixin.parseModuleItem (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12761:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13333:36)
+      at JSXParserMixin.parseBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13326:10)
+      at JSXParserMixin.parseProgram (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12639:10)
+      at JSXParserMixin.parseTopLevel (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12629:25)
+      at JSXParserMixin.parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14505:25)
+      at parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:261:32)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:189:28
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:113:33
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:287:14)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+[2m8:25:10 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ui/Modal.jsx, /src/index.css[22m
+[2m8:26:07 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ui/Modal.jsx, /src/index.css[22m
+[2m8:26:07 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: E:\AgenticSystem\Orion\frontend\src\components\ui\Modal.jsx: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (70:4)
+
+[0m [90m 68 |[31m         [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m 69 |[31m       [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+[31m[1m>[22m[31m[90m 70 |[31m     [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m    |[31m     [31m[1m^[22m[31m
+ [90m 71 |[31m   )[33m;[31m
+ [90m 72 |[31m }
+ [90m 73 |[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mE:/AgenticSystem/Orion/frontend/src/components/ui/Modal.jsx[39m:70:4
+[33m  68 |          </div>
+  69 |        </div>
+  70 |      </div>
+     |      ^
+  71 |    );
+  72 |  }[39m
+      at constructor (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:6616:19)
+      at JSXParserMixin.jsxParseElementAt (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4754:18)
+      at JSXParserMixin.jsxParseElement (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4761:17)
+      at JSXParserMixin.parseExprAtom (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4771:19)
+      at JSXParserMixin.parseExprSubscripts (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11098:23)
+      at JSXParserMixin.parseUpdate (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11083:21)
+      at JSXParserMixin.parseMaybeUnary (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11063:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10916:61)
+      at JSXParserMixin.parseExprOps (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10921:23)
+      at JSXParserMixin.parseMaybeConditional (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10898:23)
+      at JSXParserMixin.parseMaybeAssign (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10848:21)
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10817:39
+      at JSXParserMixin.allowInAnd (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12443:12)
+      at JSXParserMixin.parseMaybeAssignAllowIn (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10817:17)
+      at JSXParserMixin.parseMaybeAssignAllowInOrVoidPattern (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12510:17)
+      at JSXParserMixin.parseParenAndDistinguishExpression (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11692:28)
+      at JSXParserMixin.parseExprAtom (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11348:23)
+      at JSXParserMixin.parseExprAtom (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4776:20)
+      at JSXParserMixin.parseExprSubscripts (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11098:23)
+      at JSXParserMixin.parseUpdate (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11083:21)
+      at JSXParserMixin.parseMaybeUnary (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11063:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10916:61)
+      at JSXParserMixin.parseExprOps (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10921:23)
+      at JSXParserMixin.parseMaybeConditional (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10898:23)
+      at JSXParserMixin.parseMaybeAssign (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10848:21)
+      at JSXParserMixin.parseExpressionBase (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10801:23)
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10797:39
+      at JSXParserMixin.allowInAnd (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12438:16)
+      at JSXParserMixin.parseExpression (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10797:17)
+      at JSXParserMixin.parseReturnStatement (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13159:28)
+      at JSXParserMixin.parseStatementContent (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12815:21)
+      at JSXParserMixin.parseStatementLike (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12784:17)
+      at JSXParserMixin.parseStatementListItem (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12764:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13333:61)
+      at JSXParserMixin.parseBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13326:10)
+      at JSXParserMixin.parseBlock (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13314:10)
+      at JSXParserMixin.parseFunctionBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12117:24)
+      at JSXParserMixin.parseFunctionBodyAndFinish (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12103:10)
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13462:12
+      at JSXParserMixin.withSmartMixTopicForbiddingContext (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12420:14)
+      at JSXParserMixin.parseFunction (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13461:10)
+      at JSXParserMixin.parseFunctionStatement (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13142:17)
+      at JSXParserMixin.parseStatementContent (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12808:21)
+      at JSXParserMixin.parseStatementLike (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12784:17)
+      at JSXParserMixin.parseStatementListItem (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12764:17)
+      at JSXParserMixin.parseExportDeclaration (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13951:17)
+      at JSXParserMixin.maybeParseExportDeclaration (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13910:31)
+      at JSXParserMixin.parseExport (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13829:29)
+      at JSXParserMixin.parseStatementContent (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12895:27)
+[2m8:26:14 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ui/Modal.jsx, /src/index.css[22m
+[2m8:26:40 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m8:28:10 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ui/Modal.jsx, /src/index.css[22m
+[2m8:28:11 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: E:\AgenticSystem\Orion\frontend\src\components\ui\Modal.jsx: Identifier 'useEffect' has already been declared. (2:9)
+
+[0m [90m 1 |[31m [36mimport[31m { useEffect } [36mfrom[31m [32m"react"[31m[33m;[31m
+[31m[1m>[22m[31m[90m 2 |[31m [36mimport[31m { useEffect } [36mfrom[31m [32m"react"[31m[33m;[31m
+ [90m   |[31m          [31m[1m^[22m[31m
+ [90m 3 |[31m [36mimport[31m { [33mX[31m } [36mfrom[31m [32m"lucide-react"[31m[33m;[31m
+ [90m 4 |[31m
+ [90m 5 |[31m [90m// Reusable modal. Backdrop blur, scale-in animation, Esc to close, click-outside[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mE:/AgenticSystem/Orion/frontend/src/components/ui/Modal.jsx[39m:2:9
+[33m  1  |  import { useEffect } from "react";
+  2  |  import { useEffect } from "react";
+     |           ^
+  3  |  import { X } from "lucide-react";
+  4  |  [39m
+      at constructor (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:6616:19)
+      at ScopeHandler.checkRedeclarationInScope (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+      at ScopeHandler.declareName (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+      at JSXParserMixin.declareNameFromIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7584:16)
+      at JSXParserMixin.checkIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7580:12)
+      at JSXParserMixin.checkLVal (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7517:12)
+      at JSXParserMixin.finishImportSpecifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14283:10)
+      at JSXParserMixin.parseImportSpecifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14436:17)
+      at JSXParserMixin.parseNamedImportSpecifiers (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14415:36)
+      at JSXParserMixin.parseImportSpecifiersAndAfter (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14259:37)
+      at JSXParserMixin.parseImport (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14252:17)
+      at JSXParserMixin.parseStatementContent (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12893:27)
+      at JSXParserMixin.parseStatementLike (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12784:17)
+      at JSXParserMixin.parseModuleItem (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12761:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13333:36)
+      at JSXParserMixin.parseBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13326:10)
+      at JSXParserMixin.parseProgram (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12639:10)
+      at JSXParserMixin.parseTopLevel (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12629:25)
+      at JSXParserMixin.parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14505:25)
+      at parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:261:32)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:189:28
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:113:33
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:287:14)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+[2m8:28:20 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ui/Modal.jsx, /src/index.css[22m
+[2m8:28:20 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: E:\AgenticSystem\Orion\frontend\src\components\ui\Modal.jsx: Identifier 'useEffect' has already been declared. (2:9)
+
+[0m [90m 1 |[31m [36mimport[31m { useEffect } [36mfrom[31m [32m"react"[31m[33m;[31m
+[31m[1m>[22m[31m[90m 2 |[31m [36mimport[31m { useEffect } [36mfrom[31m [32m"react"[31m[33m;[31m
+ [90m   |[31m          [31m[1m^[22m[31m
+ [90m 3 |[31m [36mimport[31m { [33mX[31m } [36mfrom[31m [32m"lucide-react"[31m[33m;[31m
+ [90m 4 |[31m
+ [90m 5 |[31m [90m// Reusable modal. Backdrop blur, scale-in animation, Esc to close, click-outside[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mE:/AgenticSystem/Orion/frontend/src/components/ui/Modal.jsx[39m:2:9
+[33m  1  |  import { useEffect } from "react";
+  2  |  import { useEffect } from "react";
+     |           ^
+  3  |  import { X } from "lucide-react";
+  4  |  [39m
+      at constructor (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:6616:19)
+      at ScopeHandler.checkRedeclarationInScope (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+      at ScopeHandler.declareName (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+      at JSXParserMixin.declareNameFromIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7584:16)
+      at JSXParserMixin.checkIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7580:12)
+      at JSXParserMixin.checkLVal (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:7517:12)
+      at JSXParserMixin.finishImportSpecifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14283:10)
+      at JSXParserMixin.parseImportSpecifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14436:17)
+      at JSXParserMixin.parseNamedImportSpecifiers (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14415:36)
+      at JSXParserMixin.parseImportSpecifiersAndAfter (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14259:37)
+      at JSXParserMixin.parseImport (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14252:17)
+      at JSXParserMixin.parseStatementContent (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12893:27)
+      at JSXParserMixin.parseStatementLike (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12784:17)
+      at JSXParserMixin.parseModuleItem (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12761:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13333:36)
+      at JSXParserMixin.parseBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13326:10)
+      at JSXParserMixin.parseProgram (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12639:10)
+      at JSXParserMixin.parseTopLevel (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12629:25)
+      at JSXParserMixin.parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14505:25)
+      at parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:261:32)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:189:28
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:113:33
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:287:14)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+[2m8:28:32 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ui/Modal.jsx, /src/index.css[22m
+[2m8:31:56 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/PlatformApp.jsx, /src/index.css[22m
+[2m8:32:26 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/layout/Topbar.jsx, /src/index.css[22m
+[2m8:34:57 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/layout/Sidebar.jsx, /src/index.css[22m
+[2m8:38:13 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/layout/Sidebar.jsx, /src/index.css[22m
+[2m8:42:25 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/layout/Topbar.jsx, /src/index.css[22m
+[2m8:50:01 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m8:50:21 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css, /src/components/views/ViewMissions.jsx, /src/components/views/ViewMissionDetails.jsx, /src/components/views/ViewCommandCenter.jsx, /src/components/views/settings/ViewApiAccess.jsx[22m
+[2m9:06:03 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m9:29:56 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m9:43:26 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css, /src/components/views/ViewMissions.jsx, /src/components/views/ViewMissionDetails.jsx, /src/components/views/ViewCommandCenter.jsx, /src/components/views/settings/ViewApiAccess.jsx[22m
+[2m9:43:44 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m9:43:52 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m9:44:43 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m9:45:10 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m9:45:23 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m9:45:28 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m9:50:11 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m9:50:11 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: E:\AgenticSystem\Orion\frontend\src\components\views\ViewCommandCenter.jsx: Unterminated JSX contents. (744:10)
+
+[0m [90m 742 |[31m         [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m 743 |[31m       [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+[31m[1m>[22m[31m[90m 744 |[31m     [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m     |[31m           [31m[1m^[22m[31m
+ [90m 745 |[31m   )[33m;[31m
+ [90m 746 |[31m }[33m;[31m
+ [90m 747 |[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mE:/AgenticSystem/Orion/frontend/src/components/views/ViewCommandCenter.jsx[39m:744:10
+[33m  742|          </div>
+  743|        </div>
+  744|      </div>
+     |            ^
+  745|    );
+  746|  };[39m
+      at constructor (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:6616:19)
+      at JSXParserMixin.jsxReadToken (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4460:20)
+      at JSXParserMixin.getTokenFromCode (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4786:12)
+      at JSXParserMixin.nextToken (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:5799:10)
+      at JSXParserMixin.next (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:5709:10)
+      at JSXParserMixin.eat (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:5713:12)
+      at JSXParserMixin.expect (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:6915:15)
+      at JSXParserMixin.jsxParseClosingElementAt (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4692:10)
+      at JSXParserMixin.jsxParseElementAt (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4707:37)
+      at JSXParserMixin.jsxParseElementAt (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4710:32)
+      at JSXParserMixin.jsxParseElement (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4761:17)
+      at JSXParserMixin.parseExprAtom (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4771:19)
+      at JSXParserMixin.parseExprSubscripts (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11098:23)
+      at JSXParserMixin.parseUpdate (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11083:21)
+      at JSXParserMixin.parseMaybeUnary (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11063:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10916:61)
+      at JSXParserMixin.parseExprOps (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10921:23)
+      at JSXParserMixin.parseMaybeConditional (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10898:23)
+      at JSXParserMixin.parseMaybeAssign (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10848:21)
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10817:39
+      at JSXParserMixin.allowInAnd (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12443:12)
+      at JSXParserMixin.parseMaybeAssignAllowIn (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10817:17)
+      at JSXParserMixin.parseMaybeAssignAllowInOrVoidPattern (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12510:17)
+      at JSXParserMixin.parseParenAndDistinguishExpression (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11692:28)
+      at JSXParserMixin.parseExprAtom (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11348:23)
+      at JSXParserMixin.parseExprAtom (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4776:20)
+      at JSXParserMixin.parseExprSubscripts (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11098:23)
+      at JSXParserMixin.parseUpdate (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11083:21)
+      at JSXParserMixin.parseMaybeUnary (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11063:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10916:61)
+      at JSXParserMixin.parseExprOps (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10921:23)
+      at JSXParserMixin.parseMaybeConditional (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10898:23)
+      at JSXParserMixin.parseMaybeAssign (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10848:21)
+      at JSXParserMixin.parseExpressionBase (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10801:23)
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10797:39
+      at JSXParserMixin.allowInAnd (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12438:16)
+      at JSXParserMixin.parseExpression (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10797:17)
+      at JSXParserMixin.parseReturnStatement (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13159:28)
+      at JSXParserMixin.parseStatementContent (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12815:21)
+      at JSXParserMixin.parseStatementLike (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12784:17)
+      at JSXParserMixin.parseStatementListItem (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12764:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13333:61)
+      at JSXParserMixin.parseBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13326:10)
+      at JSXParserMixin.parseBlock (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13314:10)
+      at JSXParserMixin.parseFunctionBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12117:24)
+      at JSXParserMixin.parseArrowExpression (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12092:10)
+      at JSXParserMixin.parseParenAndDistinguishExpression (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11704:12)
+      at JSXParserMixin.parseExprAtom (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11348:23)
+      at JSXParserMixin.parseExprAtom (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4776:20)
+[2m9:50:36 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m9:51:46 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m9:53:50 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m9:54:01 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m9:59:14 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m9:59:31 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:11:59 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:12:30 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:12:35 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:12:41 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m10:12:46 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:18:11 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:18:16 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:18:21 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m10:25:07 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:28:41 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:28:54 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:29:27 pm[22m [36m[1m[vite][22m[39m [32m✨ new dependencies optimized: [33mreact-markdown, remark-gfm[32m[39m
+[2m10:29:27 pm[22m [36m[1m[vite][22m[39m [32m✨ optimized dependencies changed. reloading[39m
+[2m10:37:35 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:38:25 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:38:33 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:38:40 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:38:58 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:42:27 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:42:37 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:42:44 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m10:46:48 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:54:24 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:54:30 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m10:54:38 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m1:58:28 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m1:58:29 am[22m [36m[1m[vite][22m[39m [32m✨ new dependencies optimized: [33mmarked[32m[39m
+[2m1:58:29 am[22m [36m[1m[vite][22m[39m [32m✨ optimized dependencies changed. reloading[39m
+[2m2:01:17 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:05:27 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:05:32 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:05:42 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:05:58 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:09:07 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:09:46 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:10:06 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:18:42 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:18:42 am[22m [31m[1m[vite][22m[39m [31mInternal server error: E:\AgenticSystem\Orion\frontend\src\components\views\ViewCommandCenter.jsx: Unexpected token (460:20)
+
+[0m [90m 458 |[31m   )[33m;[31m
+ [90m 459 |[31m }
+[31m[1m>[22m[31m[90m 460 |[31m                     ))}
+ [90m     |[31m                     [31m[1m^[22m[31m
+ [90m 461 |[31m                   [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m 462 |[31m                 [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m 463 |[31m               )[33m;[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mE:/AgenticSystem/Orion/frontend/src/components/views/ViewCommandCenter.jsx[39m:460:20
+[33m  458|    );
+  459|  }
+  460|                      ))}
+     |                      ^
+  461|                    </div>
+  462|                  </div>[39m
+      at constructor (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:6616:19)
+      at JSXParserMixin.unexpected (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:6636:16)
+      at JSXParserMixin.parseExprAtom (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11459:22)
+      at JSXParserMixin.parseExprAtom (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4776:20)
+      at JSXParserMixin.parseExprSubscripts (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11098:23)
+      at JSXParserMixin.parseUpdate (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11083:21)
+      at JSXParserMixin.parseMaybeUnary (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11063:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10916:61)
+      at JSXParserMixin.parseExprOps (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10921:23)
+      at JSXParserMixin.parseMaybeConditional (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10898:23)
+      at JSXParserMixin.parseMaybeAssign (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10848:21)
+      at JSXParserMixin.parseExpressionBase (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10801:23)
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10797:39
+      at JSXParserMixin.allowInAnd (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12438:16)
+      at JSXParserMixin.parseExpression (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10797:17)
+      at JSXParserMixin.parseStatementContent (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12912:23)
+      at JSXParserMixin.parseStatementLike (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12784:17)
+      at JSXParserMixin.parseModuleItem (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12761:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13333:36)
+      at JSXParserMixin.parseBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13326:10)
+      at JSXParserMixin.parseProgram (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12639:10)
+      at JSXParserMixin.parseTopLevel (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12629:25)
+      at JSXParserMixin.parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14505:25)
+      at parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:261:32)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:189:28
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:113:33
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:287:14)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+[2m2:18:54 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:19:01 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m2:24:32 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:25:38 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:25:48 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:25:54 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m2:28:50 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:29:06 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:29:21 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ui/Markdown.jsx, /src/index.css[22m
+[2m2:29:29 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ui/Markdown.jsx, /src/index.css[22m
+[2m2:32:00 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:32:09 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m2:41:32 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:53:53 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css, /src/components/views/ViewMissions.jsx, /src/components/views/ViewMissionDetails.jsx, /src/components/views/ViewCommandCenter.jsx, /src/components/views/settings/ViewApiAccess.jsx[22m
+[2m2:54:13 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:54:31 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:54:50 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:55:11 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:55:34 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m2:55:45 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m3:02:57 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m3:03:29 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m3:06:34 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m3:06:34 am[22m [31m[1m[vite][22m[39m [31mInternal server error: E:\AgenticSystem\Orion\frontend\src\components\views\ViewCommandCenter.jsx: Unexpected token (487:13)
+
+[0m [90m 485 |[31m   )[33m;[31m
+ [90m 486 |[31m }
+[31m[1m>[22m[31m[90m 487 |[31m             [33m<[31m[33m/[31m[33m>[31m
+ [90m     |[31m              [31m[1m^[22m[31m
+ [90m 488 |[31m           ) [33m:[31m (
+ [90m 489 |[31m             [33m<[31m[33m>[31m
+ [90m 490 |[31m               [33m<[31m[33mBoxes[31m size[33m=[31m{[35m22[31m} className[33m=[31m[32m"mx-auto text-[#b4bdcc] mb-2"[31m [33m/[31m[33m>[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mE:/AgenticSystem/Orion/frontend/src/components/views/ViewCommandCenter.jsx[39m:487:13
+[33m  485|    );
+  486|  }
+  487|              </>
+     |               ^
+  488|            ) : (
+  489|              <>[39m
+      at constructor (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:6616:19)
+      at JSXParserMixin.unexpected (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:6636:16)
+      at JSXParserMixin.jsxParseIdentifier (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4581:12)
+      at JSXParserMixin.jsxParseNamespacedName (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4588:23)
+      at JSXParserMixin.jsxParseElementName (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4597:21)
+      at JSXParserMixin.jsxParseOpeningElementAt (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4673:22)
+      at JSXParserMixin.jsxParseElementAt (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4698:33)
+      at JSXParserMixin.jsxParseElement (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4761:17)
+      at JSXParserMixin.parseExprAtom (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:4774:19)
+      at JSXParserMixin.parseExprSubscripts (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11098:23)
+      at JSXParserMixin.parseUpdate (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11083:21)
+      at JSXParserMixin.parseMaybeUnary (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:11063:23)
+      at JSXParserMixin.parseMaybeUnaryOrPrivate (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10916:61)
+      at JSXParserMixin.parseExprOps (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10921:23)
+      at JSXParserMixin.parseMaybeConditional (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10898:23)
+      at JSXParserMixin.parseMaybeAssign (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10848:21)
+      at JSXParserMixin.parseExpressionBase (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10801:23)
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10797:39
+      at JSXParserMixin.allowInAnd (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12438:16)
+      at JSXParserMixin.parseExpression (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:10797:17)
+      at JSXParserMixin.parseStatementContent (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12912:23)
+      at JSXParserMixin.parseStatementLike (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12784:17)
+      at JSXParserMixin.parseModuleItem (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12761:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13333:36)
+      at JSXParserMixin.parseBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13326:10)
+      at JSXParserMixin.parseProgram (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12639:10)
+      at JSXParserMixin.parseTopLevel (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12629:25)
+      at JSXParserMixin.parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14505:25)
+      at parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:261:32)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:189:28
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:113:33
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:287:14)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+[2m3:07:09 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m3:07:10 am[22m [31m[1m[vite][22m[39m [31mInternal server error: E:\AgenticSystem\Orion\frontend\src\components\views\ViewCommandCenter.jsx: 'import' and 'export' may only appear at the top level. (655:0)
+
+[0m [90m 653 |[31m
+ [90m 654 |[31m [90m// =====================================================================[31m
+[31m[1m>[22m[31m[90m 655 |[31m [36mexport[31m [36mconst[31m [33mViewCommandCenter[31m [33m=[31m () [33m=>[31m {
+ [90m     |[31m [31m[1m^[22m[31m
+ [90m 656 |[31m   [36mconst[31m toast [33m=[31m useToast()[33m;[31m
+ [90m 657 |[31m   [36mconst[31m [conversations[33m,[31m setConversations] [33m=[31m useState([])[33m;[31m
+ [90m 658 |[31m   [36mconst[31m [activeId[33m,[31m setActiveId] [33m=[31m useState([36mnull[31m)[33m;[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mE:/AgenticSystem/Orion/frontend/src/components/views/ViewCommandCenter.jsx[39m:655:0
+[33m  664|    const [renaming, setRenaming] = useState(null);
+  665|    const [ctxOpen, setCtxOpen] = useState(false);
+  666|    const [sidebarOpen, setSidebarOpen] = useState(true);
+     |                                                 ^
+  667|    const [context, setContext] = useState([]);
+  668|  [39m
+      at constructor (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:6616:19)
+      at JSXParserMixin.parseStatementContent (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12888:18)
+      at JSXParserMixin.parseStatementLike (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12784:17)
+      at JSXParserMixin.parseStatementListItem (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12764:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13333:61)
+      at JSXParserMixin.parseBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13326:10)
+      at JSXParserMixin.parseBlock (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13314:10)
+      at JSXParserMixin.parseFunctionBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12117:24)
+      at JSXParserMixin.parseFunctionBodyAndFinish (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12103:10)
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13462:12
+      at JSXParserMixin.withSmartMixTopicForbiddingContext (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12420:14)
+      at JSXParserMixin.parseFunction (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13461:10)
+      at JSXParserMixin.parseFunctionStatement (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13142:17)
+      at JSXParserMixin.parseStatementContent (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12808:21)
+      at JSXParserMixin.parseStatementLike (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12784:17)
+      at JSXParserMixin.parseModuleItem (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12761:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13333:36)
+      at JSXParserMixin.parseBlockBody (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:13326:10)
+      at JSXParserMixin.parseProgram (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12639:10)
+      at JSXParserMixin.parseTopLevel (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:12629:25)
+      at JSXParserMixin.parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14505:25)
+      at parse (E:\AgenticSystem\Orion\frontend\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:261:32)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:189:28
+      at E:\AgenticSystem\Orion\frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:113:33
+      at step (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:287:14)
+      at E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (E:\AgenticSystem\Orion\frontend\node_modules\gensync\index.js:223:11)
+[2m3:07:20 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m3:25:33 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m3:25:43 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m3:25:53 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m3:26:04 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m3:26:14 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m3:28:18 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/ViewCommandCenter.jsx, /src/index.css[22m
+[2m3:35:48 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/AgentGraphCanvas.jsx, /src/index.css[22m
+[2m3:35:57 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/views/AgentGraphCanvas.jsx, /src/index.css[22m
