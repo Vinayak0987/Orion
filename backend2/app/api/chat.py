@@ -51,6 +51,7 @@ class UpdateMessageRequest(BaseModel):
     mission_id: str | None = None
     outputs: list | None = None
     status: str | None = None
+    charts: list | None = None
 
 
 class ContextRequest(BaseModel):

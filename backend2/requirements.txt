@@ -21,6 +21,14 @@ chromadb==0.5.23              # vector store for document_rag
 pypdf==5.1.0                  # extract text from uploaded PDFs
 python-docx==1.1.2            # extract text from uploaded DOCX files
 
+# --- Built-in tools pool (all pure-python, no C++ build tools) ---------------
+ddgs==9.16.0                  # keyless DuckDuckGo web_search / web_search_news
+beautifulsoup4==4.15.0        # HTML parsing for scrapers/metadata/links
+PyYAML==6.0.2                 # yaml_tool
+markdownify==1.2.3            # html_to_markdown
+rapidfuzz==3.14.6             # fuzzy_matcher / string_similarity
+python-dateutil==2.9.0.post0  # date_parser
+
 # --- Authentication / user data layer ----------------------------------------
 argon2-cffi==23.1.0           # Argon2id password hashing
 PyJWT==2.10.1                 # access + refresh token signing

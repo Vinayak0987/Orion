@@ -18,12 +18,10 @@ import {
 import {
   NAV_ITEMS,
   WORKSPACE_ITEMS,
-  AGENTS_SUBTABS,
   TOOLS_SUBTABS,
   KNOWLEDGE_SUBTABS,
   OPERATIONS_SUBTABS,
   OBSERVABILITY_SUBTABS,
-  DEPARTMENTS_SUBTABS,
 } from "../../data/navigation.js";
 
 const NAV_ICONS = {
@@ -46,12 +44,10 @@ const BADGE_COLORS = {
 };
 
 const EXPANDABLE = {
-  agents: AGENTS_SUBTABS,
   tools: TOOLS_SUBTABS,
   knowledge: KNOWLEDGE_SUBTABS,
   operations: OPERATIONS_SUBTABS,
   observability: OBSERVABILITY_SUBTABS,
-  departments: DEPARTMENTS_SUBTABS,
 };
 
 const isGroupActive = (itemId, activeView) => {
@@ -62,17 +58,7 @@ const isGroupActive = (itemId, activeView) => {
     return (
       activeView === "departments" ||
       activeView === "create-department" ||
-      activeView === "department-marketing" ||
-      activeView === "department-finance" ||
-      activeView === "department-operations" ||
-      activeView === "department-sales" ||
-      activeView === "department-hr" ||
-      activeView === "department-research" ||
-      activeView.startsWith("marketing-") ||
-      activeView.startsWith("finance-") ||
-      activeView.startsWith("sales-") ||
-      activeView.startsWith("hr-") ||
-      activeView.startsWith("research-")
+      activeView === "department-detail"
     );
   }
   return activeView === itemId;

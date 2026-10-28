@@ -1,5 +1,21 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { missionApi } from "../../missionApi";
+
+// Resolve an image src from agent output to something the browser can load.
+// The agent often emits a bare filename or a relative "/charts/x.png" path for
+// a generated chart; rewrite those to the backend's served URL.
+function resolveImgSrc(src) {
+  if (!src) return src;
+  if (/^(https?:|data:)/i.test(src)) return src;        // already absolute
+  if (src.startsWith("/charts/")) return `${missionApi.base}${src}`;
+  // bare chart filename (e.g. "abc123_0.png" or "charts/abc.png")
+  const name = src.replace(/^\.?\/*/, "");
+  if (/\.(png|jpe?g|svg)$/i.test(name)) {
+    return `${missionApi.base}/charts/${name.replace(/^charts\//, "")}`;
+  }
+  return src;
+}
 
 // Renders AI output as proper Markdown: headings (sized by #/##/###), bold,
 // italics, bullet + numbered lists, tables (GFM), code, blockquotes, links.
@@ -29,6 +45,15 @@ export function Markdown({ children, compact = false }) {
           ol: ({ node, ...p }) => <ol className="list-decimal pl-5 my-1.5 space-y-1 text-[14px] leading-relaxed marker:text-[#94a3b8]" {...p} />,
           li: ({ node, ...p }) => <li className="pl-0.5" {...p} />,
           a: ({ node, ...p }) => <a className="text-[#4f46e5] font-medium underline underline-offset-2 hover:text-[#4338ca]" target="_blank" rel="noreferrer" {...p} />,
+          img: ({ node, src, alt, ...p }) => {
+            const resolved = resolveImgSrc(src);
+            return (
+              <a href={resolved} target="_blank" rel="noreferrer" className="block my-2 neu-inset rounded-xl p-2 w-fit max-w-full">
+                <img src={resolved} alt={alt || "chart"} loading="lazy"
+                  className="max-w-[520px] w-full rounded-lg bg-white" {...p} />
+              </a>
+            );
+          },
           blockquote: ({ node, ...p }) => <blockquote className="border-l-3 border-[#c7cede] pl-3 my-2 text-[#64748b] italic" {...p} />,
           hr: () => <hr className="my-3 border-[#e2e6ee]" />,
           code: ({ node, inline, className, children, ...p }) =>

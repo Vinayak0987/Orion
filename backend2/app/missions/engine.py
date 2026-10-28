@@ -13,13 +13,21 @@ from app.config import settings
 from app.llm.client import LLMClient
 from app.missions import events, planner, store
 from app.missions.executor import run_task
-from app.missions.router import route
+from app.missions.router import resolve as _resolve
 
 
 async def run_mission(mission_id: str, skip_clarify: bool = False) -> None:
     emit = events.make_emitter(mission_id)
     try:
-        await _run(mission_id, emit, skip_clarify=skip_clarify)
+        await asyncio.wait_for(
+            _run(mission_id, emit, skip_clarify=skip_clarify),
+            timeout=settings.mission_timeout_seconds,
+        )
+    except asyncio.TimeoutError:
+        store.set_mission(mission_id, status="partial", completed_at=_now())
+        await emit("mission_failed",
+                   error=f"Mission exceeded the time limit ({settings.mission_timeout_seconds}s) "
+                   "and was stopped. Partial results may be available.")
     except Exception as e:  # noqa: BLE001 - never let the engine crash silently
         store.set_mission(mission_id, status="failed")
         await emit("mission_failed", error=str(e))
@@ -43,6 +51,25 @@ async def _run(mission_id: str, emit, skip_clarify: bool = False) -> None:
 
     llm = LLMClient(user_keys=mission.get("user_keys"))
 
+    # --- MASTER: route the goal to a department (unless one was explicitly set
+    # by the Command Center, or routing says handle directly). ---
+    if not mission.get("department_id"):
+        try:
+            from app.missions import master
+            decision = await master.route_goal(
+                mission["prompt"], created_by=user_id, user_keys=mission.get("user_keys"))
+            if decision.get("department_id"):
+                store.set_mission(mission_id, department_id=decision["department_id"])
+                mission["department_id"] = decision["department_id"]
+                await emit("routed_to_department",
+                           department_id=decision["department_id"],
+                           department_name=decision.get("department_name"),
+                           reason=decision.get("reason"))
+            else:
+                await emit("handled_directly", reason=decision.get("reason"))
+        except Exception:  # noqa: BLE001 — routing must never block the mission
+            pass
+
     # --- Short-term memory: recent turns in THIS conversation ---
     short_term = _short_term_memory(conversation_id, mission_id)
     mission["short_term_memory"] = short_term
@@ -52,7 +79,16 @@ async def _run(mission_id: str, emit, skip_clarify: bool = False) -> None:
     long_term = context_block(user_id)
 
     # --- Clarifying question (one round, unless the user already answered) ---
-    if not skip_clarify:
+    # Chart/visualization + creative/generation prompts are actionable — skip clarify.
+    _p = (mission.get("prompt") or "").lower()
+    _is_viz = any(k in _p for k in (
+        "chart", "plot", "graph", "matplotlib", "visualiz", "bar chart", "line chart",
+        "pie chart", "histogram", "code_interpreter",
+        "banner", "advertisement", " ad ", "ad ", "ads", "image", "poster", "logo",
+        "design", "generate", "create a", "create an", "video", "flyer", "creative",
+        "mockup", "render",
+    ))
+    if not skip_clarify and not _is_viz:
         store.set_mission(mission_id, status="planning")
         await emit("planning_started")  # show feedback immediately
         from app.missions import planner as _planner
@@ -77,27 +113,39 @@ async def _run(mission_id: str, emit, skip_clarify: bool = False) -> None:
     # Title + plan are independent → run them concurrently to cut latency, with
     # a hard timeout so a slow/hung model can't leave the mission "Thinking…".
     try:
+        mode = mission.get("mode", "action")
+        catalog = planner.tool_catalog_text(mode, goal=mission["prompt"])
         title, tasks = await asyncio.wait_for(
             asyncio.gather(
                 planner.generate_title(mission["prompt"], llm),
-                planner.plan(mission["prompt"], llm, context=long_term, memory=short_term),
+                planner.plan(mission["prompt"], llm, context=long_term, memory=short_term,
+                             tool_catalog=catalog),
             ),
             timeout=settings.planning_timeout_seconds,
         )
     except asyncio.TimeoutError:
-        store.set_mission(mission_id, status="failed")
-        await emit("mission_failed",
-                   error="Planning timed out — the model took too long. Try a simpler goal, "
-                   "or add a faster provider key (Groq) in Settings.")
-        return
+        # Planning was slow (common with a slow local model). Rather than failing
+        # the whole mission, degrade to a SINGLE task = run the goal directly.
+        await emit("planning_timeout_fallback")
+        title = mission["prompt"][:60]
+        tasks = [{
+            "title": mission["prompt"][:120],
+            "agent_type": "general",
+            "tools_needed": ["web_search", "document_rag"],
+            "depends_on": [],
+        }]
 
     store.set_mission(mission_id, title=title)
 
     if not tasks:
-        store.set_mission(mission_id, status="failed")
-        await emit("mission_failed",
-                   error="Could not create a plan. Try rephrasing your goal more specifically.")
-        return
+        # No multi-step plan (common for simple/direct questions). Instead of
+        # failing, run the goal as ONE task so it still gets answered.
+        tasks = [{
+            "title": mission["prompt"][:120],
+            "agent_type": "general",
+            "tools_needed": ["web_search", "document_rag"],
+            "depends_on": [],
+        }]
 
     saved = store.save_tasks(mission_id, tasks)
     for t in saved:
@@ -118,7 +166,11 @@ async def _run(mission_id: str, emit, skip_clarify: bool = False) -> None:
     lock = asyncio.Lock()
 
     async def execute(task: dict) -> None:
-        agent_id = route(task, mission)
+        decision = _resolve(task, mission)
+        agent_id = decision["agent_id"]
+        if decision.get("is_head") and decision.get("department_id"):
+            task["_delegate_head"] = True
+            task["_department_id"] = decision["department_id"]
         store.set_task(task["id"], agent_id=agent_id, status="running")
         agent_name = _agent_name(agent_id)
         await emit("task_started", task_id=task["id"], agent_id=agent_id, agent_name=agent_name)
@@ -130,6 +182,19 @@ async def _run(mission_id: str, emit, skip_clarify: bool = False) -> None:
             status = "failed" if result.get("error") else "completed"
             store.set_task(task["id"], status=status, result=result, completed_at=_now())
             results[task["title"]] = result
+            # Post-task: extract + store durable facts into the agent's memory.
+            if status == "completed":
+                try:
+                    from app.agents.store import get_agent
+                    from app.knowledge.memory import extract_and_store_memory
+
+                    agent = get_agent(agent_id)
+                    if agent:
+                        await extract_and_store_memory(
+                            agent, mission["id"], result.get("data") or result.get("summary", "")
+                        )
+                except Exception:  # noqa: BLE001 — memory must never fail a task
+                    pass
             await emit("task_completed", task_id=task["id"],
                        result_summary=result.get("summary", ""))
         except asyncio.TimeoutError:

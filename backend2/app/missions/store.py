@@ -24,19 +24,21 @@ def _decode_task(row) -> dict:
 
 def create_mission(prompt: str, created_by: str = "default-user",
                    department_id: str | None = None,
-                   conversation_id: str | None = None) -> str:
+                   conversation_id: str | None = None,
+                   mode: str = "action") -> str:
     mission_id = uuid.uuid4().hex[:12]
+    mode = mode if mode in ("planning", "action") else "action"
     with connection() as conn:
         conn.execute(
-            "INSERT INTO missions (id, prompt, status, department_id, conversation_id, created_by, created_at) "
-            "VALUES (?, ?, 'planning', ?, ?, ?, ?)",
-            (mission_id, prompt, department_id, conversation_id, created_by, _now()),
+            "INSERT INTO missions (id, prompt, status, department_id, conversation_id, mode, created_by, created_at) "
+            "VALUES (?, ?, 'planning', ?, ?, ?, ?, ?)",
+            (mission_id, prompt, department_id, conversation_id, mode, created_by, _now()),
         )
     return mission_id
 
 
 def set_mission(mission_id: str, **fields) -> None:
-    allowed = {"title", "status", "completed_at"}
+    allowed = {"title", "status", "completed_at", "department_id"}
     bad = fields.keys() - allowed
     if bad:
         raise ValueError(f"Unknown mission column(s): {bad}")
@@ -59,12 +61,17 @@ def get_mission(mission_id: str) -> dict | None:
 
 
 def list_missions(limit: int = 50, offset: int = 0, status: str | None = None,
-                  created_by: str = "default-user") -> list[dict]:
+                  created_by: str = "default-user", search: str | None = None,
+                  mtype: str | None = None) -> list[dict]:
     q = "SELECT * FROM missions WHERE created_by = ?"
     params: list = [created_by]
     if status:
         q += " AND status = ?"
         params.append(status)
+    if search:
+        q += " AND (LOWER(prompt) LIKE ? OR LOWER(COALESCE(title,'')) LIKE ?)"
+        like = f"%{search.lower()}%"
+        params += [like, like]
     q += " ORDER BY created_at DESC LIMIT ? OFFSET ?"
     params += [limit, offset]
     with connection() as conn:
@@ -78,10 +85,38 @@ def list_missions(limit: int = 50, offset: int = 0, status: str | None = None,
                 "FROM mission_tasks WHERE mission_id = ?",
                 (m["id"],),
             ).fetchone()
+            trows = conn.execute(
+                "SELECT agent_type, agent_id, status FROM mission_tasks WHERE mission_id = ?",
+                (m["id"],),
+            ).fetchall()
         m["task_count"] = counts["tasks"]
         m["agent_count"] = counts["agents"]
+        types = [t["agent_type"] for t in trows]
+        m["type"] = _classify_type(types)
+        m["agent_ids"] = sorted({t["agent_id"] for t in trows if t["agent_id"]})
+        done = sum(1 for t in trows if t["status"] in ("completed", "failed", "stopped"))
+        m["progress"] = round(100 * done / len(trows)) if trows else 0
         out.append(m)
+    if mtype:
+        out = [m for m in out if m["type"].lower() == mtype.lower()]
     return out
+
+
+def _classify_type(types: list[str]) -> str:
+    """Derive a mission 'type' from its task agent_types (Plan 14)."""
+    if not types:
+        return "Planning"
+    s = set(types)
+    if {"analysis", "writing", "finance"} & s and "research" not in s:
+        return "Planning"
+    if "operations" in s or "hr" in s:
+        return "Operations"
+    research = sum(1 for t in types if t == "research")
+    if research >= len(types) / 2:
+        return "Research"
+    if {"analysis", "writing", "finance"} & s:
+        return "Planning"
+    return "Research" if research else "Planning"
 
 
 def delete_mission(mission_id: str) -> bool:

@@ -37,15 +37,30 @@ async function postJson(path, body) {
 export const missionApi = {
   base: V2_BASE,
   health: () => getJson("/health"),
-  createMission: (prompt, { departmentId = null, conversationId = null, clarified = false } = {}) =>
+  createMission: (prompt, { departmentId = null, conversationId = null, clarified = false, mode = "action" } = {}) =>
     postJson("/missions", {
       prompt,
       department_id: departmentId,
       conversation_id: conversationId,
       clarified,
+      mode,
     }),
   missions: (limit = 50) => getJson(`/missions?limit=${limit}`),
+  missionsQuery: ({ limit = 50, offset = 0, status = "", search = "", type = "" } = {}) => {
+    const p = new URLSearchParams({ limit, offset });
+    if (status) p.set("status", status);
+    if (search) p.set("search", search);
+    if (type) p.set("type", type);
+    return getJson(`/missions?${p.toString()}`);
+  },
   mission: (id) => getJson(`/missions/${id}`),
+  listApprovals: () => getJson("/approvals"),
+  resolveApproval: (approvalId, approved, always = false) =>
+    postJson(`/approvals/${approvalId}`, { approved, always }),
+  missionTools: (id) => getJson(`/missions/${id}/tools`),
+  missionEvidence: (id) => getJson(`/missions/${id}/evidence`),
+  missionTrace: (id) => getJson(`/missions/${id}/trace`),
+  exportMissionJson: (id) => getJson(`/missions/${id}/export.json`),
   deleteMission: async (id) => {
     const res = await fetch(`${V2_BASE}/missions/${id}`, { method: "DELETE" });
     if (!res.ok) throw new Error(`Could not delete (HTTP ${res.status})`);
@@ -72,6 +87,13 @@ export const missionApi = {
     }).then((r) => r.json()),
   deleteApiKey: (provider) =>
     fetch(`${V2_BASE}/settings/api-keys/${provider}`, { method: "DELETE" }).then((r) => {
+      if (!r.ok) throw new Error(`Could not delete key (HTTP ${r.status})`);
+      return r.json();
+    }),
+  customKeys: () => getJson("/settings/api-keys/custom"),
+  addCustomKey: (name, value) => postJson("/settings/api-keys/custom", { name, value }),
+  deleteCustomKey: (slug) =>
+    fetch(`${V2_BASE}/settings/api-keys/custom/${slug}`, { method: "DELETE" }).then((r) => {
       if (!r.ok) throw new Error(`Could not delete key (HTTP ${r.status})`);
       return r.json();
     }),

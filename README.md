@@ -609,3 +609,9 @@ consumes zero free-tier quota and requires no credentials.
 
 The backend has **no authentication**. It is designed to run on localhost for a
 research project. Add auth before exposing it to any network.
+
+cd E:\AgenticSystem\Orion\frontend
+ npm run dev
+
+ cd E:\AgenticSystem\Orion\backend2
+..\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8081 --reload

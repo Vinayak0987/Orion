@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS missions (
     status        TEXT NOT NULL,             -- planning | running | completed | failed | partial
     department_id TEXT,                       -- optional; routes to a department's agents
     conversation_id TEXT,                     -- optional; links a mission to a chat turn
+    mode          TEXT NOT NULL DEFAULT 'action',  -- planning (read-only tools) | action (all tools + approval)
     created_by    TEXT NOT NULL,             -- user_id (Phase 1: 'default-user')
     created_at    TEXT NOT NULL,
     completed_at  TEXT
@@ -64,7 +65,7 @@ CREATE TABLE IF NOT EXISTS agents (
     system_prompt  TEXT NOT NULL,
     agent_type     TEXT NOT NULL,             -- research | marketing | finance | operations | hr | analysis | writing | general
     tools          TEXT NOT NULL DEFAULT '[]',  -- json array of tool ids
-    sub_agents     TEXT NOT NULL DEFAULT '[]',  -- json array of agent ids
+    sub_agents     TEXT NOT NULL DEFAULT '[]',  -- json array of pipeline steps: {id,name,role,input,output,tools[],system_prompt,order}
     department_id  TEXT,
     model          TEXT NOT NULL DEFAULT 'groq:llama-3.1-8b-instant',
     temperature    REAL NOT NULL DEFAULT 0.7,
@@ -73,7 +74,10 @@ CREATE TABLE IF NOT EXISTS agents (
     status         TEXT NOT NULL DEFAULT 'active',  -- active | inactive | deleted
     created_by     TEXT NOT NULL,             -- 'system' for defaults, user_id otherwise
     created_at     TEXT NOT NULL,
-    updated_at     TEXT NOT NULL
+    updated_at     TEXT NOT NULL,
+    origin            TEXT NOT NULL DEFAULT 'reusable', -- reusable | head | specialist | subagent | mission | promoted
+    source_mission_id TEXT,                              -- mission a dynamic agent was created for
+    role_title        TEXT                               -- human role label (e.g. 'SEO Specialist')
 );
 
 CREATE INDEX IF NOT EXISTS idx_agents_type ON agents(agent_type, created_by);
@@ -83,6 +87,46 @@ CREATE TABLE IF NOT EXISTS user_settings (
     api_keys   TEXT NOT NULL DEFAULT '{}',    -- json {groq, gemini, openai, serper, google_places}
     updated_at TEXT NOT NULL
 );
+
+-- ============================================================================
+-- Departments — the organizational layer the Master routes into. A department
+-- is NOT an agent; its "head" is an agent linked via department_members
+-- (role='head'). Specialists/subagents are added dynamically as missions run.
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS departments (
+    id               TEXT PRIMARY KEY,
+    name             TEXT NOT NULL,
+    slug             TEXT,
+    description      TEXT NOT NULL DEFAULT '',
+    purpose          TEXT NOT NULL DEFAULT '',
+    responsibilities TEXT NOT NULL DEFAULT '[]',
+    dept_type        TEXT NOT NULL DEFAULT 'custom',
+    instructions     TEXT NOT NULL DEFAULT '',
+    status           TEXT NOT NULL DEFAULT 'active',
+    config           TEXT NOT NULL DEFAULT '{}',
+    is_default       INTEGER NOT NULL DEFAULT 0,
+    created_by       TEXT NOT NULL,
+    created_at       TEXT NOT NULL,
+    updated_at       TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_departments_owner ON departments(created_by, status);
+
+CREATE TABLE IF NOT EXISTS department_members (
+    id            TEXT PRIMARY KEY,
+    department_id TEXT NOT NULL,
+    agent_id      TEXT NOT NULL,
+    role          TEXT NOT NULL DEFAULT 'specialist',  -- head | specialist | member
+    status        TEXT NOT NULL DEFAULT 'active',
+    instructions  TEXT NOT NULL DEFAULT '',
+    permissions   TEXT NOT NULL DEFAULT '{}',
+    created_at    TEXT NOT NULL,
+    updated_at    TEXT NOT NULL,
+    UNIQUE(department_id, agent_id),
+    FOREIGN KEY (department_id) REFERENCES departments(id)
+);
+CREATE INDEX IF NOT EXISTS idx_dept_members_dept  ON department_members(department_id, status);
+CREATE INDEX IF NOT EXISTS idx_dept_members_agent ON department_members(agent_id);
+
 
 -- ============================================================================
 -- Chat layer — multi-conversation ChatGPT/Claude-style Command Center.
@@ -108,6 +152,7 @@ CREATE TABLE IF NOT EXISTS messages (
     mission_id      TEXT,                      -- set on assistant messages that ran a mission
     attachments     TEXT NOT NULL DEFAULT '[]',  -- json array [{name, size, document_id, chunks}]
     outputs         TEXT NOT NULL DEFAULT '[]',  -- json array of mission output cards
+    charts          TEXT NOT NULL DEFAULT '[]',  -- json array of chart image artifacts [{url,filename}]
     status          TEXT NOT NULL DEFAULT 'done', -- done | running | failed
     created_at      TEXT NOT NULL,
     FOREIGN KEY (conversation_id) REFERENCES conversations(id)
@@ -128,3 +173,165 @@ CREATE TABLE IF NOT EXISTS global_context (
 );
 
 CREATE INDEX IF NOT EXISTS idx_global_context_user ON global_context(user_id);
+
+-- ============================================================================
+-- Tools registry — the DB-backed source of truth the Executor dispatches from.
+-- Built-in tools are seeded idempotently at startup. MCP/custom tools are added
+-- at runtime. `name` is the stable key stored in agents.tools[] (NOT a UUID),
+-- so the working executor + seeded agents keep functioning unchanged.
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS tools (
+    id           TEXT PRIMARY KEY,            -- UUID (internal); joins use `name`
+    name         TEXT NOT NULL UNIQUE,        -- snake_case identifier used in agent.tools[]
+    display_name TEXT NOT NULL,
+    description  TEXT NOT NULL,               -- read by the LLM to decide when to call it
+    type         TEXT NOT NULL DEFAULT 'builtin', -- builtin | mcp | custom | integration
+    category     TEXT NOT NULL DEFAULT 'utility', -- web | text | data | files | math | knowledge | database | utility | ml | code
+    input_schema TEXT NOT NULL DEFAULT '{}',  -- JSON schema for inputs
+    config       TEXT NOT NULL DEFAULT '{}',  -- JSON: {} builtin; {server_url,...} mcp; {endpoint,method,auth} custom
+    enabled      INTEGER NOT NULL DEFAULT 1,  -- 0/1 — disabled tools are blocked even if an agent lists them
+    requires_key TEXT,                        -- optional: name of the API key this tool needs (e.g. 'serper')
+    degraded     INTEGER NOT NULL DEFAULT 0,  -- 1 = available but running in a fallback/opt-in mode
+    created_at   TEXT NOT NULL,
+    updated_at   TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_tools_type ON tools(type);
+CREATE INDEX IF NOT EXISTS idx_tools_enabled ON tools(enabled);
+CREATE INDEX IF NOT EXISTS idx_tools_category ON tools(category);
+
+CREATE TABLE IF NOT EXISTS mcp_servers (
+    id          TEXT PRIMARY KEY,
+    name        TEXT NOT NULL,
+    description TEXT,
+    server_url  TEXT NOT NULL UNIQUE,
+    status      TEXT NOT NULL DEFAULT 'connected',  -- connected | disconnected | error
+    tool_count  INTEGER NOT NULL DEFAULT 0,
+    last_active TEXT,
+    auth_token  TEXT,                                 -- encrypted bearer token (hosted/auth servers)
+    auth_scheme TEXT NOT NULL DEFAULT 'bearer',
+    created_at  TEXT NOT NULL
+);
+
+-- Integrations registry — SaaS connectors. `auth_kind` is honest about what a
+-- connector really needs: 'api_key' connectors can be connected now (credential
+-- stored encrypted); 'oauth' connectors are registered but connecting is deferred
+-- until the OAuth app flow is built (status stays 'available', never faked).
+CREATE TABLE IF NOT EXISTS integrations (
+    id            TEXT PRIMARY KEY,     -- slug (slack, google_drive, ...)
+    name          TEXT NOT NULL,
+    description   TEXT,
+    category      TEXT,
+    auth_kind     TEXT NOT NULL DEFAULT 'oauth',  -- oauth | api_key | keyless | token
+    status        TEXT NOT NULL DEFAULT 'available', -- available | connected | error
+    account_label TEXT,                 -- shown when connected (e.g. account name)
+    credential    TEXT,                 -- encrypted credential for api_key kind
+    connected_at  TEXT,
+    connect_method TEXT NOT NULL DEFAULT 'api_key', -- oauth | api_key | mcp
+    oauth_provider TEXT,                 -- oauth provider id when connect_method='oauth'
+    mcp_url       TEXT,                  -- MCP server url when connect_method='mcp'
+    docs_url      TEXT,                  -- link to the provider's token/setup docs
+    logo_key      TEXT,                  -- frontend brand-logo key
+    created_at    TEXT NOT NULL,
+    updated_at    TEXT NOT NULL
+);
+
+-- ============================================================================
+-- Agent templates + version history (Plan 05).
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS agent_templates (
+    id          TEXT PRIMARY KEY,
+    name        TEXT NOT NULL,
+    description TEXT,
+    category    TEXT,                         -- Marketing | Finance | Operations | Research | HR | Sales | Support
+    base_config TEXT NOT NULL,                -- JSON: same shape as agents table fields
+    tags        TEXT NOT NULL DEFAULT '[]',   -- JSON array
+    is_featured INTEGER NOT NULL DEFAULT 0,
+    created_at  TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS agent_versions (
+    id         TEXT PRIMARY KEY,
+    agent_id   TEXT NOT NULL,
+    version    TEXT NOT NULL,
+    config     TEXT NOT NULL,                 -- full agent config snapshot as JSON
+    note       TEXT,
+    created_by TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    FOREIGN KEY (agent_id) REFERENCES agents(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_agent_versions_agent ON agent_versions(agent_id, created_at DESC);
+
+-- ============================================================================
+-- Knowledge documents + episodic memory (Plan 07).
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS documents (
+    id                   TEXT PRIMARY KEY,
+    name                 TEXT NOT NULL,
+    type                 TEXT NOT NULL,       -- pdf | docx | txt | csv | xlsx | md | url
+    file_path            TEXT,
+    source_url           TEXT,
+    size_bytes           INTEGER NOT NULL DEFAULT 0,
+    chunks_count         INTEGER NOT NULL DEFAULT 0,
+    status               TEXT NOT NULL DEFAULT 'processing',  -- processing | active | error
+    department_id        TEXT,
+    chroma_collection_id TEXT NOT NULL DEFAULT '',
+    processing_error     TEXT,
+    uploaded_by          TEXT NOT NULL,
+    uploaded_at          TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_documents_status ON documents(status);
+CREATE INDEX IF NOT EXISTS idx_documents_uploaded_by ON documents(uploaded_by);
+
+CREATE TABLE IF NOT EXISTS memory_entries (
+    id                TEXT PRIMARY KEY,
+    agent_id          TEXT NOT NULL,
+    department_id     TEXT,
+    content           TEXT NOT NULL,
+    chroma_id         TEXT NOT NULL,
+    source_mission_id TEXT,
+    created_at        TEXT NOT NULL,
+    expires_at        TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_memory_agent ON memory_entries(agent_id);
+CREATE INDEX IF NOT EXISTS idx_memory_expires ON memory_entries(expires_at);
+
+-- ============================================================================
+-- OAuth 2.0 — per-user authorized connections + one-time state/PKCE records.
+-- Tokens are encrypted at rest (app.core.crypto). Isolated by user_id. A user
+-- may have at most one active connection per provider (UNIQUE user+provider).
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS oauth_connections (
+    id             TEXT PRIMARY KEY,
+    user_id        TEXT NOT NULL,
+    provider       TEXT NOT NULL,
+    account_id     TEXT,                        -- provider's account identifier
+    account_label  TEXT,                        -- human label (email / login / workspace)
+    access_token   TEXT NOT NULL,               -- encrypted
+    refresh_token  TEXT,                         -- encrypted (nullable)
+    expires_at     TEXT,                         -- ISO; null = non-expiring (e.g. Notion/Slack)
+    scopes         TEXT NOT NULL DEFAULT '[]',   -- json array of granted scopes
+    status         TEXT NOT NULL DEFAULT 'connected', -- connected | expired | error
+    created_at     TEXT NOT NULL,
+    updated_at     TEXT NOT NULL,
+    UNIQUE(user_id, provider)
+);
+
+CREATE INDEX IF NOT EXISTS idx_oauth_conn_user ON oauth_connections(user_id);
+
+CREATE TABLE IF NOT EXISTS oauth_states (
+    state         TEXT PRIMARY KEY,             -- random, one-time CSRF token
+    user_id       TEXT NOT NULL,
+    provider      TEXT NOT NULL,
+    code_verifier TEXT,                          -- PKCE verifier (null if provider has no PKCE)
+    redirect_uri  TEXT NOT NULL,
+    created_at    TEXT NOT NULL,
+    expires_at    TEXT NOT NULL                  -- short TTL (minutes)
+);

@@ -78,14 +78,14 @@ export const WORKSPACE_ITEMS = [
 
 // Sub-tabs for the Agents section (Section 5). Shared by the Sidebar (nested
 // items under "Agents") and the in-page tab bar so they stay in sync.
+// Builder + Settings are NOT browse-level tabs — they are per-agent editors
+// reached by clicking an agent row (same pattern as a Tools detail modal).
 export const AGENTS_SUBTABS = [
   { id: "overview", label: "Overview" },
   { id: "create", label: "Create" },
-  { id: "builder", label: "Builder" },
   { id: "templates", label: "Templates" },
   { id: "testing", label: "Testing" },
   { id: "performance", label: "Performance" },
-  { id: "settings", label: "Settings" },
 ];
 
 // Sub-tabs for the Tools section. Shared by the Sidebar (nested items under
@@ -99,11 +99,12 @@ export const TOOLS_SUBTABS = [
 ];
 
 // Knowledge & Memory sub-views (view ids match App routes).
+// Memory Details is NOT a browse-level tab — it opens by clicking a memory
+// entry in Memory Overview (same pattern as a detail drill-down).
 export const KNOWLEDGE_SUBTABS = [
   { id: "knowledge", label: "Knowledge Base" },
   { id: "knowledge-upload", label: "Upload Sources" },
   { id: "knowledge-memory-overview", label: "Memory Overview" },
-  { id: "knowledge-memory-details", label: "Memory Details" },
   { id: "knowledge-memory-settings", label: "Memory Settings" },
 ];
 

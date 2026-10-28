@@ -1,4 +1,5 @@
-// Loader — a full-screen loading indicator in the Orion dark/cyan aesthetic.
+// Loader — a full-screen loading indicator in the Orion neumorphic aesthetic
+// (soft #eef1f6 surface, indigo ring).
 //
 // "Delayed" by default: it stays invisible for `delay` ms, so fast loads don't
 // flash a spinner (a spinner that appears and vanishes in 80ms looks worse than

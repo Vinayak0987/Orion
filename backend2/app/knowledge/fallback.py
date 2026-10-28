@@ -23,7 +23,8 @@ _WORD = re.compile(r"[a-z0-9]+")
 
 
 def _store_path(user_id: str) -> Path:
-    base = Path(settings.chroma_dir)
+    from app.config import settings as _settings
+    base = Path(_settings.chroma_dir)
     base.mkdir(parents=True, exist_ok=True)
     return base / f"fallback_docs_{user_id}.json"
 
@@ -42,23 +43,40 @@ def _save(user_id: str, rows: list[dict]) -> None:
     _store_path(user_id).write_text(json.dumps(rows), "utf-8")
 
 
-def add_chunks(user_id: str, filename: str, chunks: list[str]) -> str:
+def add_chunks(user_id: str, filename: str, chunks: list[str], document_id: str | None = None) -> str:
     rows = _load(user_id)
-    document_id = str(uuid.uuid4())
+    document_id = document_id or str(uuid.uuid4())
     for i, text in enumerate(chunks):
         rows.append({"document_id": document_id, "filename": filename, "chunk": i, "text": text})
     _save(user_id, rows)
     return document_id
 
 
+def delete_document(user_id: str, document_id: str) -> int:
+    rows = _load(user_id)
+    kept = [r for r in rows if r.get("document_id") != document_id]
+    removed = len(rows) - len(kept)
+    _save(user_id, kept)
+    return removed
+
+
+def list_chunks(user_id: str, document_id: str) -> list[dict]:
+    return [r for r in _load(user_id) if r.get("document_id") == document_id]
+
+
 def _tokens(s: str) -> set[str]:
     return set(_WORD.findall((s or "").lower()))
 
 
-def search(user_id: str, query: str, n: int = 5) -> list[dict]:
+def search(user_id: str, query: str, n: int = 5, allowed_document_ids: list[str] | None = None) -> list[dict]:
     rows = _load(user_id)
     if not rows:
         return []
+    if allowed_document_ids is not None:
+        allow = set(allowed_document_ids)
+        rows = [r for r in rows if r.get("document_id") in allow]
+        if not rows:
+            return []
     q = _tokens(query)
     if not q:
         return []

@@ -50,6 +50,80 @@ def calculate_cost(provider: str, model: str, input_tokens: int, output_tokens: 
     return (input_tokens * rates["in"] + output_tokens * rates["out"]) / 1000
 
 
+import re as _re
+
+# Qwen3 / reasoning models wrap chain-of-thought in <think>...</think>. That
+# breaks our tool-call JSON parser, so strip it from the visible content.
+_THINK_RE = _re.compile(r"<think>.*?</think>", _re.DOTALL | _re.IGNORECASE)
+
+
+def strip_think(text: str) -> str:
+    if not text:
+        return text
+    cleaned = _THINK_RE.sub("", text)
+    # If an opening <think> had no close (truncated), drop everything up to the
+    # last close we can find, else drop a leading dangling think block.
+    if "<think>" in cleaned.lower() and "</think>" not in cleaned.lower():
+        cleaned = _re.split(r"<think>", cleaned, flags=_re.IGNORECASE)[0]
+    return cleaned.strip()
+
+
+class OpenAICompatProvider:
+    """Generic provider for any OpenAI-compatible /chat/completions endpoint.
+    Used for NVIDIA NIM, Cerebras, and OpenRouter — same request/response shape
+    as Groq, only the base URL, auth header and model names differ."""
+
+    def __init__(self, name: str, base_url: str, api_key: str,
+                 model_fast: str, model_reasoning: str, extra_headers: dict | None = None):
+        self.name = name
+        self.base_url = base_url.rstrip("/") + "/chat/completions"
+        self.api_key = api_key
+        self._model_fast = model_fast
+        self._model_reasoning = model_reasoning
+        self._extra = extra_headers or {}
+
+    def model_for(self, tier: str) -> str:
+        return self._model_fast if tier == "fast" else self._model_reasoning
+
+    async def call(self, messages: list[dict], tier: str, temperature: float = 0.7) -> LLMResult:
+        model = self.model_for(tier)
+        started = time.monotonic()
+        headers = {"Authorization": f"Bearer {self.api_key}", **self._extra}
+        try:
+            async with httpx.AsyncClient(timeout=90.0) as client:
+                resp = await client.post(
+                    self.base_url, headers=headers,
+                    json={"model": model, "messages": messages, "temperature": temperature},
+                )
+        except httpx.HTTPError as e:
+            raise ProviderError(f"{self.name} transport: {e}") from e
+
+        latency = int((time.monotonic() - started) * 1000)
+        if resp.status_code == 429:
+            raise RateLimitError(f"{self.name} 429")
+        if resp.status_code >= 400:
+            raise ProviderError(f"{self.name} {resp.status_code}: {resp.text[:200]}")
+
+        data = resp.json()
+        try:
+            msg = data["choices"][0]["message"]
+            # Some reasoning models (e.g. NVIDIA nemotron) put the answer in
+            # reasoning_content when content is null — fall back to it.
+            text = msg.get("content") or msg.get("reasoning_content") or ""
+        except (KeyError, IndexError) as e:
+            raise ProviderError(f"{self.name} malformed response: {e}") from e
+        if not text.strip():
+            raise ProviderError(f"{self.name} returned empty content")
+        text = strip_think(text)
+        usage = data.get("usage", {})
+        in_tok = usage.get("prompt_tokens", 0)
+        out_tok = usage.get("completion_tokens", 0)
+        return LLMResult(
+            text=text, provider=self.name, model=model,
+            input_tokens=in_tok, output_tokens=out_tok, cost_usd=0.0, latency_ms=latency,
+        )
+
+
 class GroqProvider:
     name = "groq"
     BASE = "https://api.groq.com/openai/v1/chat/completions"
@@ -80,7 +154,7 @@ class GroqProvider:
             raise ProviderError(f"groq {resp.status_code}: {resp.text[:200]}")
 
         data = resp.json()
-        text = data["choices"][0]["message"]["content"]
+        text = strip_think(data["choices"][0]["message"]["content"])
         usage = data.get("usage", {})
         in_tok = usage.get("prompt_tokens", 0)
         out_tok = usage.get("completion_tokens", 0)
@@ -175,7 +249,7 @@ class OllamaProvider:
             raise ProviderError(f"ollama {resp.status_code}: {resp.text[:200]}")
 
         data = resp.json()
-        text = data.get("message", {}).get("content", "")
+        text = strip_think(data.get("message", {}).get("content", ""))
         in_tok = data.get("prompt_eval_count", 0)
         out_tok = data.get("eval_count", 0)
         return LLMResult(

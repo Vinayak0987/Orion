@@ -43,3 +43,33 @@ async def delete_api_key(provider: str) -> dict:
     if not removed:
         raise HTTPException(404, f"No key set for '{provider}'")
     return {"deleted": short}
+
+
+# ---- Custom named keys (arbitrary credentials the user adds for tools) ------
+
+class CustomKeyRequest(BaseModel):
+    name: str
+    value: str
+
+
+@router.get("/api-keys/custom")
+async def list_custom_keys() -> dict:
+    return {"keys": store.list_custom_keys()}
+
+
+@router.post("/api-keys/custom", status_code=201)
+async def add_custom_key(req: CustomKeyRequest) -> dict:
+    if not req.name.strip() or not req.value.strip():
+        raise HTTPException(422, "name and value are required")
+    try:
+        slug = store.add_custom_key(req.name, req.value)
+    except ValueError as e:
+        raise HTTPException(422, str(e)) from e
+    return {"id": slug, "name": slug}
+
+
+@router.delete("/api-keys/custom/{slug}")
+async def delete_custom_key(slug: str) -> dict:
+    if not store.delete_custom_key(slug):
+        raise HTTPException(404, f"No custom key '{slug}'")
+    return {"deleted": slug}

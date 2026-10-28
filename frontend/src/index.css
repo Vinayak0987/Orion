@@ -4565,6 +4565,10 @@ body {
 .om-flow { animation: omFlow 1s linear infinite; }
 @keyframes omFlow { to { stroke-dashoffset: -22; } }
 
+/* Rotating conic ring for the Orion core node */
+.om-spin { animation: omSpin 4s linear infinite; }
+@keyframes omSpin { to { transform: rotate(360deg); } }
+
 /* Blinking typewriter cursor at the end of streaming markdown output */
 .om-streaming > .om-md > :last-child::after {
   content: "";
@@ -4793,3 +4797,451 @@ body {
 }
 .neu-card-hover:hover { box-shadow: 9px 9px 22px #cfd4e0, -9px -9px 22px #ffffff; transform: translateY(-2px); }
 .neu-card-hover:active { transform: translateY(0); }
+
+/* ============================================================================
+   NEUMORPHIC RE-SKIN OVERRIDES
+   The Tools / Agents / Knowledge views use the original mock layout classes
+   (.tools-page, .agents-page, .intg-card, .mcp-card, .ct-card, .td-*, tables,
+   stat strips…). These overrides keep every layout rule intact but replace the
+   flat-white "skin" with the neumorphic surface (#eef1f6 base, soft dual
+   shadows) from DESIGN_SYSTEM.md. Appended last so it wins the cascade.
+   ========================================================================== */
+
+/* Page surfaces → neu base tone */
+.tools-page,
+.agents-page,
+.knowledge-page,
+.km-page,
+.upload-page,
+.memory-page {
+  background: #eef1f6 !important;
+}
+
+/* Raised cards/panels → neumorphic raised */
+.tools-page .card,
+.tools-panel,
+.tools-page .tools-stat,
+.agents-page .card,
+.agents-page .workspace,
+.agents-page .exact-org,
+.tools-page .intg-card,
+.tools-page .mcp-card,
+.tools-page .mcp-help,
+.tools-page .ct-card,
+.tools-page .ct-ideas,
+.tools-page .td-profile,
+.tools-page .td-subnav,
+.tools-page .td-overview,
+.tools-page .td-stats,
+.km-page .card,
+.knowledge-page .card,
+.upload-page .card,
+.memory-page .card {
+  background: #eef1f6 !important;
+  border: none !important;
+  box-shadow: 8px 8px 18px #d2d7e2, -8px -8px 18px #ffffff !important;
+}
+
+/* Hover lift on clickable cards */
+.tools-page .intg-card:hover,
+.tools-page .mcp-card:hover,
+.tools-page .ct-card:hover,
+.agents-page tbody tr:hover,
+.km-page .doc-row:hover {
+  box-shadow: 10px 10px 22px #cfd4e0, -10px -10px 22px #ffffff !important;
+}
+
+/* Inset wells → selects, table header, nested panels. The search WRAPPER stays
+   transparent; its inner <input> is the inset pill (styled further below). */
+.tools-page .tools-select,
+.tools-page .tools-table thead tr,
+.tools-page .td-row,
+.tools-page .mcp-version,
+.agents-page input[type="text"],
+.agents-page .search,
+.km-page .search,
+.km-page .toolbar input,
+.upload-page .dropzone {
+  background: #eef1f6 !important;
+  border: none !important;
+  box-shadow: inset 3px 3px 7px #d4d9e4, inset -3px -3px 7px #ffffff !important;
+}
+/* Search wrapper is just a positioning container — no box of its own. */
+.tools-page .tools-search { background: transparent !important; box-shadow: none !important; border: none !important; }
+
+/* Tables sit on the neu surface, not white */
+.tools-page .tools-table,
+.agents-page table,
+.km-page table {
+  background: transparent !important;
+}
+.tools-page .tools-table td,
+.agents-page td,
+.agents-page th,
+.km-page td,
+.km-page th {
+  border-color: #dfe3ec !important;
+}
+
+/* Icon tiles → soft raised circles */
+.tools-page .tools-stat-ic,
+.tools-page .mcp-icon,
+.tools-page .intg-logo,
+.tools-page .ct-icon,
+.agents-page .stat-ic,
+.km-page .doc-ic {
+  background: #eef1f6 !important;
+  box-shadow: 4px 4px 10px #d4d9e4, -4px -4px 10px #ffffff !important;
+}
+
+/* Primary buttons → indigo gradient neu */
+.tools-page .tools-primary,
+.agents-page .primary,
+.km-page .primary,
+.upload-page .primary {
+  background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 4px 4px 10px #cdd2de, -4px -4px 10px #ffffff, inset 0 1px 0 rgba(255,255,255,0.25) !important;
+}
+
+/* Secondary / ghost buttons (Open, Test, page buttons, view toggles) */
+.tools-page .tools-open-btn,
+.tools-page .tools-more-btn,
+.tools-page .tools-page-btn,
+.tools-page .mcp-test-btn,
+.tools-page .td-test,
+.agents-page .view,
+.agents-page .ghost {
+  background: #eef1f6 !important;
+  border: none !important;
+  box-shadow: 3px 3px 7px #d4d9e4, -3px -3px 7px #ffffff !important;
+  color: #5b6678 !important;
+}
+.tools-page .tools-page-btn.active,
+.agents-page .view.selected {
+  box-shadow: inset 3px 3px 7px #d4d9e4, inset -3px -3px 7px #ffffff !important;
+  color: #4f46e5 !important;
+}
+
+/* Status badges keep their tint but drop hard borders */
+.tools-page .tools-badge,
+.agents-page .badge,
+.km-page .badge {
+  border: none !important;
+}
+
+
+/* Brand logos render at a consistent size regardless of their native viewBox. */
+.brand-logo { line-height: 0; }
+.brand-logo svg { width: 100%; height: 100%; display: block; }
+.brand-logo img { object-fit: contain; }
+/* Override the mock's fixed .intg-logo svg sizing so logos center + scale. */
+.tools-page .intg-logo { display: grid; place-items: center; }
+.tools-page .intg-logo svg,
+.tools-page .intg-logo .brand-logo,
+.tools-page .intg-logo .brand-logo img { width: 30px !important; height: 30px !important; }
+
+/* ============================================================================
+   TYPE-SCALE CORRECTIONS (DESIGN_SYSTEM.md)
+   The mock CSS used oversized headings/KPIs (32–34px). Bring every Tools/Agents
+   surface back to spec: page title 23px/600, section 15px/600, KPI value 20px,
+   labels 12px, body 13.5–14px. Title ink #334155, body #5b6678.
+   ========================================================================== */
+.tools-page .tools-head h1,
+.agents-page .page-head h1 {
+  font-size: 23px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.3px !important;
+  color: #334155 !important;
+}
+@media (max-width: 9999px) {
+  .tools-page .tools-head h1 { font-size: 23px !important; }
+}
+.tools-page .tools-subtitle,
+.agents-page .subtitle {
+  font-size: 14px !important;
+  color: #8792a6 !important;
+  margin-top: 4px !important;
+}
+
+/* Stat / KPI cards */
+.tools-page .tools-stat-value,
+.agents-page .stat-value {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #334155 !important;
+  letter-spacing: -0.2px !important;
+}
+.tools-page .tools-stat-label,
+.agents-page .stat-label {
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: #8792a6 !important;
+}
+.tools-page .tools-stat-trend { font-size: 11px !important; }
+.tools-page .tools-stat-ic,
+.agents-page .stat-ic { width: 40px !important; height: 40px !important; }
+.tools-page .tools-stat-ic svg { width: 18px !important; height: 18px !important; }
+
+/* Integration / MCP / custom cards */
+.tools-page .intg-name,
+.tools-page .mcp-name,
+.tools-page .ct-name {
+  font-size: 14.5px !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
+}
+.tools-page .intg-desc,
+.tools-page .mcp-desc,
+.tools-page .ct-desc {
+  font-size: 12.5px !important;
+  color: #8792a6 !important;
+  min-height: auto !important;
+}
+
+/* Table text + headers */
+.tools-page .tools-table th,
+.agents-page th {
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: #9aa6b8 !important;
+}
+.tools-page .tools-table td,
+.agents-page td { font-size: 13.5px !important; color: #5b6678 !important; }
+.tools-page .tools-name { font-size: 13.5px !important; font-weight: 600 !important; color: #334155 !important; }
+
+/* Buttons + badges to spec sizes */
+.tools-page .tools-primary,
+.agents-page .primary { font-size: 14px !important; height: 40px !important; }
+.tools-page .intg-btn,
+.tools-page .mcp-test-btn,
+.tools-page .ct-edit-btn { font-size: 12.5px !important; }
+.tools-page .tools-badge,
+.agents-page .badge { font-size: 11.5px !important; }
+
+
+/* Search / filters / toolbar controls → spec sizes (were 58px/17px) */
+.tools-page .tools-search input {
+  height: 42px !important;
+  font-size: 14px !important;
+  padding: 0 14px 0 40px !important;
+  border-radius: 12px !important;
+}
+.tools-page .tools-search-icon { left: 13px !important; width: 17px !important; height: 17px !important; }
+.tools-page .tools-select {
+  height: 42px !important;
+  font-size: 13.5px !important;
+  padding: 0 14px !important;
+  border-radius: 12px !important;
+}
+.tools-page .tools-toolbar { grid-template-columns: 1fr 200px 200px !important; gap: 12px !important; }
+.tools-page .tools-select-chev { width: 16px !important; height: 16px !important; }
+
+/* Pagination + card action buttons → spec sizes */
+.tools-page .tools-page-btn {
+  min-width: 34px !important; height: 34px !important;
+  font-size: 13px !important; border-radius: 9px !important;
+}
+.tools-page .intg-btn,
+.tools-page .mcp-test-btn,
+.tools-page .ct-edit-btn {
+  height: 38px !important; font-size: 12.5px !important;
+  padding: 0 14px !important; border-radius: 10px !important; color: #4f46e5 !important;
+}
+.tools-page .tools-more-btn { width: 34px !important; height: 34px !important; }
+
+/* Open / small table actions */
+.tools-page .tools-open-btn {
+  height: 32px !important; font-size: 12.5px !important; padding: 0 12px !important;
+  display: inline-flex !important; align-items: center !important; justify-content: center !important;
+  gap: 5px !important; white-space: nowrap !important; line-height: 1 !important;
+}
+.tools-page .tools-open-btn svg { margin: 0 !important; flex: none; }
+
+/* Agents table toolbar (search/select) to match */
+.agents-page .search,
+.agents-page .select { height: 42px !important; font-size: 13.5px !important; }
+
+
+/* ============================================================================
+   NEUMORPHIC SKIN — remaining Tools controls that were still flat white.
+   Inputs/selects = inset wells; buttons = soft raised; cards = raised.
+   ========================================================================== */
+.tools-page .tools-search input,
+.tools-page .tools-select {
+  background: #eef1f6 !important;
+  border: none !important;
+  border-radius: 9999px !important;
+  box-shadow: inset 3px 3px 7px #d4d9e4, inset -3px -3px 7px #ffffff !important;
+}
+/* Native select arrow off (the single visible caret is .tools-select-chev). */
+.tools-page .tools-select {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  width: 100% !important;
+  padding: 0 38px 0 18px !important;
+  color: #334155 !important;
+  font-weight: 500 !important;
+  cursor: pointer;
+}
+.tools-page .tools-search input {
+  padding: 0 18px 0 42px !important;
+  border-radius: 9999px !important;
+}
+.tools-page .tools-search-icon {
+  left: 16px !important; top: 50% !important; transform: translateY(-50%) !important;
+  width: 17px !important; height: 17px !important; color: #9aa6b8 !important;
+}
+.tools-page .tools-select-wrap { position: relative; display: block; }
+.tools-page .tools-select-chev {
+  position: absolute !important;
+  right: 14px; top: 50%; transform: translateY(-50%);
+  pointer-events: none; color: #8792a6 !important;
+  width: 16px !important; height: 16px !important;
+}
+/* Even spacing in the toolbar; filters a touch narrower so they read as pills. */
+.tools-page .tools-toolbar { grid-template-columns: 1fr 190px 190px !important; gap: 12px !important; }
+.tools-page .tools-search input:focus {
+  box-shadow: inset 3px 3px 7px #d4d9e4, inset -3px -3px 7px #ffffff, 0 0 0 2px #c7d2fe !important;
+}
+.tools-page .tools-search input::placeholder { color: #9aa6b8 !important; }
+
+/* Raised neutral buttons */
+.tools-page .tools-open-btn,
+.tools-page .tools-more-btn,
+.tools-page .tools-page-btn,
+.tools-page .mcp-test-btn,
+.tools-page .intg-btn,
+.tools-page .td-test,
+.tools-page .ct-edit-btn {
+  background: #eef1f6 !important;
+  border: none !important;
+  box-shadow: 3px 3px 7px #d4d9e4, -3px -3px 7px #ffffff !important;
+  color: #5b6678 !important;
+}
+.tools-page .tools-open-btn:hover,
+.tools-page .tools-more-btn:hover,
+.tools-page .mcp-test-btn:hover,
+.tools-page .intg-btn:hover,
+.tools-page .td-test:hover,
+.tools-page .ct-edit-btn:hover {
+  box-shadow: 4px 4px 9px #d0d5e1, -4px -4px 9px #ffffff !important;
+  color: #4f46e5 !important;
+}
+.tools-page .tools-open-btn:active,
+.tools-page .tools-page-btn:active,
+.tools-page .intg-btn:active {
+  box-shadow: inset 3px 3px 7px #d4d9e4, inset -3px -3px 7px #ffffff !important;
+}
+.tools-page .tools-page-btn.active {
+  box-shadow: inset 3px 3px 7px #d4d9e4, inset -3px -3px 7px #ffffff !important;
+  color: #4f46e5 !important;
+}
+
+/* Inset sub-cards (tool-details rows / stat wells / mcp version pills) */
+.tools-page .td-stat,
+.tools-page .td-row,
+.tools-page .mcp-version {
+  background: #eef1f6 !important;
+  border: none !important;
+  box-shadow: inset 3px 3px 6px #d4d9e4, inset -3px -3px 6px #ffffff !important;
+}
+
+/* Agents page inputs/selects + buttons to match */
+.agents-page .search,
+.agents-page .select,
+.agents-page input[type="text"] {
+  background: #eef1f6 !important;
+  border: none !important;
+  box-shadow: inset 3px 3px 7px #d4d9e4, inset -3px -3px 7px #ffffff !important;
+}
+.agents-page .view,
+.agents-page .square-icon,
+.agents-page .ghost {
+  background: #eef1f6 !important;
+  border: none !important;
+  box-shadow: 3px 3px 7px #d4d9e4, -3px -3px 7px #ffffff !important;
+}
+.agents-page .view.selected,
+.agents-page .square-icon.selected {
+  box-shadow: inset 3px 3px 7px #d4d9e4, inset -3px -3px 7px #ffffff !important;
+  color: #4f46e5 !important;
+}
+
+/* MCP server cards — expandable, aligned actions */
+.tools-page .mcp-card { display: block !important; padding: 0 !important; }
+.tools-page .mcp-card-row {
+  display: grid !important;
+  grid-template-columns: auto 1fr auto auto !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 16px 18px !important;
+}
+.tools-page .mcp-icon {
+  width: 48px !important; height: 48px !important; border-radius: 12px !important;
+  display: grid !important; place-items: center !important; flex: none !important;
+  background: #eef1f6 !important; box-shadow: 4px 4px 10px #d4d9e4, -4px -4px 10px #ffffff !important;
+}
+.tools-page .mcp-status { display: flex !important; flex-direction: column !important; align-items: flex-end !important; gap: 4px !important; }
+.tools-page .mcp-actions {
+  display: flex !important; align-items: center !important; gap: 10px !important; flex: none !important;
+}
+.tools-page .mcp-test-btn {
+  display: inline-flex !important; align-items: center !important; justify-content: center !important;
+  gap: 6px !important; white-space: nowrap !important; height: 36px !important; padding: 0 14px !important;
+}
+.tools-page .mcp-chev { color: #9aa6b8; display: inline-flex; }
+.tools-page .mcp-local-tag {
+  font-size: 10px; font-weight: 700; color: #4f46e5; background: #e7ebf3;
+  border-radius: 6px; padding: 1px 6px; margin-left: 6px; vertical-align: middle;
+}
+.tools-page .mcp-versions { display: flex; gap: 8px; margin-top: 6px; }
+.tools-page .mcp-version {
+  font-size: 11px !important; color: #8792a6 !important; background: #eef1f6 !important;
+  box-shadow: inset 2px 2px 5px #d4d9e4, inset -2px -2px 5px #ffffff !important;
+  border-radius: 999px !important; padding: 2px 10px !important; border: none !important;
+}
+
+/* Expanded tools panel */
+.tools-page .mcp-tools-panel { padding: 4px 18px 18px 18px; border-top: 1px solid #e2e6ee; }
+.tools-page .mcp-tools-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; }
+.tools-page .mcp-tool-item {
+  display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; border-radius: 10px;
+  background: #eef1f6; box-shadow: inset 2px 2px 5px #d8dce6, inset -2px -2px 5px #ffffff;
+}
+.tools-page .mcp-tool-ic { color: #4f46e5; margin-top: 1px; flex: none; }
+.tools-page .mcp-tool-name { font-size: 12.5px; font-weight: 600; color: #334155; }
+.tools-page .mcp-tool-desc { font-size: 11px; color: #8792a6; line-height: 1.35; }
+@media (max-width: 760px) { .tools-page .mcp-tools-grid { grid-template-columns: 1fr; } }
+
+
+/* MCP connect/remove buttons */
+.tools-page .mcp-test-btn.is-connect { color: #4f46e5 !important; }
+.tools-page .mcp-remove-btn {
+  width: 36px !important; height: 36px !important; display: inline-flex !important;
+  align-items: center !important; justify-content: center !important; flex: none !important;
+  background: #eef1f6 !important; border: none !important; border-radius: 10px !important;
+  color: #e11d48 !important; box-shadow: 3px 3px 7px #d4d9e4, -3px -3px 7px #ffffff !important;
+  cursor: pointer;
+}
+.tools-page .mcp-remove-btn:hover { box-shadow: inset 2px 2px 5px #d4d9e4, inset -2px -2px 5px #ffffff !important; }
+.tools-page .mcp-remove-btn:disabled { opacity: .5; }
+
+
+/* Custom tool card — aligned delete + clickable */
+.tools-page .ct-card { cursor: pointer; }
+.tools-page .ct-actions { display: flex !important; align-items: center !important; flex: none !important; }
+.tools-page .ct-del-btn {
+  width: 36px !important; height: 36px !important; display: inline-flex !important;
+  align-items: center !important; justify-content: center !important; flex: none !important;
+  background: #eef1f6 !important; border: none !important; border-radius: 10px !important;
+  color: #e11d48 !important; box-shadow: 3px 3px 7px #d4d9e4, -3px -3px 7px #ffffff !important;
+  cursor: pointer;
+}
+.tools-page .ct-del-btn:hover { box-shadow: inset 2px 2px 5px #d4d9e4, inset -2px -2px 5px #ffffff !important; }
+.tools-page .ct-del-btn:disabled { opacity: .5; }
+.tools-page .ct-card:hover { box-shadow: 10px 10px 22px #cfd4e0, -10px -10px 22px #ffffff !important; }

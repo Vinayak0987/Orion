@@ -1,6 +1,7 @@
 // Exact official brand logos (single-path SVGs from Simple Icons) rendered at
 // 24x24 with each brand's official color. Shared across Tools pages so icons
 // are consistent and accurate.
+import { useState } from "react";
 
 const Logo = ({ color, path, title }) => (
   <svg viewBox="0 0 24 24" role="img" aria-label={title} xmlns="http://www.w3.org/2000/svg">
@@ -107,3 +108,274 @@ export const GoogleLogo = () => (
     <path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z" />
   </svg>
 );
+
+
+
+// ---------------------------------------------------------------------------
+// Additional brand logos for the Tools Catalog (Simple Icons paths, official
+// colors). Each is a single-path mark at 24x24 unless noted.
+// ---------------------------------------------------------------------------
+
+export const GmailLogo = () => (
+  <svg viewBox="0 0 24 24" role="img" aria-label="Gmail" xmlns="http://www.w3.org/2000/svg">
+    <title>Gmail</title>
+    <path fill="#EA4335" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" />
+  </svg>
+);
+
+export const GoogleCalendarLogo = () => (
+  <svg viewBox="0 0 24 24" role="img" aria-label="Google Calendar" xmlns="http://www.w3.org/2000/svg">
+    <title>Google Calendar</title>
+    <rect x="4" y="4" width="16" height="16" rx="2" fill="#fff" stroke="#dadce0" />
+    <path d="M4 7h16" stroke="#1a73e8" strokeWidth="1.5" />
+    <rect x="4" y="4" width="16" height="4" rx="2" fill="#1a73e8" opacity="0.12" />
+    <text x="12" y="17" textAnchor="middle" fontSize="8" fontWeight="700" fill="#1a73e8">31</text>
+    <path d="M7.5 2.5v3M16.5 2.5v3" stroke="#1a73e8" strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+);
+
+export const GoogleSheetsLogo = () => (
+  <svg viewBox="0 0 24 24" role="img" aria-label="Google Sheets" xmlns="http://www.w3.org/2000/svg">
+    <title>Google Sheets</title>
+    <path fill="#0F9D58" d="M6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" />
+    <path fill="#fff" fillOpacity="0.5" d="M14 2l6 6h-6z" />
+    <rect x="8" y="12" width="8" height="7" rx="0.5" fill="#fff" />
+    <path d="M8 14.5h8M8 16.7h8M11.3 12v7" stroke="#0F9D58" strokeWidth="0.9" />
+  </svg>
+);
+
+export const GoogleAdsLogo = () => (
+  <svg viewBox="0 0 24 24" role="img" aria-label="Google Ads" xmlns="http://www.w3.org/2000/svg">
+    <title>Google Ads</title>
+    <rect x="2.5" y="8.8" width="6.4" height="12.8" rx="3.2" transform="rotate(-30 5.7 15.2)" fill="#FBBC04" />
+    <rect x="11.5" y="2.4" width="6.4" height="12.8" rx="3.2" transform="rotate(30 14.7 8.8)" fill="#4285F4" />
+    <circle cx="6.4" cy="18.2" r="3.1" fill="#34A853" />
+  </svg>
+);
+
+export const OutlookLogo = () => (
+  <svg viewBox="0 0 24 24" role="img" aria-label="Outlook" xmlns="http://www.w3.org/2000/svg">
+    <title>Outlook</title>
+    <rect x="10" y="5" width="11" height="14" rx="1" fill="#fff" stroke="#0a66c2" strokeWidth="0.6" />
+    <path d="M10 7l5.5 3.5L21 7" fill="none" stroke="#0a66c2" strokeWidth="1" />
+    <rect x="2" y="6.5" width="10" height="11" rx="2" fill="#0A66C2" />
+    <text x="7" y="15" textAnchor="middle" fontSize="8" fontWeight="700" fill="#fff">O</text>
+  </svg>
+);
+
+export const LinkedInLogo = () => (
+  <Logo title="LinkedIn" color="#0A66C2"
+    path="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+);
+
+export const XLogo = () => (
+  <Logo title="X" color="#000000"
+    path="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+);
+
+export const InstagramLogo = () => (
+  <svg viewBox="0 0 24 24" role="img" aria-label="Instagram" xmlns="http://www.w3.org/2000/svg">
+    <title>Instagram</title>
+    <defs>
+      <radialGradient id="igg" cx="30%" cy="107%" r="150%">
+        <stop offset="0%" stopColor="#fdf497" />
+        <stop offset="5%" stopColor="#fdf497" />
+        <stop offset="45%" stopColor="#fd5949" />
+        <stop offset="60%" stopColor="#d6249f" />
+        <stop offset="90%" stopColor="#285AEB" />
+      </radialGradient>
+    </defs>
+    <rect x="1" y="1" width="22" height="22" rx="6" fill="url(#igg)" />
+    <rect x="5.5" y="5.5" width="13" height="13" rx="4" fill="none" stroke="#fff" strokeWidth="1.8" />
+    <circle cx="12" cy="12" r="3.3" fill="none" stroke="#fff" strokeWidth="1.8" />
+    <circle cx="16.3" cy="7.7" r="1.1" fill="#fff" />
+  </svg>
+);
+
+export const FacebookLogo = () => (
+  <Logo title="Facebook" color="#0866FF"
+    path="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z" />
+);
+
+export const YouTubeLogo = () => (
+  <Logo title="YouTube" color="#FF0000"
+    path="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+);
+
+export const TikTokLogo = () => (
+  <Logo title="TikTok" color="#000000"
+    path="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
+);
+
+export const DiscordLogo = () => (
+  <Logo title="Discord" color="#5865F2"
+    path="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" />
+);
+
+export const HubSpotLogo = () => (
+  <Logo title="HubSpot" color="#FF7A59"
+    path="M18.164 7.931V5.084a2.198 2.198 0 0 0 1.267-1.978v-.067A2.199 2.199 0 0 0 17.238.845h-.067a2.199 2.199 0 0 0-2.193 2.194v.067a2.196 2.196 0 0 0 1.252 1.973l.013.006v2.852a6.22 6.22 0 0 0-2.969 1.31l.012-.009-7.828-6.096A2.497 2.497 0 1 0 2.3 6.144l-.014-.004 7.696 5.991a6.176 6.176 0 0 0-1.039 3.446c0 1.274.385 2.457 1.044 3.44l-.015-.023-2.342 2.343a1.968 1.968 0 0 0-.58-.095h-.002a2.033 2.033 0 1 0 2.033 2.033 1.978 1.978 0 0 0-.095-.58l.004.016 2.317-2.317a6.247 6.247 0 1 0 4.782-11.113l-.052-.009zm-1.711 9.471a3.21 3.21 0 1 1 .002-6.42 3.21 3.21 0 0 1-.002 6.42z" />
+);
+
+export const MailchimpLogo = () => (
+  <Logo title="Mailchimp" color="#FFE01B"
+    path="M18.137 14.096c.141.019.277.057.408.113.071-1.432-.195-2.408-.734-3.299-.004.169-.014.336-.03.503.584.56.808 1.422.356 2.683zm-9.189 2.611c-.188.047-.38.07-.573.07a2.133 2.133 0 0 1-.235-.013c.397.483 1.034.68 1.738.498a.796.796 0 0 0-.42-.498 1.44 1.44 0 0 0-.51-.057zM23.56 15.51c-.038-.137-.17-.447-.345-.822a3.98 3.98 0 0 0 .128-.56c.242-1.635-.21-2.743-.896-3.253.4-.586.633-1.313.633-2.102 0-.044-.001-.088-.003-.132-.004-1.978-1.615-3.588-3.593-3.588a3.6 3.6 0 0 0-1.65.4C16.818 3.922 14.588 2.6 11.995 2.6c-4.062 0-7.395 3.247-7.72 7.355-.603.337-1.08.874-1.344 1.52a3.096 3.096 0 0 0-.206 1.63c.188 1.242 1.14 2.148 2.39 2.39-.038.336-.034.676.012 1.012.14 1.038.69 1.943 1.548 2.546.906.638 2.11.835 3.22.528.056 1.028.906 1.846 1.953 1.878 1.013.03 1.885-.6 2.19-1.5 1.14-.015 2.242-.405 3.148-1.11.72-.56 1.26-1.312 1.56-2.168.016-.045.03-.09.044-.136.636-.063 1.2-.42 1.53-.966a2.09 2.09 0 0 0 .29-1.59z" />
+);
+
+export const CanvaLogo = () => (
+  <Logo title="Canva" color="#00C4CC"
+    path="M23.4035 11.9999c0 6.2956-5.1079 11.4034-11.4034 11.4034C5.7044 23.4033.5967 18.2955.5967 11.9999.5967 5.7044 5.7044.5966 12 .5966c6.2956 0 11.4035 5.1078 11.4035 11.4033zM12.001 4.9c-3.4571 0-5.8893 2.7429-5.8893 6.3429 0 3.6 2.3179 6.4571 5.7322 6.4571 2.5607 0 4.1143-1.5428 4.5-2.9143.0536-.1928-.075-.3-.2143-.2357-1.0286.4714-2.0786.6857-3.0857.6857-2.4214 0-3.9321-1.6714-3.9321-4.0714 0-2.3786 1.3607-4.0714 3.1286-4.0714.8464 0 1.3607.4714 1.3607 1.0929 0 .3-.1071.5143-.2893.6857-.225.2143-.3214.4714-.3214.75 0 .6214.4714 1.0286 1.1143 1.0286.9214 0 1.6071-.9 1.6071-2.1 0-1.7143-1.5-3.3214-3.9535-3.3214z" />
+);
+
+export const PayPalLogo = () => (
+  <Logo title="PayPal" color="#003087"
+    path="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z" />
+);
+
+export const QuickBooksLogo = () => (
+  <Logo title="QuickBooks" color="#2CA01C"
+    path="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zM4.636 12A3.818 3.818 0 0 0 8.455 15.818h.545V14.4h-.545A2.4 2.4 0 1 1 8.455 9.6h1.09v7.49a1.418 1.418 0 0 0 1.419 1.419V9.6h1.09v8.908a1.419 1.419 0 0 0 1.42-1.418V9.6h.544a2.4 2.4 0 1 1 0 4.8h-.544v1.418h.544A3.818 3.818 0 1 0 15.545 8.182H8.455A3.818 3.818 0 0 0 4.636 12z" />
+);
+
+export const XeroLogo = () => (
+  <Logo title="Xero" color="#13B5EA"
+    path="M12 0C5.373 0 0 5.372 0 12c0 6.627 5.373 12 12 12 6.628 0 12-5.373 12-12 0-6.628-5.372-12-12-12zM6.374 15.3a.906.906 0 0 1-1.282 0 .906.906 0 0 1 0-1.282l2.015-2.016L5.09 9.985a.907.907 0 1 1 1.283-1.283l2.016 2.017 2.017-2.017a.907.907 0 1 1 1.283 1.283L9.672 12l2.017 2.018a.907.907 0 0 1-1.283 1.282L8.39 13.3l-2.016 2z" />
+);
+
+export const AirtableLogo = () => (
+  <Logo title="Airtable" color="#18BFFF"
+    path="M11.992 1.966c-.434 0-.87.086-1.28.257L1.779 5.917c-.503.208-.49.908.012 1.116l8.982 3.558a3.266 3.266 0 0 0 2.454 0l8.982-3.558c.503-.208.516-.908.013-1.116l-8.933-3.694a3.33 3.33 0 0 0-1.297-.257zM23.4 8.056a.657.657 0 0 0-.259.055l-9.167 3.636a.66.66 0 0 0-.42.615v9.137a.657.657 0 0 0 .9.609l9.166-3.533a.66.66 0 0 0 .42-.615V8.712a.656.656 0 0 0-.64-.656zM.593 8.057a.657.657 0 0 0-.593.654v8.805c0 .27.166.513.418.615l9.167 3.567a.657.657 0 0 0 .9-.61v-9.137a.66.66 0 0 0-.42-.615L.853 8.112a.657.657 0 0 0-.26-.055z" />
+);
+
+export const GitLabLogo = () => (
+  <Logo title="GitLab" color="#FC6D26"
+    path="m23.6004 9.5927-.0337-.0862L20.3.9814a.851.851 0 0 0-.3362-.405.8748.8748 0 0 0-.9997.0539.8748.8748 0 0 0-.29.4399l-2.2055 6.748H7.5375l-2.2057-6.748a.8573.8573 0 0 0-.29-.4412.8748.8748 0 0 0-.9997-.0537.8585.8585 0 0 0-.3362.4049L.4332 9.5015l-.0325.0862a6.0657 6.0657 0 0 0 2.0119 7.0105l.0113.0087.0301.0211 4.976 3.7264 2.462 1.8633 1.4995 1.1321a1.0085 1.0085 0 0 0 1.2197 0l1.4995-1.1321 2.4619-1.8633 5.006-3.7489.0124-.0098a6.0682 6.0682 0 0 0 2.0094-7.003z" />
+);
+
+export const HiggsfieldLogo = () => (
+  <svg viewBox="0 0 24 24" role="img" aria-label="Higgsfield" xmlns="http://www.w3.org/2000/svg">
+    <title>Higgsfield</title>
+    <rect x="2" y="2" width="20" height="20" rx="6" fill="#111827" />
+    <path d="M8 7v10M16 7v10M8 12h8" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" fill="none" />
+  </svg>
+);
+
+export const StabilityLogo = () => (
+  <svg viewBox="0 0 24 24" role="img" aria-label="Stability AI" xmlns="http://www.w3.org/2000/svg">
+    <title>Stability AI</title>
+    <rect x="2" y="2" width="20" height="20" rx="6" fill="#8B5CF6" />
+    <path d="M7 9.5c0-1.4 1.2-2.5 3-2.5s3 .9 3 2c0 2.4-5.5 1.6-5.5 4.5 0 1.3 1.3 2.3 3 2.3s3-1 3-2.4" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+  </svg>
+);
+
+export const WooCommerceLogo = () => (
+  <Logo title="WooCommerce" color="#96588A"
+    path="M2.227 4.857A2.228 2.228 0 0 0 0 7.094v7.457c0 1.236 1.001 2.237 2.237 2.237h9.253l4.229 2.355-.962-2.355h7.006A2.228 2.228 0 0 0 24 14.551V7.094a2.228 2.228 0 0 0-2.237-2.237H2.227z" />
+);
+
+export const SendGridLogo = () => (
+  <svg viewBox="0 0 24 24" role="img" aria-label="SendGrid" xmlns="http://www.w3.org/2000/svg">
+    <title>SendGrid</title>
+    <rect x="2" y="2" width="9.5" height="9.5" fill="#99E1F4" />
+    <rect x="12.5" y="2" width="9.5" height="9.5" fill="#1A82E2" />
+    <rect x="2" y="12.5" width="9.5" height="9.5" fill="#00B3E3" />
+    <rect x="12.5" y="12.5" width="9.5" height="9.5" fill="#1A82E2" opacity="0.5" />
+  </svg>
+);
+
+/**
+ * Resolve a catalog `logo_key` to its brand logo component. Falls back to a
+ * neutral monogram tile only when no brand logo exists (never a bare letter).
+ */
+const LOGO_BY_KEY = {
+  gmail: GmailLogo, google: GoogleLogo, google_drive: GoogleDriveLogo,
+  google_calendar: GoogleCalendarLogo, google_sheets: GoogleSheetsLogo, google_ads: GoogleAdsLogo,
+  outlook: OutlookLogo,
+  slack: SlackLogo, notion: NotionLogo, github: GitHubLogo, gitlab: GitLabLogo,
+  openai: OpenAILogo, stripe: StripeLogo, twilio: TwilioLogo, shopify: ShopifyLogo,
+  zapier: ZapierLogo, linkedin: LinkedInLogo, x: XLogo, instagram: InstagramLogo,
+  facebook: FacebookLogo, youtube: YouTubeLogo, tiktok: TikTokLogo, discord: DiscordLogo,
+  hubspot: HubSpotLogo, mailchimp: MailchimpLogo, canva: CanvaLogo, paypal: PayPalLogo,
+  quickbooks: QuickBooksLogo, xero: XeroLogo, airtable: AirtableLogo, woocommerce: WooCommerceLogo,
+  higgsfield: HiggsfieldLogo, stability: StabilityLogo, sendgrid: SendGridLogo,
+  brave: BraveLogo,
+};
+
+// Official domain per logo key — the favicon from here is the real brand icon.
+const DOMAIN_BY_KEY = {
+  gmail: "gmail.com", google: "google.com", google_drive: "drive.google.com",
+  google_calendar: "calendar.google.com", google_sheets: "docs.google.com",
+  google_ads: "ads.google.com", outlook: "outlook.com", microsoft: "microsoft.com",
+  slack: "slack.com", notion: "notion.so", github: "github.com", gitlab: "gitlab.com",
+  openai: "openai.com", stripe: "stripe.com", twilio: "twilio.com", shopify: "shopify.com",
+  zapier: "zapier.com", linkedin: "linkedin.com", x: "x.com", instagram: "instagram.com",
+  facebook: "facebook.com", youtube: "youtube.com", tiktok: "tiktok.com", discord: "discord.com",
+  hubspot: "hubspot.com", mailchimp: "mailchimp.com", canva: "canva.com", paypal: "paypal.com",
+  quickbooks: "quickbooks.intuit.com", xero: "xero.com", airtable: "airtable.com",
+  woocommerce: "woocommerce.com", higgsfield: "higgsfield.ai", stability: "stability.ai",
+  sendgrid: "sendgrid.com", brave: "brave.com", meta: "meta.com",
+};
+
+const faviconUrl = (domain, size = 64) =>
+  `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=${size}`;
+
+// Direct icon URLs for products whose shared-domain favicon is wrong (Google
+// products all resolve to the Google "G" via the favicon service). These point
+// at each product's REAL hosted icon so Gmail shows the Gmail icon, etc.
+const DIRECT_ICON_BY_KEY = {
+  gmail: "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico",
+  google_drive: "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png",
+  google_calendar: "https://ssl.gstatic.com/calendar/images/dynamiclogo_2020q4/calendar_31_2x.png",
+  google_sheets: "https://ssl.gstatic.com/docs/spreadsheets/favicon3.ico",
+  google_ads: "https://www.gstatic.com/images/branding/product/1x/ads_48dp.png",
+  youtube: "https://www.gstatic.com/youtube/img/branding/favicon/favicon_144x144.png",
+  zapier: "https://cdn.zapier.com/zapier/images/favicon.ico",
+};
+
+/**
+ * BrandLogo — shows the REAL brand icon.
+ * Order: live favicon from the service's domain → hand-made SVG logo (if any)
+ * → neutral monogram tile. Favicons are the real logos, so this is accurate for
+ * every service without hand-drawing paths.
+ */
+export const BrandLogo = ({ logoKey, name = "", size = 20 }) => {
+  const [imgFailed, setImgFailed] = useState(false);
+  const direct = logoKey ? DIRECT_ICON_BY_KEY[logoKey] : null;
+  const domain = logoKey ? DOMAIN_BY_KEY[logoKey] : null;
+  const SvgLogo = logoKey ? LOGO_BY_KEY[logoKey] : null;
+  const src = direct || (domain ? faviconUrl(domain, size >= 32 ? 64 : 32) : null);
+
+  // 1) Real product icon (direct URL) or live favicon.
+  if (src && !imgFailed) {
+    return (
+      <span className="brand-logo" style={{ width: size, height: size, display: "inline-flex", alignItems: "center", justifyContent: "center", flex: "none" }}>
+        <img
+          src={src}
+          alt={name || logoKey}
+          width={size}
+          height={size}
+          style={{ width: size, height: size, objectFit: "contain", borderRadius: 4 }}
+          loading="lazy"
+          onError={() => setImgFailed(true)}
+        />
+      </span>
+    );
+  }
+
+  // 2) Hand-made SVG fallback.
+  if (SvgLogo) {
+    return (
+      <span className="brand-logo" style={{ width: size, height: size, display: "inline-flex", alignItems: "center", justifyContent: "center", flex: "none" }}>
+        <SvgLogo />
+      </span>
+    );
+  }
+
+  // 3) Monogram.
+  const letter = (name || "?").trim().charAt(0).toUpperCase();
+  return (
+    <span style={{ width: size, height: size, flex: "none" }} className="rounded-md bg-[#e7ebf3] text-[#4f46e5] inline-flex items-center justify-center text-[11px] font-bold">
+      {letter}
+    </span>
+  );
+};

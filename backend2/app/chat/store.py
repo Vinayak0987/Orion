@@ -82,6 +82,7 @@ def _decode_message(row) -> dict:
     rec = dict(row)
     rec["attachments"] = json.loads(rec.get("attachments") or "[]")
     rec["outputs"] = json.loads(rec.get("outputs") or "[]")
+    rec["charts"] = json.loads(rec.get("charts") or "[]")
     return rec
 
 
@@ -116,7 +117,7 @@ def add_message(
 
 
 def update_message(message_id: str, **fields) -> None:
-    allowed = {"content", "mission_id", "outputs", "status"}
+    allowed = {"content", "mission_id", "outputs", "status", "charts"}
     bad = fields.keys() - allowed
     if bad:
         raise ValueError(f"Unknown message column(s): {bad}")

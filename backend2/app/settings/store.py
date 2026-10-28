@@ -85,3 +85,56 @@ def decrypted_keys(user_id: str = DEFAULT_USER) -> dict:
     """
     keys = _load_raw(user_id)
     return {p: decrypt(keys[p]) for p in PROVIDERS if keys.get(p)}
+
+
+# ---- Custom named keys (user-defined credentials usable by tools) -----------
+# Stored in the same user_settings.api_keys JSON under the "custom:<name>"
+# namespace so they don't collide with the 5 fixed providers.
+
+_CUSTOM_PREFIX = "custom:"
+
+
+def _slug(name: str) -> str:
+    import re
+    return re.sub(r"[^a-z0-9_]+", "_", (name or "").strip().lower()).strip("_")
+
+
+def add_custom_key(name: str, value: str, user_id: str = DEFAULT_USER) -> str:
+    """Store an arbitrary named key (encrypted). Returns its slug id."""
+    slug = _slug(name)
+    if not slug:
+        raise ValueError("invalid key name")
+    keys = _load_raw(user_id)
+    keys[_CUSTOM_PREFIX + slug] = encrypt((value or "").strip())
+    _save_raw(user_id, keys)
+    return slug
+
+
+def list_custom_keys(user_id: str = DEFAULT_USER) -> list[dict]:
+    """Masked list of the user's custom keys (last-4 only)."""
+    keys = _load_raw(user_id)
+    out = []
+    for k, stored in keys.items():
+        if not k.startswith(_CUSTOM_PREFIX):
+            continue
+        plain = decrypt(stored) if stored else ""
+        out.append({"id": k[len(_CUSTOM_PREFIX):], "name": k[len(_CUSTOM_PREFIX):],
+                    "masked": f"...{plain[-4:]}" if len(plain) > 4 else ("..." if plain else None)})
+    return out
+
+
+def delete_custom_key(slug: str, user_id: str = DEFAULT_USER) -> bool:
+    keys = _load_raw(user_id)
+    full = _CUSTOM_PREFIX + _slug(slug)
+    if full in keys:
+        keys.pop(full)
+        _save_raw(user_id, keys)
+        return True
+    return False
+
+
+def get_custom_key(slug: str, user_id: str = DEFAULT_USER) -> str:
+    """Decrypted value of a custom key (for tool runtime use). Never over the API."""
+    keys = _load_raw(user_id)
+    stored = keys.get(_CUSTOM_PREFIX + _slug(slug))
+    return decrypt(stored) if stored else ""

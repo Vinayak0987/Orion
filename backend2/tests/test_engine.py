@@ -62,7 +62,7 @@ def scripted(monkeypatch):
     monkeypatch.setattr(exec_mod, "LLMClient", lambda user_keys=None: llm)
 
     # Mock the web_search tool so no network is touched.
-    async def fake_dispatch(tool_name, tool_input, user_keys=None):
+    async def fake_dispatch(tool_name, tool_input, user_keys=None, ctx=None):
         return {"results": [{"title": "Competitor A"}], "count": 1}
     monkeypatch.setattr(exec_mod.registry, "dispatch", fake_dispatch)
 
@@ -102,7 +102,7 @@ async def test_traces_recorded(scripted):
     assert any(t["trace_type"] == "tool" and t["tool_name"] == "web_search" for t in traces)
 
 
-async def test_empty_plan_fails_cleanly(scripted, monkeypatch):
+async def test_empty_plan_falls_back_to_direct_task(scripted, monkeypatch):
     from app.missions import engine, store
 
     scripted.plan_json = []  # planner returns no tasks
@@ -110,4 +110,6 @@ async def test_empty_plan_fails_cleanly(scripted, monkeypatch):
     await engine.run_mission(mission_id)
 
     mission = store.get_mission(mission_id)
-    assert mission["status"] == "failed"
+    # New behavior: instead of failing, an empty plan degrades to a single
+    # direct task so the goal still gets answered.
+    assert mission["status"] in ("completed", "partial")

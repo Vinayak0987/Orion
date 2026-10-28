@@ -1,6 +1,5 @@
-/* Loader.css — Orion loading indicator. A cyan ring orbits a glowing core on
-   the same dark backdrop as the intro/auth screens, so it feels like part of
-   the product rather than a generic spinner. */
+/* Loader.css — Orion loading indicator. An indigo ring orbits a glowing core on
+   the neumorphic surface, matching the rest of the app. */
 
 .orion-loader {
   display: flex;
@@ -8,7 +7,7 @@
   align-items: center;
   justify-content: center;
   gap: 20px;
-  color: #eaeaec;
+  color: #5b6678;
 }
 
 .orion-loader-fullscreen {
@@ -16,9 +15,7 @@
   inset: 0;
   z-index: 800;
   min-height: 100vh;
-  background:
-    repeating-linear-gradient(118deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 4px),
-    radial-gradient(ellipse at 50% 40%, #0b0b0c 0%, #060606 70%);
+  background: #eef1f6;
   animation: orionLoaderFade 0.35s ease both;
 }
 
@@ -38,10 +35,10 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 2px solid rgba(0, 225, 255, 0.15);
-  border-top-color: #00e1ff;
-  border-right-color: #35ecff;
-  box-shadow: 0 0 14px rgba(0, 225, 255, 0.35);
+  border: 3px solid rgba(79, 70, 229, 0.15);
+  border-top-color: #4f46e5;
+  border-right-color: #6366f1;
+  box-shadow: 0 0 14px rgba(79, 70, 229, 0.25);
   animation: orionLoaderSpin 0.9s linear infinite;
 }
 
@@ -53,8 +50,8 @@
   height: 12px;
   margin: -6px 0 0 -6px;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, #ffffff, #00e1ff 70%);
-  box-shadow: 0 0 12px rgba(0, 225, 255, 0.6);
+  background: radial-gradient(circle at 40% 35%, #a5b4fc, #4f46e5 70%);
+  box-shadow: 0 0 12px rgba(79, 70, 229, 0.5);
   animation: orionLoaderPulse 1.4s ease-in-out infinite;
 }
 
@@ -63,7 +60,7 @@
   font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(235, 235, 240, 0.5);
+  color: rgba(91, 102, 120, 0.6);
 }
 .orion-loader-label::after {
   content: "";

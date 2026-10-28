@@ -11,33 +11,9 @@ import { AgentsSection } from "./components/AgentsSection.jsx";
 import { ToolsSection } from "./components/ToolsSection.jsx";
 import { ViewCreateDepartment } from "./components/views/ViewCreateDepartment.jsx";
 import { ViewDepartments } from "./components/views/ViewDepartments.jsx";
-import { ViewMarketing } from "./components/views/ViewMarketing.jsx";
-import { ViewMarketingSettings } from "./components/views/ViewMarketingSettings.jsx";
-import { ViewMarketingMembers } from "./components/views/ViewMarketingMembers.jsx";
-import { ViewMarketingActivity } from "./components/views/ViewMarketingActivity.jsx";
-import { ViewFinanceActivity } from "./components/views/ViewFinanceActivity.jsx";
-import { ViewFinanceMembers } from "./components/views/ViewFinanceMembers.jsx";
-import { ViewFinanceSettings } from "./components/views/ViewFinanceSettings.jsx";
-import { ViewOperationsActivity } from "./components/views/ViewOperationsActivity.jsx";
-import { ViewOperationsMembers } from "./components/views/ViewOperationsMembers.jsx";
-import { ViewOperationsSettings } from "./components/views/ViewOperationsSettings.jsx";
-import { ViewSalesDept } from "./components/views/ViewSalesDept.jsx";
-import { ViewSalesActivity } from "./components/views/ViewSalesActivity.jsx";
-import { ViewSalesMembers } from "./components/views/ViewSalesMembers.jsx";
-import { ViewSalesSettings } from "./components/views/ViewSalesSettings.jsx";
-import { ViewHRDept } from "./components/views/ViewHRDept.jsx";
-import { ViewHRActivity } from "./components/views/ViewHRActivity.jsx";
-import { ViewHRMembers } from "./components/views/ViewHRMembers.jsx";
-import { ViewHRSettings } from "./components/views/ViewHRSettings.jsx";
-import { ViewResearchDept } from "./components/views/ViewResearchDept.jsx";
-import { ViewResearchActivity } from "./components/views/ViewResearchActivity.jsx";
-import { ViewResearchMembers } from "./components/views/ViewResearchMembers.jsx";
-import { ViewResearchSettings } from "./components/views/ViewResearchSettings.jsx";
-import { ViewFinanceDept } from "./components/views/ViewFinanceDept.jsx";
-import { ViewOperations } from "./components/views/ViewOperations.jsx";
+import { ViewDepartmentDetail } from "./components/views/ViewDepartmentDetail.jsx";
 import { ViewKnowledgeBase } from "./components/views/ViewKnowledgeBase.jsx";
 import { ViewUploadSources } from "./components/views/ViewUploadSources.jsx";
-import { ViewDocumentViewer } from "./components/views/ViewDocumentViewer.jsx";
 import { ViewMemoryOverview } from "./components/views/ViewMemoryOverview.jsx";
 import { ViewMemoryDetails } from "./components/views/ViewMemoryDetails.jsx";
 import { ViewMemorySettings } from "./components/views/ViewMemorySettings.jsx";
@@ -70,6 +46,8 @@ export default function PlatformApp({ onLogout }) {
   const [agentsTab, setAgentsTab] = useState("overview");
   const [toolsTab, setToolsTab] = useState("overview");
   const [settingsTab, setSettingsTab] = useState("settings");
+  const [memoryEntry, setMemoryEntry] = useState(null);
+  const [activeDeptId, setActiveDeptId] = useState(null);
 
   // Match dist/index.html body classes while Platform is mounted.
   useEffect(() => {
@@ -90,6 +68,8 @@ export default function PlatformApp({ onLogout }) {
       setViewingDetails(false);
       return;
     }
+    // Agents is a flat nav item (no subtabs): always land on its Overview.
+    if (id === "agents") setAgentsTab("overview");
     go(id);
   };
 
@@ -112,7 +92,7 @@ export default function PlatformApp({ onLogout }) {
   };
 
   const renderContent = () => {
-    if (viewingDetails) return <ViewMissionDetails missionId={detailMissionId} onBack={() => setViewingDetails(false)} />;
+    if (viewingDetails) return <ViewMissionDetails missionId={detailMissionId} onBack={() => setViewingDetails(false)} onNavigate={go} onViewDetails={(id) => { setDetailMissionId(id); setViewingDetails(true); }} />;
 
     // Settings opened via Orion Workspace — in-page sidebar handles sub-pages
     if (activeView === "settings") {
@@ -125,7 +105,7 @@ export default function PlatformApp({ onLogout }) {
       case "command-center":
         return <ViewCommandCenter />;
       case "missions":
-        return <ViewMissions onViewDetails={(id) => { setDetailMissionId(id); setViewingDetails(true); }} />;
+        return <ViewMissions onViewDetails={(id) => { setDetailMissionId(id); setViewingDetails(true); }} onNavigate={go} />;
       case "approvals":
         return <ViewApprovals />;
       case "notifications":
@@ -141,87 +121,32 @@ export default function PlatformApp({ onLogout }) {
       case "departments":
         return (
           <ViewDepartments
-            onOpen={() => go("department-marketing")}
             onCreate={() => go("create-department")}
-            onDepartmentClick={(deptName) => {
-              const deptRoutes = {
-                "Marketing": "department-marketing",
-                "Finance": "department-finance",
-                "Operations": "department-operations",
-                "Sales": "department-sales",
-                "HR": "department-hr",
-                "Research": "department-research"
-              };
-              const route = deptRoutes[deptName];
-              if (route) go(route);
-            }}
+            onDepartmentClick={(d) => { setActiveDeptId(d.id); go("department-detail"); }}
           />
         );
-      case "department-marketing":
-        return <ViewMarketing onTabChange={(route) => go(route)} />;
-      case "marketing-activity":
-        return <ViewMarketingActivity />;
-      case "marketing-members":
-        return <ViewMarketingMembers />;
-      case "marketing-settings":
-        return <ViewMarketingSettings />;
-      case "department-finance":
-        return <ViewFinanceDept onTabChange={(route) => go(route)} />;
-      case "finance-activity":
-        return <ViewFinanceActivity />;
-      case "finance-members":
-        return <ViewFinanceMembers />;
-      case "finance-settings":
-        return <ViewFinanceSettings />;
-      case "department-operations":
-        return <ViewOperations onTabChange={(route) => go(route)} />;
-      case "operations-activity":
-        return <ViewOperationsActivity />;
-      case "operations-members":
-        return <ViewOperationsMembers />;
-      case "operations-settings":
-        return <ViewOperationsSettings />;
-      case "department-sales":
-        return <ViewSalesDept onTabChange={(route) => go(route)} />;
-      case "sales-activity":
-        return <ViewSalesActivity />;
-      case "sales-members":
-        return <ViewSalesMembers />;
-      case "sales-settings":
-        return <ViewSalesSettings />;
-      case "department-hr":
-        return <ViewHRDept onTabChange={(route) => go(route)} />;
-      case "hr-activity":
-        return <ViewHRActivity />;
-      case "hr-members":
-        return <ViewHRMembers />;
-      case "hr-settings":
-        return <ViewHRSettings />;
-      case "department-research":
-        return <ViewResearchDept onTabChange={(route) => go(route)} />;
-      case "research-activity":
-        return <ViewResearchActivity />;
-      case "research-members":
-        return <ViewResearchMembers />;
-      case "research-settings":
-        return <ViewResearchSettings />;
+      case "department-detail":
+        return <ViewDepartmentDetail departmentId={activeDeptId} onBack={() => go("departments")} />;
 
       // Knowledge & Memory
       case "knowledge":
-        return (
-          <ViewKnowledgeBase
-            onOpenDoc={() => go("knowledge-document")}
-            onUpload={() => go("knowledge-upload")}
-          />
-        );
+        return <ViewKnowledgeBase onUpload={() => go("knowledge-upload")} />;
       case "knowledge-upload":
         return <ViewUploadSources />;
-      case "knowledge-document":
-        return <ViewDocumentViewer onBack={() => go("knowledge")} />;
       case "knowledge-memory-overview":
-        return <ViewMemoryOverview />;
+        return (
+          <ViewMemoryOverview
+            onOpenEntry={(entry) => { setMemoryEntry(entry); go("knowledge-memory-details"); }}
+          />
+        );
       case "knowledge-memory-details":
-        return <ViewMemoryDetails />;
+        return (
+          <ViewMemoryDetails
+            entry={memoryEntry}
+            onBack={() => go("knowledge-memory-overview")}
+            onDeleted={() => { setMemoryEntry(null); go("knowledge-memory-overview"); }}
+          />
+        );
       case "knowledge-memory-settings":
         return <ViewMemorySettings />;
 

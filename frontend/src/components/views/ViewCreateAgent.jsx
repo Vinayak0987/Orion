@@ -1,245 +1,465 @@
-// 5.2 Create New Agent — built to match the reference design exactly.
-// Renders inside the app's existing Sidebar/Topbar (content area only).
-import { useState } from "react";
+// Agents · Create (ViewCreateAgent.jsx)
+//
+// NEW FLOW — AI-derived multi-agent pipeline:
+//   1. The user DESCRIBES the goal in natural language, picks a Department and
+//      an Agent Type, then clicks "Design Pipeline".
+//   2. agentApi.architect(...) returns a MASTER agent + an ordered list of
+//      structured SUB-AGENTS (each with role/input/output/tools/system_prompt).
+//   3. The pipeline renders as an ordered list of EDITABLE sub-agent cards:
+//      the user can edit text fields, add/remove tools per sub-agent, reorder,
+//      delete, and add blank sub-agents.
+//   4. On "Create Agent" we POST /agents with the master fields, the edited
+//      sub_agents (order reindexed 1..n) and tools = UNION of all sub-agent
+//      tools (recomputed fresh, never trusting a stale union).
+import { useEffect, useMemo, useState } from "react";
 import {
-  Paperclip,
-  ChevronRight,
-  Globe,
-  FileText,
-  Target,
-  Plus,
-  ChevronDown,
-  Check,
-  RefreshCw,
-  Sparkles,
-  ArrowRight,
+  Sparkles, Loader2, Plus, Check, ArrowRight, RefreshCw, Wrench,
+  Bot, X, Search, Pen, LineChart, Megaphone, DollarSign, Users, Cog,
+  ChevronUp, ChevronDown, Trash2, GitBranch, ArrowDown,
 } from "lucide-react";
+import { agentApi } from "../../agentApi.js";
+import { toolApi } from "../../toolApi.js";
+import { useToast } from "../ui/Toast.jsx";
+import { NeuChip } from "./settings/SettingsShared.jsx";
+import { BrandLogo } from "./brandLogos.jsx";
 
-/* ---- Brand / tool icons (exact logos) ---- */
-const NotionLogo = () => (
-  <svg viewBox="0 0 24 24" className="tool-logo" aria-hidden="true">
-    <rect x="3" y="2.5" width="18" height="19" rx="2.5" fill="#fff" stroke="#111" strokeWidth="1.4" />
-    <path d="M8 7.5v9M8 7.5l7.5 9M15.5 7.5v9" fill="none" stroke="#111" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const SlackLogo = () => (
-  <svg viewBox="0 0 24 24" className="tool-logo" aria-hidden="true">
-    <path d="M6 15a2 2 0 1 1-2-2h2v2z" fill="#E01E5A" />
-    <path d="M7 15a2 2 0 1 1 4 0v5a2 2 0 1 1-4 0v-5z" fill="#E01E5A" />
-    <path d="M9 6a2 2 0 1 1 2 2H9V6z" fill="#36C5F0" />
-    <path d="M9 7a2 2 0 1 1 0 4H4a2 2 0 1 1 0-4h5z" fill="#36C5F0" />
-    <path d="M18 9a2 2 0 1 1 2 2h-2V9z" fill="#2EB67D" />
-    <path d="M17 9a2 2 0 1 1-4 0V4a2 2 0 1 1 4 0v5z" fill="#2EB67D" />
-    <path d="M15 18a2 2 0 1 1-2-2h2v2z" fill="#ECB22E" />
-    <path d="M15 17a2 2 0 1 1 0-4h5a2 2 0 1 1 0 4h-5z" fill="#ECB22E" />
-  </svg>
-);
-
-const GoogleDriveLogo = () => (
-  <svg viewBox="0 0 24 24" className="tool-logo" aria-hidden="true">
-    <path d="M8.4 3h7.2l7.2 12.4h-7.2z" fill="#FFCF3E" />
-    <path d="M8.4 3 1.2 15.4 4.8 21 12 8.6z" fill="#0F9D58" />
-    <path d="M4.8 21h14.4l3.6-5.6H8.4z" fill="#4285F4" />
-  </svg>
-);
-
-const RobotAvatar = () => (
-  <svg viewBox="0 0 64 64" className="robot-svg" aria-hidden="true">
-    {/* antenna */}
-    <circle cx="32" cy="10" r="3" fill="#4f46e5" />
-    <rect x="31" y="12" width="2" height="6" rx="1" fill="#4f46e5" />
-    {/* head */}
-    <rect x="16" y="18" width="32" height="26" rx="9" fill="#4f46e5" />
-    {/* eyes */}
-    <circle cx="26" cy="29" r="3.4" fill="#fff" />
-    <circle cx="38" cy="29" r="3.4" fill="#fff" />
-    {/* mouth */}
-    <rect x="24" y="36" width="16" height="5" rx="2.5" fill="#fff" />
-    {/* ears */}
-    <rect x="12" y="27" width="4" height="8" rx="2" fill="#4f46e5" />
-    <rect x="48" y="27" width="4" height="8" rx="2" fill="#4f46e5" />
-  </svg>
-);
-
-const RESPONSIBILITIES = [
-  "Research and analyze market trends",
-  "Collect and process data from multiple sources",
-  "Generate actionable insights",
-  "Create reports and visualizations",
-  "Monitor competitor activity",
+const AGENT_TYPES = ["research", "marketing", "finance", "operations", "hr", "analysis", "writing", "general"];
+const DEPARTMENTS = ["Marketing", "Finance", "Research", "Operations", "HR", "Sales", "Support", "General"];
+const MEMORY_OPTIONS = [
+  { label: "Long-term (90 days)", days: 90 },
+  { label: "Standard (30 days)", days: 30 },
+  { label: "Short-term (7 days)", days: 7 },
+  { label: "Disabled", days: 0 },
 ];
 
-const SUGGESTED_TOOLS = [
-  { label: "Web Search", icon: <Globe size={15} strokeWidth={2} className="tool-lucide" /> },
-  { label: "Notion", icon: <NotionLogo /> },
-  { label: "Slack", icon: <SlackLogo /> },
-  { label: "Google Drive", icon: <GoogleDriveLogo /> },
-];
+const TYPE_ICON = {
+  research: Search, marketing: Megaphone, finance: DollarSign, operations: Cog,
+  hr: Users, analysis: LineChart, writing: Pen, general: Bot,
+};
 
-const KNOWLEDGE_SOURCES = [
-  { label: "Market Reports", icon: <FileText size={15} strokeWidth={2} className="tool-lucide" /> },
-  { label: "Competitor Data", icon: <Target size={15} strokeWidth={2} className="tool-lucide" /> },
-  { label: "Industry News", icon: <FileText size={15} strokeWidth={2} className="tool-lucide" /> },
-];
+const inputCls = "neu-inset w-full h-10 px-3 rounded-xl text-[13.5px] text-[#334155] outline-none";
+const areaCls = "neu-inset w-full px-3 py-2.5 rounded-xl text-[13.5px] text-[#334155] outline-none resize-y";
+const Label = ({ children }) => (
+  <label className="block text-[12.5px] font-semibold text-[#5b6678] mb-1.5 mt-4 first:mt-0">{children}</label>
+);
 
-const PERMISSIONS = ["Read data", "Write reports", "Use external tools"];
+// -----------------------------------------------------------------------------
+// Shared tool catalog hook: builtins (by name) + external integrations/custom
+// (with logos). Used to resolve chips and to power the add-tool picker.
+// -----------------------------------------------------------------------------
+function useToolCatalog() {
+  const [builtins, setBuiltins] = useState([]);   // [{ name, description, category }]
+  const [externals, setExternals] = useState([]); // [{ id, name, logo_key, kind, connected }]
 
-const PREVIEW_TAGS = ["Research", "Analyze", "Report", "Visualize"];
+  useEffect(() => {
+    toolApi.list({ type: "builtin" })
+      .then((d) => setBuiltins((d.tools || []).map((t) => ({ name: t.name, description: t.description || "", category: t.category || "" }))))
+      .catch(() => {});
+    toolApi.listIntegrations()
+      .then((d) => setExternals((prev) => [
+        ...prev,
+        ...(d.integrations || []).map((i) => ({ id: i.id, name: i.name, logo_key: i.logo_key || i.id, kind: "integration", connected: i.status === "connected" })),
+      ]))
+      .catch(() => {});
+    toolApi.list({ type: "custom" })
+      .then((d) => setExternals((prev) => [
+        ...prev,
+        ...(d.tools || []).map((t) => ({ id: t.name, name: t.display_name || t.name, logo_key: t.name, kind: "custom", connected: true })),
+      ]))
+      .catch(() => {});
+  }, []);
 
-export const ViewCreateAgent = () => {
-  const [mode, setMode] = useState("ai"); // "ai" | "manual"
+  const externalById = useMemo(() => {
+    const m = new Map();
+    for (const e of externals) m.set(e.id, e);
+    return m;
+  }, [externals]);
+  const builtinByName = useMemo(() => {
+    const m = new Map();
+    for (const b of builtins) m.set(b.name, b);
+    return m;
+  }, [builtins]);
+
+  return { builtins, externals, externalById, builtinByName };
+}
+
+// A single tool chip: BrandLogo for external, wrench/category badge for builtin.
+function ToolChip({ tool, externalById, builtinByName, onRemove }) {
+  const ext = externalById.get(tool);
+  const builtin = builtinByName.get(tool);
+  return (
+    <span className="neu-chip inline-flex items-center gap-1.5 px-2.5 py-1 text-[11.5px] font-medium text-[#5b6678]">
+      {ext ? (
+        <BrandLogo logoKey={ext.logo_key} name={ext.name} size={14} />
+      ) : (
+        <Wrench size={12} className="text-[#8792a6]" />
+      )}
+      <span>{ext ? ext.name : builtin ? builtin.name : tool}</span>
+      {onRemove && (
+        <button type="button" onClick={onRemove} className="text-[#b4bdcc] hover:text-rose-500"><X size={12} /></button>
+      )}
+    </span>
+  );
+}
+
+// Add-tool picker popover: builtins listed by name + externals/custom with logos.
+function ToolPicker({ builtins, externals, selected, onAdd, onClose }) {
+  const [q, setQ] = useState("");
+  const query = q.trim().toLowerCase();
+  const sel = new Set(selected);
+  const fExternals = externals.filter((e) => !sel.has(e.id) && (!query || e.name.toLowerCase().includes(query) || e.id.toLowerCase().includes(query)));
+  const fBuiltins = builtins.filter((b) => !sel.has(b.name) && (!query || b.name.toLowerCase().includes(query) || (b.category || "").toLowerCase().includes(query)));
 
   return (
-    <div className="create-agent-page">
-      {/* Page header */}
-      <div className="ca-head">
-        <h1>Create New Agent</h1>
-        <p>Choose how you want to create your agent.</p>
-      </div>
-
-      {/* AI-assisted / Manual toggle */}
-      <div className="ca-mode">
-        <button
-          className={`ca-mode-btn ${mode === "ai" ? "active" : ""}`}
-          onClick={() => setMode("ai")}
-        >
-          AI-assisted
-        </button>
-        <button
-          className={`ca-mode-btn ${mode === "manual" ? "active" : ""}`}
-          onClick={() => setMode("manual")}
-        >
-          Manual
-        </button>
-      </div>
-
-      {/* Describe box */}
-      <div className="ca-describe card">
-        <h3>Describe what you want this agent to do</h3>
-        <div className="ca-prompt">
-          <textarea
-            placeholder="E.g. Create a research agent that analyzes market trends and generates business reports..."
-            rows={2}
-          />
-          <div className="ca-prompt-actions">
-            <button className="ca-attach" aria-label="Attach">
-              <Paperclip size={20} strokeWidth={1.8} />
-            </button>
-            <button className="ca-send" aria-label="Generate">
-              <ChevronRight size={20} strokeWidth={2.6} />
-            </button>
-          </div>
+    <div className="fixed inset-0 z-[210] bg-slate-900/50 grid place-items-center p-4" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="w-full max-w-md bg-[#eef1f6] rounded-2xl shadow-[0_20px_60px_rgba(15,23,42,0.35)] p-5">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-[15px] font-semibold text-[#334155]">Add a tool</h3>
+          <button onClick={onClose} className="neu-circle w-9 h-9 rounded-full grid place-items-center text-[#8792a6]"><X size={17} /></button>
         </div>
-      </div>
-
-      {/* Two-column body */}
-      <div className="ca-body">
-        {/* Generated Preview */}
-        <div className="ca-generated card">
-          <h2>Generated Preview</h2>
-
-          <label className="ca-label">Agent Name</label>
-          <input className="ca-input" defaultValue="Market Research Agent" />
-
-          <h4 className="ca-section-title">Purpose</h4>
-          <p className="ca-purpose">
-            Analyze market trends, collect insights, and generate comprehensive
-            research reports for business decisions.
-          </p>
-
-          <h4 className="ca-section-title">Responsibilities</h4>
-          <ul className="ca-resp">
-            {RESPONSIBILITIES.map((r) => (
-              <li key={r}>{r}</li>
-            ))}
-          </ul>
-
-          <h4 className="ca-section-title">Suggested Tools</h4>
-          <div className="ca-chips">
-            {SUGGESTED_TOOLS.map((t) => (
-              <span key={t.label} className="ca-chip">
-                {t.icon}
-                {t.label}
-                <span className="ca-chip-x" aria-hidden="true">×</span>
-              </span>
-            ))}
-          </div>
-
-          <h4 className="ca-section-title">Knowledge Sources</h4>
-          <div className="ca-chips">
-            {KNOWLEDGE_SOURCES.map((k) => (
-              <span key={k.label} className="ca-chip">
-                {k.icon}
-                {k.label}
-                <span className="ca-chip-x" aria-hidden="true">×</span>
-              </span>
-            ))}
-          </div>
-          <button className="ca-add-source">
-            <Plus size={16} strokeWidth={2.4} /> Add Source
-          </button>
-
-          <h4 className="ca-section-title">Memory</h4>
-          <div className="ca-select">
-            Long-term (90 days)
-            <ChevronDown size={18} strokeWidth={2} className="ca-select-caret" />
-          </div>
-
-          <h4 className="ca-section-title">Permissions</h4>
-          <div className="ca-perms">
-            {PERMISSIONS.map((p) => (
-              <label key={p} className="ca-perm">
-                <span className="ca-check">
-                  <Check size={13} strokeWidth={3.2} />
-                </span>
-                {p}
-              </label>
-            ))}
-          </div>
+        <div className="neu-inset rounded-xl flex items-center gap-2 px-3 h-10 mb-3">
+          <Search size={15} className="text-[#9aa6b8]" />
+          <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search builtins or integrations…"
+            className="bg-transparent outline-none text-[13px] text-[#334155] w-full" />
         </div>
-
-        {/* Agent Preview */}
-        <div className="ca-preview card">
-          <h2>Agent Preview</h2>
-          <div className="ca-preview-inner">
-            <div className="ca-robot">
-              <RobotAvatar />
+        <div className="max-h-[55vh] overflow-y-auto scrollbar-hide space-y-3">
+          {fExternals.length > 0 && (
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#9aa6b8] mb-1.5">Integrations &amp; custom</p>
+              <div className="grid gap-1.5">
+                {fExternals.map((e) => (
+                  <button key={e.id} type="button" onClick={() => onAdd(e.id)}
+                    className="neu-card rounded-xl px-3 py-2 flex items-center gap-2.5 text-left">
+                    <span className="neu-circle w-8 h-8 rounded-lg grid place-items-center"><BrandLogo logoKey={e.logo_key} name={e.name} size={16} /></span>
+                    <span className="flex-1 min-w-0"><span className="block text-[12.5px] font-semibold text-[#334155] truncate">{e.name}</span>
+                      <span className="block text-[10.5px] text-[#9aa6b8]">{e.kind === "custom" ? "Custom tool" : e.connected ? "connected" : "not connected"}</span></span>
+                    <Plus size={14} className="text-[#4f46e5]" />
+                  </button>
+                ))}
+              </div>
             </div>
-            <h3 className="ca-robot-name">
-              Market
-              <br />
-              Research Agent
-            </h3>
-            <p className="ca-robot-desc">
-              Analyzes trends. Finds insights. Delivers results.
+          )}
+          {fBuiltins.length > 0 && (
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#9aa6b8] mb-1.5">Built-in tools</p>
+              <div className="grid gap-1.5">
+                {fBuiltins.map((b) => (
+                  <button key={b.name} type="button" onClick={() => onAdd(b.name)}
+                    className="neu-card rounded-xl px-3 py-2 flex items-center gap-2.5 text-left">
+                    <span className="neu-circle w-8 h-8 rounded-lg grid place-items-center text-[#8792a6]"><Wrench size={15} /></span>
+                    <span className="flex-1 min-w-0"><span className="block text-[12.5px] font-semibold text-[#334155] truncate">{b.name}</span>
+                      {b.category && <span className="block text-[10.5px] text-[#9aa6b8]">{b.category}</span>}</span>
+                    <Plus size={14} className="text-[#4f46e5]" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          {fExternals.length === 0 && fBuiltins.length === 0 && (
+            <p className="text-[13px] text-[#9aa6b8] text-center py-6">No matching tools.</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// -----------------------------------------------------------------------------
+// Sub-agent card (editable).
+// -----------------------------------------------------------------------------
+function SubAgentCard({ sa, index, total, catalog, onChange, onRemove, onMoveUp, onMoveDown }) {
+  const [picking, setPicking] = useState(false);
+  const field = (k, v) => onChange({ ...sa, [k]: v });
+  const tools = sa.tools || [];
+
+  const removeTool = (t) => field("tools", tools.filter((x) => x !== t));
+  const addTool = (t) => { if (!tools.includes(t)) field("tools", [...tools, t]); setPicking(false); };
+
+  return (
+    <div className="neu-card rounded-2xl p-4">
+      <div className="flex items-start gap-3">
+        <span className="neu-circle w-8 h-8 rounded-lg grid place-items-center text-[13px] font-bold text-[#4f46e5] shrink-0 mt-0.5">{index + 1}</span>
+        <div className="flex-1 min-w-0">
+          <input value={sa.name || ""} onChange={(e) => field("name", e.target.value)} placeholder="Sub-agent name"
+            className="neu-inset w-full h-9 px-3 rounded-lg text-[13.5px] font-semibold text-[#334155] outline-none" />
+        </div>
+        <div className="flex items-center gap-1 shrink-0">
+          <button type="button" onClick={onMoveUp} disabled={index === 0}
+            className="neu-circle w-8 h-8 rounded-lg grid place-items-center text-[#8792a6] disabled:opacity-30" title="Move up"><ChevronUp size={15} /></button>
+          <button type="button" onClick={onMoveDown} disabled={index === total - 1}
+            className="neu-circle w-8 h-8 rounded-lg grid place-items-center text-[#8792a6] disabled:opacity-30" title="Move down"><ChevronDown size={15} /></button>
+          <button type="button" onClick={onRemove}
+            className="neu-circle w-8 h-8 rounded-lg grid place-items-center text-[#8792a6] hover:text-rose-500" title="Delete step"><Trash2 size={14} /></button>
+        </div>
+      </div>
+
+      <div className="mt-3 grid gap-2.5">
+        <div>
+          <label className="block text-[11px] font-semibold text-[#8792a6] mb-1">Role</label>
+          <input value={sa.role || ""} onChange={(e) => field("role", e.target.value)} placeholder="What this step does"
+            className="neu-inset w-full h-9 px-3 rounded-lg text-[13px] text-[#334155] outline-none" />
+        </div>
+        <div className="grid grid-cols-2 gap-2.5">
+          <div>
+            <label className="block text-[11px] font-semibold text-[#8792a6] mb-1">Input</label>
+            <input value={sa.input || ""} onChange={(e) => field("input", e.target.value)} placeholder="Expected input"
+              className="neu-inset w-full h-9 px-3 rounded-lg text-[13px] text-[#334155] outline-none" />
+          </div>
+          <div>
+            <label className="block text-[11px] font-semibold text-[#8792a6] mb-1">Output</label>
+            <input value={sa.output || ""} onChange={(e) => field("output", e.target.value)} placeholder="Produced output"
+              className="neu-inset w-full h-9 px-3 rounded-lg text-[13px] text-[#334155] outline-none" />
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-3">
+        <div className="flex items-center justify-between mb-1.5">
+          <label className="text-[11px] font-semibold text-[#8792a6]">Tools</label>
+          <button type="button" onClick={() => setPicking(true)}
+            className="neu-btn-ghost inline-flex items-center gap-1 h-7 px-2.5 text-[11px] font-semibold"><Plus size={12} /> Add tool</button>
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {tools.length === 0 && <span className="text-[11.5px] text-[#9aa6b8]">No tools yet.</span>}
+          {tools.map((t) => (
+            <ToolChip key={t} tool={t} externalById={catalog.externalById} builtinByName={catalog.builtinByName} onRemove={() => removeTool(t)} />
+          ))}
+        </div>
+      </div>
+
+      {picking && (
+        <ToolPicker builtins={catalog.builtins} externals={catalog.externals} selected={tools} onAdd={addTool} onClose={() => setPicking(false)} />
+      )}
+    </div>
+  );
+}
+
+// -----------------------------------------------------------------------------
+// Main view.
+// -----------------------------------------------------------------------------
+export const ViewCreateAgent = ({ onCreated }) => {
+  const toast = useToast();
+  const catalog = useToolCatalog();
+
+  // Design inputs.
+  const [description, setDescription] = useState("");
+  const [department, setDepartment] = useState("General");
+  const [agentType, setAgentType] = useState("general");
+  const [designing, setDesigning] = useState(false);
+
+  // Master agent (editable after design).
+  const [master, setMaster] = useState(null); // { name, agent_type, purpose, system_prompt, department }
+  const [subAgents, setSubAgents] = useState([]); // structured editable array
+  const [memoryTtl, setMemoryTtl] = useState(30);
+  const [temperature, setTemperature] = useState(0.7);
+  const [saving, setSaving] = useState(false);
+
+  const AgentIcon = TYPE_ICON[master?.agent_type || agentType] || Bot;
+
+  // Union of all sub-agent tools (always recomputed, never stale).
+  const unionTools = useMemo(() => {
+    const s = new Set();
+    for (const sa of subAgents) for (const t of sa.tools || []) s.add(t);
+    return [...s];
+  }, [subAgents]);
+
+  const designPipeline = async () => {
+    if (!description.trim()) { toast.error("Describe what the agent should do first"); return; }
+    setDesigning(true);
+    try {
+      const r = await agentApi.architect({ description: description.trim(), department, agent_type: agentType });
+      setMaster({
+        name: r.name || "",
+        agent_type: r.agent_type || agentType,
+        purpose: r.purpose || "",
+        system_prompt: r.system_prompt || "",
+        department: r.department || department,
+      });
+      const subs = Array.isArray(r.sub_agents) ? r.sub_agents : [];
+      setSubAgents(subs
+        .slice()
+        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+        .map((sa, i) => ({
+          id: sa.id,
+          name: sa.name || "",
+          role: sa.role || "",
+          input: sa.input || "",
+          output: sa.output || "",
+          tools: Array.isArray(sa.tools) ? sa.tools : [],
+          system_prompt: sa.system_prompt || "",
+          order: i + 1,
+        })));
+      toast.success(`Pipeline designed · ${subs.length} sub-agent${subs.length === 1 ? "" : "s"}`);
+    } catch (e) {
+      if (/503/.test(e.message)) toast.error("No LLM key configured — add one to design pipelines.");
+      else toast.error(e.message);
+    } finally { setDesigning(false); }
+  };
+
+  const setSub = (idx, next) => setSubAgents((arr) => arr.map((s, i) => (i === idx ? next : s)));
+  const removeSub = (idx) => setSubAgents((arr) => arr.filter((_, i) => i !== idx));
+  const move = (idx, dir) => setSubAgents((arr) => {
+    const j = idx + dir;
+    if (j < 0 || j >= arr.length) return arr;
+    const next = arr.slice();
+    [next[idx], next[j]] = [next[j], next[idx]];
+    return next;
+  });
+  const addBlank = () => setSubAgents((arr) => [...arr, { name: "", role: "", input: "", output: "", tools: [], system_prompt: "", order: arr.length + 1 }]);
+
+  const create = async () => {
+    if (!master) return;
+    if (!master.name.trim()) { toast.error("Agent name is required"); return; }
+    setSaving(true);
+    try {
+      const sub_agents = subAgents.map((sa, i) => ({
+        ...(sa.id ? { id: sa.id } : {}),
+        name: sa.name,
+        role: sa.role,
+        input: sa.input,
+        output: sa.output,
+        tools: sa.tools || [],
+        system_prompt: sa.system_prompt || "",
+        order: i + 1,
+      }));
+      const r = await agentApi.create({
+        name: master.name.trim(),
+        agent_type: master.agent_type,
+        purpose: master.purpose,
+        system_prompt: master.system_prompt,
+        tools: unionTools,
+        sub_agents,
+        department_id: master.department,
+        temperature,
+        memory_enabled: memoryTtl > 0,
+        memory_ttl_days: memoryTtl || 30,
+        permissions: { knowledge_docs: [] },
+      });
+      toast.success(`'${master.name}' created · ${sub_agents.length} steps · ${unionTools.length} tools`);
+      onCreated?.(r.agent_id);
+    } catch (e) { toast.error(e.message); }
+    finally { setSaving(false); }
+  };
+
+  const reset = () => { setMaster(null); setSubAgents([]); setDescription(""); };
+
+  return (
+    <div className="neu-surface h-full overflow-y-auto scrollbar-hide px-6 py-7 sm:px-8">
+      <div className="max-w-[1120px] mx-auto">
+        <div className="mb-5">
+          <h1 className="text-[23px] font-semibold text-[#334155]">Create Agent</h1>
+          <p className="text-[14px] text-[#8792a6] mt-1">Describe your goal and AI designs a multi-agent pipeline you can edit.</p>
+        </div>
+
+        {/* DESIGN PANEL */}
+        <div className="neu-card rounded-2xl p-5 mb-4">
+          <h2 className="text-[14px] font-semibold text-[#334155] mb-1 flex items-center gap-1.5"><GitBranch size={15} className="text-[#4f46e5]" /> Describe the goal</h2>
+          <p className="text-[12.5px] text-[#8792a6] mb-3">In plain language, say what this agent should accomplish. The architect breaks it into an ordered sub-agent pipeline.</p>
+          <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3}
+            placeholder="e.g. Research competitor pricing weekly, summarize the findings, and draft an email to the sales team."
+            className={`${areaCls} min-h-[80px]`} />
+          <div className="grid sm:grid-cols-[1fr_1fr_auto] gap-3 mt-3 items-end">
+            <div>
+              <Label>Department</Label>
+              <select value={department} onChange={(e) => setDepartment(e.target.value)} className="neu-input neu-select w-full h-10 px-3 rounded-xl text-[13.5px]">
+                {DEPARTMENTS.map((d) => <option key={d}>{d}</option>)}
+              </select>
+            </div>
+            <div>
+              <Label>Agent Type</Label>
+              <select value={agentType} onChange={(e) => setAgentType(e.target.value)} className="neu-input neu-select w-full h-10 px-3 rounded-xl text-[13.5px]">
+                {AGENT_TYPES.map((t) => <option key={t}>{t}</option>)}
+              </select>
+            </div>
+            <button onClick={designPipeline} disabled={designing || !description.trim()}
+              className="neu-btn-primary inline-flex items-center justify-center gap-2 h-10 px-5 text-[14px] font-semibold">
+              {designing ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />} Design Pipeline
+            </button>
+          </div>
+        </div>
+
+        {/* EMPTY STATE */}
+        {!master && (
+          <div className="neu-inset rounded-2xl py-14 px-6 text-center">
+            <span className="w-14 h-14 mx-auto rounded-2xl grid place-items-center text-[#4f46e5] neu-circle mb-4"><GitBranch size={26} /></span>
+            <h3 className="text-[15px] font-semibold text-[#334155]">No pipeline yet</h3>
+            <p className="text-[13px] text-[#8792a6] mt-1.5 max-w-md mx-auto">
+              Describe your goal above and click <b className="text-[#5b6678]">Design Pipeline</b>. The AI architect will design an ordered
+              list of specialized sub-agents — each with its own role, inputs, outputs, and tools — that you can fully edit before creating the agent.
             </p>
-            <div className="ca-preview-tags">
-              {PREVIEW_TAGS.map((tag) => (
-                <span key={tag} className="ca-preview-tag">
-                  {tag}
-                </span>
+          </div>
+        )}
+
+        {/* DESIGNED PIPELINE */}
+        {master && (
+          <>
+            {/* Master header */}
+            <div className="neu-card rounded-2xl p-5 mb-4">
+              <div className="flex items-start gap-4">
+                <span className="w-14 h-14 rounded-2xl grid place-items-center text-white bg-gradient-to-br from-[#6366f1] to-[#4338ca] shrink-0"><AgentIcon size={26} /></span>
+                <div className="flex-1 min-w-0">
+                  <input value={master.name} onChange={(e) => setMaster((m) => ({ ...m, name: e.target.value }))} placeholder="Agent name"
+                    className="neu-inset w-full h-10 px-3 rounded-xl text-[15px] font-bold text-[#334155] outline-none" />
+                  <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                    <NeuChip>{master.agent_type}</NeuChip>
+                    <NeuChip>{master.department}</NeuChip>
+                    <NeuChip>{subAgents.length} steps</NeuChip>
+                    <NeuChip>{unionTools.length} tools</NeuChip>
+                  </div>
+                </div>
+              </div>
+              <Label>Purpose</Label>
+              <textarea className={`${areaCls} min-h-[56px]`} value={master.purpose} onChange={(e) => setMaster((m) => ({ ...m, purpose: e.target.value }))} placeholder="What this agent is responsible for." />
+              <Label>System Prompt (optional, editable)</Label>
+              <textarea className={`${areaCls} min-h-[72px] font-mono`} value={master.system_prompt} onChange={(e) => setMaster((m) => ({ ...m, system_prompt: e.target.value }))} placeholder="Behavioral instructions." />
+              <div className="grid sm:grid-cols-2 gap-3">
+                <div>
+                  <Label>Memory</Label>
+                  <select value={memoryTtl} onChange={(e) => setMemoryTtl(Number(e.target.value))} className="neu-input neu-select w-full h-10 px-3 rounded-xl text-[13.5px]">
+                    {MEMORY_OPTIONS.map((m) => <option key={m.days} value={m.days}>{m.label}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <Label>Temperature · {temperature}</Label>
+                  <input type="range" min="0" max="1" step="0.1" value={temperature} onChange={(e) => setTemperature(parseFloat(e.target.value))} className="w-full accent-[#4f46e5] mt-3" />
+                </div>
+              </div>
+            </div>
+
+            {/* Sub-agent pipeline */}
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-[14px] font-semibold text-[#334155]">Pipeline · {subAgents.length} sub-agent{subAgents.length === 1 ? "" : "s"}</h2>
+              <button onClick={addBlank} className="neu-btn-ghost inline-flex items-center gap-1.5 h-8 px-3 text-[12px] font-semibold"><Plus size={13} /> Add step</button>
+            </div>
+            <div className="space-y-3">
+              {subAgents.length === 0 && (
+                <div className="neu-inset rounded-xl py-8 text-center text-[13px] text-[#8792a6]">No sub-agents. Add a step to build the pipeline.</div>
+              )}
+              {subAgents.map((sa, i) => (
+                <div key={sa.id || i}>
+                  <SubAgentCard sa={sa} index={i} total={subAgents.length} catalog={catalog}
+                    onChange={(next) => setSub(i, next)} onRemove={() => removeSub(i)}
+                    onMoveUp={() => move(i, -1)} onMoveDown={() => move(i, 1)} />
+                  {i < subAgents.length - 1 && (
+                    <div className="flex justify-center py-1 text-[#c3cbda]"><ArrowDown size={16} /></div>
+                  )}
+                </div>
               ))}
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Footer actions */}
-      <div className="ca-footer">
-        <div className="ca-footer-left">
-          <button className="ca-btn-outline">
-            <RefreshCw size={17} strokeWidth={2} /> Regenerate
-          </button>
-          <button className="ca-btn-outline">
-            <FileText size={17} strokeWidth={2} /> Save as Template
-          </button>
-        </div>
-        <button className="ca-btn-primary">
-          <Sparkles size={17} strokeWidth={2} /> Create Agent
-          <ArrowRight size={17} strokeWidth={2.2} />
-        </button>
+            {/* Actions */}
+            <div className="flex items-center justify-end gap-2.5 mt-5">
+              <button onClick={reset} className="neu-btn-ghost inline-flex items-center gap-1.5 h-10 px-4 text-[13px] font-semibold"><RefreshCw size={15} /> Reset</button>
+              <button onClick={create} disabled={saving || !master.name.trim()}
+                className="neu-btn-primary inline-flex items-center gap-2 h-10 px-5 text-[14px] font-semibold">
+                {saving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />} Create Agent <ArrowRight size={16} />
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
 };
+
+export default ViewCreateAgent;
