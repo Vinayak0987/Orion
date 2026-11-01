@@ -68,7 +68,71 @@ def _tokens(s: str) -> set[str]:
     return set(_WORD.findall((s or "").lower()))
 
 
-def search(user_id: str, query: str, n: int = 5, allowed_document_ids: list[str] | None = None) -> list[dict]:
+async def search(user_id: str, query: str, n: int = 5, allowed_document_ids: list[str] | None = None) -> list[dict]:
+    """Search MongoDB document embeddings with vector similarity, keyword fallback."""
+    # Primary: Try vector search using MongoDB's $vectorSearch
+    try:
+        from app.auth import store as auth_store
+        from app.llm.embeddings import get_embedding_client
+
+        # Generate query embedding
+        embedding_client = get_embedding_client()
+        query_embedding = await embedding_client.embed_text(query)
+
+        if query_embedding and any(query_embedding):  # Non-zero vector
+            # Use vector search
+            results = auth_store.search_document_embeddings(
+                query_embedding=query_embedding,
+                user_id=user_id,
+                limit=n,
+            )
+
+            if results:
+                # Filter by allowed document IDs if specified
+                if allowed_document_ids is not None:
+                    allow = set(allowed_document_ids)
+                    results = [r for r in results if r.get("document_id") in allow]
+
+                if results:
+                    # Return results with text content
+                    return [{"text": r.get("text", ""), "document_id": r.get("document_id")} for r in results]
+    except Exception:
+        # Vector search failed, fall through to keyword search
+        pass
+
+    # Fallback: Keyword matching on MongoDB embeddings
+    try:
+        from app.auth import store as auth_store
+        embeddings = auth_store.get_db().document_embeddings.find({"user_id": user_id})
+
+        if allowed_document_ids is not None:
+            allow = set(allowed_document_ids)
+            embeddings = [e for e in embeddings if e.get("document_id") in allow]
+
+        if not embeddings:
+            # Final fallback: local JSON file
+            return _search_local(user_id, query, n, allowed_document_ids)
+
+        q = _tokens(query)
+        if not q:
+            return []
+
+        scored = []
+        for emb in embeddings:
+            text = emb.get("text", "")
+            overlap = len(q & _tokens(text))
+            if overlap:
+                scored.append((overlap, text, emb.get("document_id")))
+
+        scored.sort(key=lambda x: x[0], reverse=True)
+        return [{"text": t, "document_id": doc_id} for _, t, doc_id in scored[:n]]
+    except Exception:
+        # Final fallback: local JSON file on any error
+        return _search_local(user_id, query, n, allowed_document_ids)
+
+
+def _search_local(user_id: str, query: str, n: int = 5, allowed_document_ids: list[str] | None = None) -> list[dict]:
+    """Search local JSON fallback store."""
     rows = _load(user_id)
     if not rows:
         return []
@@ -84,6 +148,6 @@ def search(user_id: str, query: str, n: int = 5, allowed_document_ids: list[str]
     for r in rows:
         overlap = len(q & _tokens(r["text"]))
         if overlap:
-            scored.append((overlap, r["text"]))
+            scored.append((overlap, r["text"], r.get("document_id")))
     scored.sort(key=lambda x: x[0], reverse=True)
-    return [{"text": t} for _, t in scored[:n]]
+    return [{"text": t, "document_id": doc_id} for _, t, doc_id in scored[:n]]

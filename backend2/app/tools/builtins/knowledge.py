@@ -31,19 +31,19 @@ from app.tools.base import ToolContext, err, need, ok, tool
         "required": ["document_id"]
     },
 )
-def query_document(ti: dict, ctx: ToolContext) -> dict:
+async def query_document(ti: dict, ctx: ToolContext) -> dict:
     if (m := need(ti, "document_id")):
         return err(m)
     from app.knowledge.store import query_document as _qd
-    res = _qd(ctx.user_id or "default-user", ti["document_id"].strip(),
-              ti.get("query", ""), int(ti.get("limit") or 10))
+    res = await _qd(ctx.user_id or "default-user", ti["document_id"].strip(),
+                    ti.get("query", ""), int(ti.get("limit") or 10))
     if res.get("error"):
         return err(res["error"])
     return ok(**res)
 
 
-def _doc_search(user_id: str, query: str, top_k: int = 5, agent_id: str | None = None) -> dict:
-    """Shared doc retrieval: Chroma if present, else keyword fallback.
+async def _doc_search(user_id: str, query: str, top_k: int = 5, agent_id: str | None = None) -> dict:
+    """Shared doc retrieval: MongoDB Vector Search with keyword fallback.
     When agent_id is given, results are scoped to documents the agent may see
     (its departments + org-wide docs)."""
     # Resolve the allowed-document scope for this acting agent.
@@ -54,32 +54,12 @@ def _doc_search(user_id: str, query: str, top_k: int = 5, agent_id: str | None =
             allowed = _docs.allowed_document_ids(agent_id)
         except Exception:  # noqa: BLE001 — scoping must never break retrieval
             allowed = None
-    try:
-        import chromadb  # noqa: F401
 
-        from app.config import settings
-
-        client = chromadb.PersistentClient(path=str(settings.chroma_dir))
-        try:
-            coll = client.get_collection(f"documents_{user_id}")
-        except Exception:  # noqa: BLE001 — nothing uploaded yet
-            return ok(passages=[], note="No documents uploaded yet.")
-        where = None
-        if allowed is not None:
-            if not allowed:
-                return ok(passages=[], count=0, note="No documents in your scope.")
-            where = {"document_id": {"$in": allowed}}
-        res = coll.query(query_texts=[query], n_results=top_k, where=where)
-        docs = (res.get("documents") or [[]])[0]
-        metas = (res.get("metadatas") or [[]])[0]
-        passages = [{"text": d, "source": (metas[i] or {}).get("filename") if i < len(metas) else None}
-                    for i, d in enumerate(docs)]
-        return ok(passages=passages, count=len(passages), source="chroma")
-    except ImportError:
-        passages = fallback.search(user_id, query, n=top_k, allowed_document_ids=allowed)
-        if not passages:
-            return ok(passages=[], note="No documents uploaded yet.")
-        return ok(passages=passages, count=len(passages), source="keyword")
+    # Use vector search with keyword fallback
+    passages = await fallback.search(user_id, query, n=top_k, allowed_document_ids=allowed)
+    if not passages:
+        return ok(passages=[], note="No documents uploaded yet.")
+    return ok(passages=passages, count=len(passages), source="vector")
 
 
 # --- 95. document_rag --------------------------------------------------------
@@ -90,11 +70,11 @@ def _doc_search(user_id: str, query: str, top_k: int = 5, agent_id: str | None =
     category="knowledge",
     input_schema={"properties": {"query": {"type": "string"}, "top_k": {"type": "integer"}}, "required": ["query"]},
 )
-def document_rag(ti: dict, ctx: ToolContext) -> dict:
+async def document_rag(ti: dict, ctx: ToolContext) -> dict:
     if (m := need(ti, "query")):
         return err(m, passages=[])
-    return _doc_search(ctx.user_id or "default-user", ti["query"].strip(), int(ti.get("top_k") or 5),
-                       agent_id=ctx.agent_id)
+    return await _doc_search(ctx.user_id or "default-user", ti["query"].strip(), int(ti.get("top_k") or 5),
+                            agent_id=ctx.agent_id)
 
 
 # --- 97. keyword_search ------------------------------------------------------
@@ -105,10 +85,10 @@ def document_rag(ti: dict, ctx: ToolContext) -> dict:
     category="knowledge",
     input_schema={"properties": {"query": {"type": "string"}, "top_k": {"type": "integer"}}, "required": ["query"]},
 )
-def keyword_search(ti: dict, ctx: ToolContext) -> dict:
+async def keyword_search(ti: dict, ctx: ToolContext) -> dict:
     if (m := need(ti, "query")):
         return err(m, passages=[])
-    passages = fallback.search(ctx.user_id or "default-user", ti["query"].strip(), n=int(ti.get("top_k") or 5))
+    passages = await fallback.search(ctx.user_id or "default-user", ti["query"].strip(), n=int(ti.get("top_k") or 5))
     return ok(passages=passages, count=len(passages))
 
 
@@ -120,11 +100,11 @@ def keyword_search(ti: dict, ctx: ToolContext) -> dict:
     category="knowledge",
     input_schema={"properties": {"query": {"type": "string"}, "top_k": {"type": "integer"}}, "required": ["query"]},
 )
-def chunk_retriever(ti: dict, ctx: ToolContext) -> dict:
+async def chunk_retriever(ti: dict, ctx: ToolContext) -> dict:
     if (m := need(ti, "query")):
         return err(m, chunks=[])
-    res = _doc_search(ctx.user_id or "default-user", ti["query"].strip(), int(ti.get("top_k") or 8),
-                      agent_id=ctx.agent_id)
+    res = await _doc_search(ctx.user_id or "default-user", ti["query"].strip(), int(ti.get("top_k") or 8),
+                            agent_id=ctx.agent_id)
     passages = res.get("passages", [])
     return ok(chunks=[p.get("text") for p in passages], count=len(passages))
 
@@ -169,13 +149,13 @@ def list_documents(ti: dict, ctx: ToolContext) -> dict:
     category="knowledge",
     input_schema={"properties": {"content": {"type": "string"}, "ttl_days": {"type": "integer"}}, "required": ["content"]},
 )
-def memory_write(ti: dict, ctx: ToolContext) -> dict:
+async def memory_write(ti: dict, ctx: ToolContext) -> dict:
     if (m := need(ti, "content")):
         return err(m)
     if not ctx.agent_id:
         return err("no acting agent in context")
-    eid = memory.write(ctx.agent_id, ti["content"].strip(), mission_id=ctx.mission_id,
-                       ttl_days=int(ti.get("ttl_days") or 30))
+    eid = await memory.write(ctx.agent_id, ti["content"].strip(), mission_id=ctx.mission_id,
+                            ttl_days=int(ti.get("ttl_days") or 30))
     return ok(stored=bool(eid), entry_id=eid)
 
 
@@ -202,10 +182,10 @@ def memory_read(ti: dict, ctx: ToolContext) -> dict:
     category="knowledge",
     input_schema={"properties": {"query": {"type": "string"}, "top_k": {"type": "integer"}}, "required": ["query"]},
 )
-def memory_search(ti: dict, ctx: ToolContext) -> dict:
+async def memory_search(ti: dict, ctx: ToolContext) -> dict:
     if (m := need(ti, "query")):
         return err(m, results=[])
     if not ctx.agent_id:
         return err("no acting agent in context", results=[])
-    results = memory.search(ctx.agent_id, ti["query"].strip(), top_k=int(ti.get("top_k") or 5))
+    results = await memory.search(ctx.agent_id, ti["query"].strip(), top_k=int(ti.get("top_k") or 5))
     return ok(results=results, count=len(results))

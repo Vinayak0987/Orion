@@ -1,8 +1,8 @@
-"""Knowledge document ingestion — chunk + embed uploaded files into ChromaDB.
+"""Knowledge document ingestion — chunk + embed uploaded files into MongoDB Vector Search.
 
 A document uploaded in the Command Center lands here. We extract its text,
-split it into overlapping chunks, and add them to the user's Chroma collection
-(`documents_<user_id>`) — the exact collection the `document_rag` tool searches.
+split it into overlapping chunks, and add them to MongoDB's vector search
+collections — the exact collections the `document_rag` tool searches.
 So the moment a doc is attached, agents in the mission can retrieve from it.
 
 Text extraction is best-effort and dependency-light:
@@ -18,31 +18,12 @@ import io
 import re
 import uuid
 
+from app.auth import store as auth_store
 from app.config import settings
 
 
 class IngestError(Exception):
     """Raised when a document cannot be read or embedded."""
-
-
-_client = None
-_client_path = None
-
-
-def _get_client():
-    global _client, _client_path
-    from app.config import settings as _settings
-    path = str(_settings.chroma_dir)
-    if _client is None or _client_path != path:
-        import chromadb
-
-        _client = chromadb.PersistentClient(path=path)
-        _client_path = path
-    return _client
-
-
-def _collection_name(user_id: str) -> str:
-    return f"documents_{user_id}"
 
 
 def extract_text(filename: str, data: bytes, content_type: str = "") -> str:
@@ -100,23 +81,38 @@ def _ext_to_type(filename: str) -> str:
 
 
 def _embed_chunks(user_id: str, document_id: str, filename: str, chunks: list[str]) -> str:
-    """Store chunks in Chroma if available, else the keyword fallback. Returns the
-    collection id used (empty for fallback)."""
+    """Store chunks in MongoDB Vector Search with embeddings. Returns the document_id."""
+    from app.llm.embeddings import get_embedding_client
+
+    # Generate embeddings for all chunks
+    embedding_client = get_embedding_client()
+    embeddings = []
+
+    # Generate embeddings synchronously (can be optimized with async in the future)
+    import asyncio
+
+    async def generate_embeddings():
+        return await embedding_client.embed_batch(chunks)
+
     try:
-        import chromadb  # noqa: F401
+        embeddings = asyncio.run(generate_embeddings())
+    except Exception:  # noqa: BLE001 - if embedding fails, store without embeddings
+        embeddings = [[] for _ in chunks]
 
-        client = _get_client()
-        coll = client.get_or_create_collection(_collection_name(user_id))
-        ids = [f"{document_id}:{i}" for i in range(len(chunks))]
-        metadatas = [{"document_id": document_id, "filename": filename, "chunk": i}
-                     for i in range(len(chunks))]
-        coll.add(ids=ids, documents=chunks, metadatas=metadatas)
-        return _collection_name(user_id)
-    except ImportError:
-        from app.knowledge import fallback
-
-        fallback.add_chunks(user_id, filename, chunks, document_id=document_id)
-        return ""
+    # Store chunks with their embeddings
+    for i, chunk in enumerate(chunks):
+        embedding_id = f"{document_id}:{i}"
+        embedding = embeddings[i] if i < len(embeddings) else []
+        auth_store.add_document_embedding(
+            embedding_id=embedding_id,
+            document_id=document_id,
+            chunk_id=str(i),
+            text=chunk,
+            embedding=embedding,
+            metadata={"filename": filename, "chunk": i},
+            user_id=user_id
+        )
+    return document_id
 
 
 def ingest_document(
@@ -211,50 +207,31 @@ from contextlib import contextmanager  # noqa: E402
 
 @contextmanager
 def _title_update(doc_id: str, title: str):
-    from app.db.sqlite import connection
-
-    with connection() as conn:
-        conn.execute("UPDATE documents SET name=? WHERE id=?", (title, doc_id))
+    """Update document title in MongoDB."""
+    auth_store.update_document(doc_id, name=title)
     yield
 
 
 def list_chunks(user_id: str, document_id: str) -> list[dict]:
     """Return the stored chunks for a document (for the Chunk Inspector)."""
-    try:
-        import chromadb  # noqa: F401
-
-        client = _get_client()
+    embeddings = auth_store.list_document_embeddings(document_id)
+    out = []
+    for emb in embeddings:
+        chunk_id = emb.get("chunk_id", "0")
         try:
-            coll = client.get_collection(_collection_name(user_id))
-        except Exception:  # noqa: BLE001
-            return []
-        res = coll.get(where={"document_id": document_id})
-        docs = res.get("documents") or []
-        metas = res.get("metadatas") or []
-        out = [{"chunk": (metas[i] or {}).get("chunk", i), "text": d} for i, d in enumerate(docs)]
-        return sorted(out, key=lambda c: c["chunk"])
-    except ImportError:
-        from app.knowledge import fallback
-
-        return fallback.list_chunks(user_id, document_id)
+            chunk_num = int(chunk_id)
+        except:
+            chunk_num = 0
+        out.append({
+            "chunk": chunk_num,
+            "text": emb.get("text", "")
+        })
+    return sorted(out, key=lambda c: c["chunk"])
 
 
 def delete_chunks(user_id: str, document_id: str) -> int:
-    """Remove a document's chunks from the vector/keyword store."""
-    try:
-        import chromadb  # noqa: F401
-
-        client = _get_client()
-        try:
-            coll = client.get_collection(_collection_name(user_id))
-        except Exception:  # noqa: BLE001
-            return 0
-        coll.delete(where={"document_id": document_id})
-        return 1
-    except ImportError:
-        from app.knowledge import fallback
-
-        return fallback.delete_document(user_id, document_id)
+    """Remove a document's chunks from MongoDB Vector Search."""
+    return auth_store.delete_document_embeddings(document_id)
 
 
 
@@ -362,7 +339,7 @@ def _query_csv(text: str, query: str, limit: int) -> dict:
             "total_rows": len(rows), "kind": "csv"}
 
 
-def query_document(user_id: str, doc_id: str, query: str = "", limit: int = 10) -> dict:
+async def query_document(user_id: str, doc_id: str, query: str = "", limit: int = 10) -> dict:
     """Agent-facing: return ONLY the relevant part of a document for `query`.
 
     Lazy-chunks on first use. CSV/structured → relevant rows; large text → top-k
@@ -392,26 +369,44 @@ def query_document(user_id: str, doc_id: str, query: str = "", limit: int = 10) 
         return {"document": name, "kind": "small", "content": text}
 
     _ensure_chunked(user_id, doc)  # lazy: chunk now if not already
-    # Retrieve only the relevant chunks for the query.
+
+    # Try vector search first
     try:
-        import chromadb  # noqa: F401
-        from app.config import settings
-        client = chromadb.PersistentClient(path=str(settings.chroma_dir))
-        coll = client.get_collection(_collection_name(user_id))
-        res = coll.query(query_texts=[query or name], n_results=limit,
-                         where={"document_id": doc_id})
-        docs = (res.get("documents") or [[]])[0]
-        return {"document": name, "kind": "passages", "passages": docs, "count": len(docs)}
-    except Exception:  # noqa: BLE001 — keyword fallback scoped to this doc
-        from app.knowledge import fallback
-        chunks = fallback.list_chunks(user_id, doc_id)
-        if not chunks:
-            return {"document": name, "kind": "passages", "passages": [], "count": 0,
-                    "note": "No content retrieved."}
-        q = (query or "").lower()
-        terms = set(_re.findall(r"[a-z0-9]+", q))
-        scored = sorted(chunks, key=lambda c: len(terms & set(_re.findall(r"[a-z0-9]+", c["text"].lower()))),
-                        reverse=True)
-        top = [c["text"] for c in scored[:limit] if (not terms or (terms & set(_re.findall(r"[a-z0-9]+", c["text"].lower()))))]
-        return {"document": name, "kind": "passages", "passages": top or [c["text"] for c in chunks[:limit]],
-                "count": min(limit, len(chunks))}
+        from app.llm.embeddings import get_embedding_client
+        from app.auth import store as auth_store
+
+        embedding_client = get_embedding_client()
+        query_embedding = await embedding_client.embed_text(query)
+
+        if query_embedding and any(query_embedding):
+            results = auth_store.search_document_embeddings(
+                query_embedding=query_embedding,
+                user_id=user_id,
+                limit=limit,
+                document_id=doc_id,
+            )
+
+            if results:
+                return {
+                    "document": name,
+                    "kind": "passages",
+                    "passages": [r.get("text", "") for r in results],
+                    "count": len(results),
+                    "source": "vector",
+                }
+    except Exception:
+        # Vector search failed, fall through to keyword search
+        pass
+
+    # Fallback: keyword search on chunks
+    chunks = list_chunks(user_id, doc_id)
+    if not chunks:
+        return {"document": name, "kind": "passages", "passages": [], "count": 0,
+                "note": "No content retrieved."}
+    q = (query or "").lower()
+    terms = set(_re.findall(r"[a-z0-9]+", q))
+    scored = sorted(chunks, key=lambda c: len(terms & set(_re.findall(r"[a-z0-9]+", c["text"].lower()))),
+                    reverse=True)
+    top = [c["text"] for c in scored[:limit] if (not terms or (terms & set(_re.findall(r"[a-z0-9]+", c["text"].lower()))))]
+    return {"document": name, "kind": "passages", "passages": top or [c["text"] for c in chunks[:limit]],
+            "count": min(limit, len(chunks)), "source": "keyword"}
