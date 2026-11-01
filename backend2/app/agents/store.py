@@ -1,4 +1,4 @@
-"""Agents store — CRUD over the agents table.
+"""Agents store — CRUD over MongoDB agents collection.
 
 Phase 1 uses this read-heavy: the Router queries by type, the Executor loads one
 by id. Full user-facing CRUD endpoints arrive in Phase 2.
@@ -9,99 +9,79 @@ from __future__ import annotations
 import json
 import uuid
 
-from app.db.sqlite import _now, connection
+from app.auth import store as auth_store
 
 _JSON_FIELDS = ("tools", "sub_agents", "permissions")
 
 
-def _decode(row) -> dict:
-    rec = dict(row)
+def _decode(doc: dict) -> dict:
+    """Convert MongoDB doc to agent dict."""
+    rec = dict(doc)
+    rec["id"] = rec.pop("_id")
     for f in _JSON_FIELDS:
-        rec[f] = json.loads(rec[f]) if rec.get(f) else ([] if f != "permissions" else {})
+        rec[f] = rec.get(f) or ([] if f != "permissions" else {})
     return rec
 
 
 def create_agent(**fields) -> str:
+    """Create an agent in MongoDB."""
     agent_id = fields.get("id") or uuid.uuid4().hex[:12]
-    now = _now()
-    with connection() as conn:
-        conn.execute(
-            """INSERT OR REPLACE INTO agents
-               (id, name, purpose, system_prompt, agent_type, tools, sub_agents,
-                department_id, model, temperature, memory_enabled, memory_ttl_days,
-                permissions, status, version, created_by, created_at, updated_at,
-                origin, source_mission_id, role_title)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-            (
-                agent_id,
-                fields["name"],
-                fields.get("purpose", ""),
-                fields["system_prompt"],
-                fields["agent_type"],
-                json.dumps(fields.get("tools", [])),
-                json.dumps(fields.get("sub_agents", [])),
-                fields.get("department_id"),
-                fields.get("model", "groq:llama-3.1-8b-instant"),
-                fields.get("temperature", 0.7),
-                1 if fields.get("memory_enabled") else 0,
-                fields.get("memory_ttl_days", 30),
-                json.dumps(fields.get("permissions", {})),
-                fields.get("status", "active"),
-                fields.get("version", "v1.0.0"),
-                fields.get("created_by", "default-user"),
-                now,
-                now,
-                fields.get("origin", "reusable"),
-                fields.get("source_mission_id"),
-                fields.get("role_title"),
-            ),
-        )
+    auth_store.create_agent(
+        agent_id=agent_id,
+        name=fields["name"],
+        system_prompt=fields["system_prompt"],
+        agent_type=fields["agent_type"],
+        model=fields.get("model", "groq:llama-3.1-8b-instant"),
+        temperature=fields.get("temperature", 0.7),
+        tools=fields.get("tools", []),
+        sub_agents=fields.get("sub_agents", []),
+        department_id=fields.get("department_id"),
+        created_by=fields.get("created_by", "default-user"),
+        origin=fields.get("origin", "reusable"),
+        role_title=fields.get("role_title"),
+    )
     return agent_id
 
 
 def get_agent(agent_id: str) -> dict | None:
-    with connection() as conn:
-        row = conn.execute("SELECT * FROM agents WHERE id = ?", (agent_id,)).fetchone()
-    return _decode(row) if row else None
+    """Get an agent from MongoDB."""
+    doc = auth_store.get_agent(agent_id)
+    return _decode(doc) if doc else None
 
 
 def list_agents(status: str = "active") -> list[dict]:
-    with connection() as conn:
-        rows = conn.execute(
-            "SELECT * FROM agents WHERE status = ? ORDER BY created_at", (status,)
-        ).fetchall()
-    return [_decode(r) for r in rows]
+    """List agents from MongoDB."""
+    agents = auth_store.list_agents(status=status)
+    return [_decode(a) for a in agents]
 
 
 def find_agents_by_type(agent_type: str, user_id: str, department_id: str | None) -> list[dict]:
     """Router query. Prefers the user's own agents in the given department."""
-    with connection() as conn:
-        rows = conn.execute(
-            """SELECT * FROM agents
-               WHERE agent_type = ? AND status = 'active'
-                 AND (created_by = ? OR created_by = 'system')
-               ORDER BY
-                 (created_by = ?) DESC,
-                 (department_id IS ?) DESC,
-                 created_at""",
-            (agent_type, user_id, user_id, department_id),
-        ).fetchall()
-    return [_decode(r) for r in rows]
+    agents = auth_store.list_agents(agent_type=agent_type, created_by=user_id, status="active")
+    # Also get system agents
+    system_agents = auth_store.list_agents(agent_type=agent_type, created_by="system", status="active")
+    all_agents = agents + system_agents
+    
+    # Decode MongoDB docs to agent dicts (converts _id to id)
+    decoded = [_decode(a) for a in all_agents]
+    
+    # Sort: user agents first, then by department match, then by created_at
+    def sort_key(a):
+        is_user = a.get("created_by") == user_id
+        dept_match = a.get("department_id") == department_id
+        return (not is_user, not dept_match, a.get("created_at", ""))
+    
+    return sorted(decoded, key=sort_key)
 
 
 def get_system_default(agent_type: str) -> dict | None:
-    with connection() as conn:
-        row = conn.execute(
-            "SELECT * FROM agents WHERE agent_type = ? AND created_by = 'system' LIMIT 1",
-            (agent_type,),
-        ).fetchone()
-    if row is None:
-        # Last-resort: any 'general' system agent.
-        with connection() as conn:
-            row = conn.execute(
-                "SELECT * FROM agents WHERE agent_type = 'general' AND created_by = 'system' LIMIT 1"
-            ).fetchone()
-    return _decode(row) if row else None
+    """Get system default agent from MongoDB."""
+    agents = auth_store.list_agents(agent_type=agent_type, created_by="system", status="active")
+    if agents:
+        return _decode(agents[0])
+    # Last-resort: any 'general' system agent.
+    general = auth_store.list_agents(agent_type="general", created_by="system", status="active")
+    return _decode(general[0]) if general else None
 
 
 
@@ -128,12 +108,16 @@ def _bump_version(version: str | None) -> str:
     return f"v{major}.{minor}.{patch + 1}"
 
 
-def _snapshot_version(conn, agent: dict, note: str = "") -> None:
-    conn.execute(
-        """INSERT INTO agent_versions (id, agent_id, version, config, note, created_by, created_at)
-           VALUES (?,?,?,?,?,?,?)""",
-        (uuid.uuid4().hex, agent["id"], agent.get("version", "v1.0.0"),
-         json.dumps(agent, default=str), note, agent.get("created_by", "default-user"), _now()),
+def _snapshot_version(agent: dict, note: str = "") -> None:
+    """Snapshot agent config into agent_versions in MongoDB."""
+    version_id = uuid.uuid4().hex
+    auth_store.create_agent_version(
+        version_id=version_id,
+        agent_id=agent["id"],
+        version=agent.get("version", "v1.0.0"),
+        config=agent,
+        note=note or "pre-update snapshot",
+        created_by=agent.get("created_by", "default-user")
     )
 
 
@@ -142,34 +126,31 @@ def update_agent(agent_id: str, changes: dict, *, note: str = "") -> dict | None
     current = get_agent(agent_id)
     if current is None:
         return None
-    with connection() as conn:
-        _snapshot_version(conn, current, note=note or "pre-update snapshot")
-        sets, params = [], []
-        for k, v in changes.items():
-            if k not in _UPDATABLE:
-                continue
-            sets.append(f"{k} = ?")
-            if k in _UPDATE_JSON:
-                params.append(json.dumps(v))
-            elif k == "memory_enabled":
-                params.append(1 if v else 0)
-            else:
-                params.append(v)
-        new_version = _bump_version(current.get("version"))
-        sets.append("version = ?"); params.append(new_version)
-        sets.append("updated_at = ?"); params.append(_now())
-        params.append(agent_id)
-        conn.execute(f"UPDATE agents SET {', '.join(sets)} WHERE id = ?", params)
+    _snapshot_version(current, note=note or "pre-update snapshot")
+    
+    # Prepare update data
+    update_data = {}
+    for k, v in changes.items():
+        if k not in _UPDATABLE:
+            continue
+        if k in _UPDATE_JSON:
+            update_data[k] = json.dumps(v)
+        elif k == "memory_enabled":
+            update_data[k] = 1 if v else 0
+        else:
+            update_data[k] = v
+    
+    new_version = _bump_version(current.get("version"))
+    update_data["version"] = new_version
+    
+    auth_store.update_agent(agent_id, **update_data)
     return get_agent(agent_id)
 
 
 def delete_agent(agent_id: str) -> bool:
     """Soft delete — status = 'deleted'. Keeps traces + versions intact."""
-    with connection() as conn:
-        cur = conn.execute(
-            "UPDATE agents SET status = 'deleted', updated_at = ? WHERE id = ?", (_now(), agent_id)
-        )
-    return cur.rowcount > 0
+    auth_store.update_agent(agent_id, status="deleted")
+    return True
 
 
 def clone_agent(agent_id: str, *, new_name: str | None = None, created_by: str = "default-user") -> str | None:
@@ -191,140 +172,225 @@ def clone_agent(agent_id: str, *, new_name: str | None = None, created_by: str =
         permissions=src.get("permissions", {}),
         status="active",
         created_by=created_by,
+        id=None,  # Force new ID
     )
 
 
 def get_versions(agent_id: str) -> list[dict]:
-    with connection() as conn:
-        rows = conn.execute(
-            "SELECT id, version, note, created_by, created_at FROM agent_versions "
-            "WHERE agent_id = ? ORDER BY created_at DESC",
-            (agent_id,),
-        ).fetchall()
-    return [dict(r) for r in rows]
+    """Get agent versions from MongoDB."""
+    versions = auth_store.list_agent_versions(agent_id)
+    return [dict(v) for v in versions]
 
 
-def _stats_for(conn, agent_id: str) -> dict:
-    row = conn.execute(
-        """SELECT
-             COUNT(DISTINCT mission_id)                                  AS runs,
-             COUNT(*)                                                    AS trace_count,
-             SUM(CASE WHEN success = 1 THEN 1 ELSE 0 END)                AS ok_count,
-             AVG(latency_ms)                                             AS avg_latency,
-             SUM(COALESCE(input_tokens,0) + COALESCE(output_tokens,0))   AS tokens,
-             SUM(COALESCE(cost_usd,0))                                   AS cost,
-             MAX(created_at)                                             AS last_active
-           FROM execution_traces WHERE agent_id = ?""",
-        (agent_id,),
-    ).fetchone()
-    traces = row["trace_count"] or 0
-    ok_count = row["ok_count"] or 0
+def _stats_for(agent_id: str) -> dict:
+    """Get stats for an agent from MongoDB execution traces using aggregation."""
+    db = auth_store.get_db()
+    
+    # Use aggregation to calculate stats in a single query
+    pipeline = [
+        {"$match": {"agent_id": agent_id}},
+        {
+            "$group": {
+                "_id": "$agent_id",
+                "trace_count": {"$sum": 1},
+                "ok_count": {"$sum": {"$cond": [{"$eq": ["$success", 1]}, 1, 0]}},
+                "total_latency": {"$sum": "$latency_ms"},
+                "total_tokens": {"$sum": {"$add": ["$input_tokens", "$output_tokens"]}},
+                "total_cost": {"$sum": "$cost_usd"},
+                "last_active": {"$max": "$created_at"},
+                "mission_ids": {"$addToSet": "$mission_id"}
+            }
+        }
+    ]
+    
+    result = list(db.execution_traces.aggregate(pipeline))
+    
+    if not result:
+        return {
+            "runs": 0,
+            "success_rate": None,
+            "avg_latency_ms": None,
+            "total_tokens": 0,
+            "estimated_cost_usd": 0.0,
+            "last_active": None,
+            "trace_count": 0,
+        }
+    
+    stats = result[0]
+    traces_count = stats["trace_count"]
+    ok_count = stats["ok_count"]
+    total_latency = stats["total_latency"] or 0
+    
     return {
-        "runs": row["runs"] or 0,
-        "success_rate": round(ok_count / traces, 4) if traces else None,
-        "avg_latency_ms": round(row["avg_latency"], 1) if row["avg_latency"] is not None else None,
-        "total_tokens": row["tokens"] or 0,
-        "estimated_cost_usd": round(row["cost"] or 0.0, 6),
-        "last_active": row["last_active"],
-        "trace_count": traces,
+        "runs": len(stats["mission_ids"]),
+        "success_rate": round(ok_count / traces_count, 4) if traces_count else None,
+        "avg_latency_ms": round(total_latency / traces_count, 1) if traces_count else None,
+        "total_tokens": stats["total_tokens"] or 0,
+        "estimated_cost_usd": round(stats["total_cost"] or 0, 6),
+        "last_active": stats["last_active"],
+        "trace_count": traces_count,
     }
 
 
 def list_agents_with_stats(*, status: str = "active", agent_type: str | None = None,
                            department_id: str | None = None) -> list[dict]:
-    q = "SELECT * FROM agents WHERE status = ?"
-    params: list = [status]
-    if agent_type:
-        q += " AND agent_type = ?"; params.append(agent_type)
-    if department_id:
-        q += " AND department_id = ?"; params.append(department_id)
-    q += " ORDER BY created_at DESC"
-    with connection() as conn:
-        rows = conn.execute(q, params).fetchall()
-        agents = []
-        for r in rows:
-            a = _decode(r)
-            a["stats"] = _stats_for(conn, a["id"])
-            agents.append(a)
-    return agents
+    """List agents with batch-optimized stats from MongoDB."""
+    agents = auth_store.list_agents(agent_type=agent_type, status=status)
+    
+    # Collect all agent IDs
+    agent_ids = [a.get("_id") for a in agents]
+    
+    # Batch calculate stats for all agents in a single aggregation query
+    db = auth_store.get_db()
+    pipeline = [
+        {"$match": {"agent_id": {"$in": agent_ids}}},
+        {
+            "$group": {
+                "_id": "$agent_id",
+                "trace_count": {"$sum": 1},
+                "ok_count": {"$sum": {"$cond": [{"$eq": ["$success", 1]}, 1, 0]}},
+                "total_latency": {"$sum": "$latency_ms"},
+                "total_tokens": {"$sum": {"$add": ["$input_tokens", "$output_tokens"]}},
+                "total_cost": {"$sum": "$cost_usd"},
+                "last_active": {"$max": "$created_at"},
+                "mission_ids": {"$addToSet": "$mission_id"}
+            }
+        }
+    ]
+    
+    stats_by_agent = {}
+    for result in db.execution_traces.aggregate(pipeline):
+        agent_id = result["_id"]
+        traces_count = result["trace_count"]
+        stats_by_agent[agent_id] = {
+            "runs": len(result["mission_ids"]),
+            "success_rate": round(result["ok_count"] / traces_count, 4) if traces_count else None,
+            "avg_latency_ms": round((result["total_latency"] or 0) / traces_count, 1) if traces_count else None,
+            "total_tokens": result["total_tokens"] or 0,
+            "estimated_cost_usd": round(result["total_cost"] or 0, 6),
+            "last_active": result["last_active"],
+            "trace_count": traces_count,
+        }
+    
+    # Assign stats to each agent
+    out = []
+    for a in agents:
+        decoded = _decode(a)
+        decoded["stats"] = stats_by_agent.get(decoded["id"], {
+            "runs": 0,
+            "success_rate": None,
+            "avg_latency_ms": None,
+            "total_tokens": 0,
+            "estimated_cost_usd": 0.0,
+            "last_active": None,
+            "trace_count": 0,
+        })
+        out.append(decoded)
+    return out
 
 
 def performance(agent_id: str) -> dict | None:
+    """Get performance stats for an agent from MongoDB using aggregations."""
     agent = get_agent(agent_id)
     if agent is None:
         return None
-    with connection() as conn:
-        base = _stats_for(conn, agent_id)
-        error_count = conn.execute(
-            "SELECT COUNT(*) AS c FROM execution_traces WHERE agent_id = ? AND success = 0", (agent_id,)
-        ).fetchone()["c"]
-        tool_rows = conn.execute(
-            """SELECT tool_name, COUNT(*) AS n FROM execution_traces
-               WHERE agent_id = ? AND trace_type='tool' AND tool_name IS NOT NULL
-               GROUP BY tool_name ORDER BY n DESC""",
-            (agent_id,),
-        ).fetchall()
-        recent = conn.execute(
-            """SELECT mission_id, trace_type, provider, model, tool_name, latency_ms, success, created_at
-               FROM execution_traces WHERE agent_id = ? ORDER BY created_at DESC LIMIT 20""",
-            (agent_id,),
-        ).fetchall()
-    base["error_count"] = error_count
-    base["error_rate"] = round(error_count / base["trace_count"], 4) if base["trace_count"] else None
-    base["tool_usage"] = [{"tool": r["tool_name"], "count": r["n"]} for r in tool_rows]
-    base["recent_runs"] = [dict(r) for r in recent]
+    base = _stats_for(agent_id)
+    
+    db = auth_store.get_db()
+    
+    # Batch get error count and tool usage in aggregations
+    pipeline = [
+        {"$match": {"agent_id": agent_id}},
+        {
+            "$group": {
+                "_id": "$agent_id",
+                "error_count": {"$sum": {"$cond": [{"$eq": ["$success", 0]}, 1, 0]}},
+                "tools": {"$push": {"$cond": [{"$eq": ["$trace_type", "tool"]}, "$tool_name", None]}}
+            }
+        }
+    ]
+    
+    result = list(db.execution_traces.aggregate(pipeline))
+    if result:
+        stats = result[0]
+        base["error_count"] = stats["error_count"]
+        base["error_rate"] = round(stats["error_count"] / base["trace_count"], 4) if base["trace_count"] else None
+        
+        # Calculate tool usage from aggregated tools array
+        tool_usage = {}
+        for tool_name in stats["tools"]:
+            if tool_name:
+                tool_usage[tool_name] = tool_usage.get(tool_name, 0) + 1
+        base["tool_usage"] = [{"tool": k, "count": v} for k, v in sorted(tool_usage.items(), key=lambda x: x[1], reverse=True)]
+    else:
+        base["error_count"] = 0
+        base["error_rate"] = None
+        base["tool_usage"] = []
+    
+    # Get recent runs (limit to 20, sorted by created_at desc)
+    recent = list(db.execution_traces.find(
+        {"agent_id": agent_id},
+        sort=[("created_at", -1)],
+        limit=20
+    ))
+    base["recent_runs"] = [dict(t) for t in recent]
+    
     return {"agent": {"id": agent["id"], "name": agent["name"], "agent_type": agent["agent_type"]}, **base}
 
 
 # ---- Templates --------------------------------------------------------------
 
 def create_template(**fields) -> str:
+    """Create an agent template in MongoDB."""
     tid = fields.get("id") or uuid.uuid4().hex[:12]
-    with connection() as conn:
-        conn.execute(
-            """INSERT OR REPLACE INTO agent_templates
-               (id, name, description, category, base_config, tags, is_featured, created_at)
-               VALUES (?,?,?,?,?,?,?,?)""",
-            (tid, fields["name"], fields.get("description", ""), fields.get("category", ""),
-             json.dumps(fields.get("base_config", {})), json.dumps(fields.get("tags", [])),
-             1 if fields.get("is_featured") else 0, _now()),
-        )
+    auth_store.create_agent_template(
+        template_id=tid,
+        name=fields["name"],
+        description=fields.get("description", ""),
+        category=fields.get("category", ""),
+        base_config=fields.get("base_config", {}),
+        tags=fields.get("tags", []),
+        is_featured=fields.get("is_featured", False)
+    )
     return tid
 
 
 def list_templates() -> list[dict]:
-    with connection() as conn:
-        rows = conn.execute("SELECT * FROM agent_templates ORDER BY is_featured DESC, name").fetchall()
+    """List agent templates from MongoDB."""
+    templates = auth_store.list_agent_templates()
     out = []
-    for r in rows:
-        rec = dict(r)
-        rec["base_config"] = json.loads(rec["base_config"]) if rec.get("base_config") else {}
-        rec["tags"] = json.loads(rec["tags"]) if rec.get("tags") else []
-        rec["is_featured"] = bool(rec["is_featured"])
+    for t in templates:
+        rec = dict(t)
+        rec["id"] = rec.pop("_id")
+        rec["base_config"] = rec.get("base_config", {})
+        rec["tags"] = rec.get("tags", [])
+        rec["is_featured"] = bool(rec.get("is_featured"))
         out.append(rec)
     return out
 
 
 def get_template(template_id: str) -> dict | None:
-    with connection() as conn:
-        row = conn.execute("SELECT * FROM agent_templates WHERE id = ?", (template_id,)).fetchone()
-    if not row:
+    """Get an agent template from MongoDB."""
+    doc = auth_store.get_agent_template(template_id)
+    if not doc:
         return None
-    rec = dict(row)
-    rec["base_config"] = json.loads(rec["base_config"]) if rec.get("base_config") else {}
-    rec["tags"] = json.loads(rec["tags"]) if rec.get("tags") else []
-    rec["is_featured"] = bool(rec["is_featured"])
+    rec = dict(doc)
+    rec["id"] = rec.pop("_id")
+    rec["base_config"] = rec.get("base_config", {})
+    rec["tags"] = rec.get("tags", [])
+    rec["is_featured"] = bool(rec.get("is_featured"))
     return rec
 
 
 def create_from_template(template_id: str, *, name: str | None = None,
                          created_by: str = "default-user") -> str | None:
+    """Create an agent from a template."""
     tpl = get_template(template_id)
     if tpl is None:
         return None
-    cfg = tpl["base_config"] or {}
+    cfg = tpl.get("base_config", {})
     return create_agent(
-        name=name or cfg.get("name") or tpl["name"],
+        name=name or cfg.get("name") or tpl.get("name"),
         purpose=cfg.get("purpose", tpl.get("description", "")),
         system_prompt=cfg.get("system_prompt", f"You are a {tpl['name']}."),
         agent_type=cfg.get("agent_type", "general"),

@@ -10,6 +10,12 @@ users           { _id, email (unique, lowercased), full_name, password_hash,
                   created_at, ... free to grow }
 refresh_tokens  { _id=jti, user_id, expires_at, revoked, created_at }
                   Stored so refresh tokens can be revoked (logout / rotation).
+sessions        { _id, user_id, raw_prompt, intent_json, status, plan_json,
+                  metadata_json, active_departments, skipped_departments,
+                  total_tokens, total_duration_ms, completeness_score,
+                  created_at, completed_at }
+                  Business plan sessions with user isolation - data persists
+                  across devices when MongoDB is configured.
 """
 
 from __future__ import annotations
@@ -163,3 +169,94 @@ def revoke_all_user_tokens(user_id: str) -> None:
     get_db().refresh_tokens.update_many(
         {"user_id": user_id}, {"$set": {"revoked": True}}
     )
+
+
+# --------------------------------------------------------------------------- #
+# Sessions (Business Plans with User Isolation)
+# --------------------------------------------------------------------------- #
+def create_session(
+    session_id: str,
+    user_id: str,
+    raw_prompt: str,
+    intent_json: dict | None = None,
+) -> dict:
+    """Create a new business plan session for a specific user."""
+    db = get_db()
+    doc = {
+        "_id": session_id,
+        "user_id": user_id,
+        "raw_prompt": raw_prompt,
+        "intent_json": intent_json,
+        "status": "pending",
+        "plan_json": None,
+        "metadata_json": None,
+        "active_departments": [],
+        "skipped_departments": [],
+        "total_tokens": 0,
+        "total_duration_ms": None,
+        "completeness_score": None,
+        "created_at": _now(),
+        "completed_at": None,
+    }
+    db.sessions.insert_one(doc)
+    return doc
+
+
+def update_session(session_id: str, **fields: Any) -> None:
+    """Update session fields. Only allows updating existing sessions."""
+    allowed = {
+        "intent_json",
+        "status",
+        "plan_json",
+        "metadata_json",
+        "active_departments",
+        "skipped_departments",
+        "total_tokens",
+        "total_duration_ms",
+        "completeness_score",
+        "completed_at",
+    }
+    unknown = fields.keys() - allowed
+    if unknown:
+        raise ValueError(f"Unknown session field(s): {sorted(unknown)}")
+
+    update_data = {k: v for k, v in fields.items() if v is not None}
+    if not update_data:
+        return
+
+    get_db().sessions.update_one({"_id": session_id}, {"$set": update_data})
+
+
+def get_session(session_id: str, user_id: str) -> dict | None:
+    """Get a session, but only if it belongs to the requesting user."""
+    return get_db().sessions.find_one({"_id": session_id, "user_id": user_id})
+
+
+def list_sessions(user_id: str, limit: int = 50, offset: int = 0) -> list[dict]:
+    """List sessions for a specific user only (user isolation)."""
+    cursor = (
+        get_db()
+        .sessions.find({"user_id": user_id})
+        .sort("created_at", -1)
+        .skip(offset)
+        .limit(limit)
+    )
+    return list(cursor)
+
+
+def delete_session(session_id: str, user_id: str) -> bool:
+    """Delete a session, but only if it belongs to the requesting user."""
+    result = get_db().sessions.delete_one({"_id": session_id, "user_id": user_id})
+    return result.deleted_count > 0
+
+
+def _ensure_indexes() -> None:
+    if _db is None:
+        return
+    # Unique email prevents duplicate accounts at the storage layer, regardless
+    # of any race in the application check.
+    _db.users.create_index("email", unique=True)
+    _db.refresh_tokens.create_index("user_id")
+    # Session indexes for user isolation and efficient queries
+    _db.sessions.create_index([("user_id", 1), ("created_at", -1)])
+    _db.sessions.create_index("status")

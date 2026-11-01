@@ -23,8 +23,11 @@ from pydantic import BaseModel, Field
 
 from app.apis.cache import knowledge_cache
 from app.apis.places import select_provider
+from app.auth.deps import get_current_user, get_optional_user
+from app.auth.models import UserPublic
 from app.config import settings
 from app.core.logging import configure_logging
+from app.db import unified
 from app.db import sqlite
 from app.intent import PromptValidationError, classify_intent
 from app.llm.chain import llm_client
@@ -236,16 +239,22 @@ class GenerateRequest(BaseModel):
 
 
 @app.post("/generate", tags=["generate"])
-async def generate(request: GenerateRequest) -> dict:
+async def generate(
+    request: GenerateRequest,
+    current_user: UserPublic | None = Depends(get_optional_user),
+) -> dict:
     """Run the full multi-agent pipeline (F10-F13).
 
     Department agents are Phase 5; until then the DAG executes placeholder
     runners, so `plan` is empty and `completeness_score` is 0. Routing,
     parallelism, timing, telemetry and persistence are all live.
     """
+    user_id = current_user.id if current_user else "default"
     try:
         state = await orchestrate(
-            request.prompt, force_all_departments=request.force_all_departments
+            request.prompt,
+            user_id=user_id,
+            force_all_departments=request.force_all_departments,
         )
     except PromptValidationError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
@@ -261,9 +270,9 @@ async def generate(request: GenerateRequest) -> dict:
 # =============================================================================
 
 
-def _load_state_or_404(session_id: str):
+def _load_state_or_404(session_id: str, user_id: str = "default"):
     """Rebuild a package from a stored session (F59)."""
-    record = sqlite.get_session(session_id)
+    record = unified.get_session(session_id, user_id)
     if record is None:
         raise HTTPException(status_code=404, detail=f"Session '{session_id}' not found")
     if not record.get("plan"):
@@ -431,6 +440,7 @@ async def websocket_generate(websocket: WebSocket) -> None:
 
     prompt = str(request.get("prompt", ""))
     force_all = bool(request.get("force_all_departments", False))
+    user_id = "default"  # WebSocket doesn't have auth in current implementation
 
     async def send_event(event: ProgressEvent) -> None:
         payload = event.model_dump(mode="json")
@@ -440,6 +450,7 @@ async def websocket_generate(websocket: WebSocket) -> None:
     try:
         state = await orchestrate(
             prompt,
+            user_id=user_id,
             force_all_departments=force_all,
             progress_callback=send_event,
         )
@@ -480,21 +491,37 @@ class SessionSummary(BaseModel):
 
 
 @app.get("/sessions", response_model=list[SessionSummary], tags=["sessions"])
-async def list_sessions(limit: int = 50, offset: int = 0) -> list[SessionSummary]:
+async def list_sessions(
+    limit: int = 50,
+    offset: int = 0,
+    current_user: UserPublic | None = Depends(get_optional_user),
+) -> list[SessionSummary]:
+    """List sessions for the authenticated user, or default user if not authenticated."""
     limit = max(1, min(limit, 200))
-    return [SessionSummary(**row) for row in sqlite.list_sessions(limit, offset)]
+    user_id = current_user.id if current_user else "default"
+    return [SessionSummary(**row) for row in unified.list_sessions(user_id, limit, offset)]
 
 
 @app.get("/sessions/{session_id}", tags=["sessions"])
-async def get_session(session_id: str) -> dict:
-    record = sqlite.get_session(session_id)
+async def get_session(
+    session_id: str,
+    current_user: UserPublic | None = Depends(get_optional_user),
+) -> dict:
+    """Get a session for the authenticated user, or default user if not authenticated."""
+    user_id = current_user.id if current_user else "default"
+    record = unified.get_session(session_id, user_id)
     if record is None:
         raise HTTPException(status_code=404, detail=f"Session '{session_id}' not found")
     return record
 
 
 @app.delete("/sessions/{session_id}", tags=["sessions"])
-async def delete_session(session_id: str) -> dict:
-    if not sqlite.delete_session(session_id):
+async def delete_session(
+    session_id: str,
+    current_user: UserPublic | None = Depends(get_optional_user),
+) -> dict:
+    """Delete a session for the authenticated user, or default user if not authenticated."""
+    user_id = current_user.id if current_user else "default"
+    if not unified.delete_session(session_id, user_id):
         raise HTTPException(status_code=404, detail=f"Session '{session_id}' not found")
     return {"deleted": session_id}

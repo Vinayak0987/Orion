@@ -27,7 +27,7 @@ import httpx
 
 from app.config import settings
 from app.core.crypto import decrypt, encrypt
-from app.db.sqlite import _now, connection
+from app.auth import store as auth_store
 
 
 class MCPOAuthError(Exception):
@@ -163,18 +163,30 @@ async def begin(mcp_url: str, server_name: str | None = None) -> str:
 
     verifier = _verifier()
     state = uuid.uuid4().hex + uuid.uuid4().hex
-    now = dt.datetime.now(dt.UTC)
-    with connection() as conn:
-        conn.execute(
-            """INSERT INTO mcp_oauth_flows
-               (state, mcp_url, server_name, code_verifier, client_id, client_secret,
-                token_endpoint, redirect_uri, resource, created_at, expires_at)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
-            (state, mcp_url, server_name or mcp_url, verifier, client_id,
-             encrypt(client_secret) if client_secret else None,
-             info["token_endpoint"], redirect, info.get("resource"),
-             now.isoformat(), (now + dt.timedelta(minutes=10)).isoformat()),
-        )
+
+    # Store OAuth flow state in MongoDB (reusing oauth_states collection)
+    # We'll store the MCP-specific data in the existing structure
+    db = auth_store.get_db()
+    now = auth_store._now()
+    expires = (now + dt.timedelta(minutes=10)).isoformat() if isinstance(now, dt.datetime) else now
+
+    doc = {
+        "_id": state,
+        "user_id": "default-user",  # MCP OAuth is single-tenant for now
+        "provider": f"mcp:{mcp_url}",  # Unique provider identifier
+        "code_verifier": verifier,
+        "redirect_uri": redirect,
+        "created_at": now.isoformat() if isinstance(now, dt.datetime) else now,
+        "expires_at": expires,
+        # MCP-specific data (stored as extra fields)
+        "mcp_url": mcp_url,
+        "server_name": server_name or mcp_url,
+        "client_id": client_id,
+        "client_secret": encrypt(client_secret) if client_secret else None,
+        "token_endpoint": info["token_endpoint"],
+        "resource": info.get("resource"),
+    }
+    db.oauth_states.insert_one(doc)
 
     from urllib.parse import urlencode
     params = {
@@ -187,19 +199,28 @@ async def begin(mcp_url: str, server_name: str | None = None) -> str:
         "code_challenge_method": "S256",
     }
     if info.get("resource"):
-        params["resource"] = info["resource"]
+        params["resource"] = info.get("resource")
     return f"{info['authorization_endpoint']}?{urlencode(params)}"
 
 
 def _consume_flow(state: str) -> dict | None:
-    with connection() as conn:
-        row = conn.execute("SELECT * FROM mcp_oauth_flows WHERE state=?", (state,)).fetchone()
-        if row is None:
-            return None
-        conn.execute("DELETE FROM mcp_oauth_flows WHERE state=?", (state,))
-        rec = dict(row)
-    if rec["expires_at"] <= _now():
+    db = auth_store.get_db()
+    doc = db.oauth_states.find_one({"_id": state})
+    if doc is None:
         return None
+    db.oauth_states.delete_one({"_id": state})
+    rec = dict(doc)
+
+    # Check expiration
+    expires_at = rec.get("expires_at")
+    if expires_at:
+        if isinstance(expires_at, str):
+            expires_at = dt.datetime.fromisoformat(expires_at)
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=dt.UTC)
+        if expires_at < auth_store._now():
+            return None
+
     rec["client_secret"] = decrypt(rec["client_secret"]) if rec.get("client_secret") else None
     return rec
 
@@ -243,13 +264,12 @@ async def refresh(mcp_url: str) -> str | None:
     """Refresh an expired MCP bearer token using the stored refresh token + oauth_config.
     Returns the new access token, or None if not refreshable."""
     from app.tools import mcp as mcpstore
-    row = None
-    with connection() as conn:
-        r = conn.execute("SELECT refresh_token, oauth_config FROM mcp_servers WHERE server_url=?", (mcp_url,)).fetchone()
-        if r:
-            row = dict(r)
+
+    # Get MCP server data from MongoDB
+    row = auth_store.get_mcp_server(mcp_url)
     if not row or not row.get("refresh_token") or not row.get("oauth_config"):
         return None
+
     cfg = json.loads(row["oauth_config"])
     data = {"grant_type": "refresh_token", "refresh_token": decrypt(row["refresh_token"]),
             "client_id": cfg["client_id"]}

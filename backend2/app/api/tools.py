@@ -30,16 +30,18 @@ DEFAULT_USER = "default-user"
 @router.get("/tools")
 async def list_tools(type: str | None = None, category: str | None = None,
                      enabled: bool | None = None, search: str | None = None) -> dict:
-    tools = store.list_tools(type=type, category=category, enabled=enabled, search=search)
-    # Lightweight facet counts for the UI filter chips.
-    all_tools = store.list_tools()
+    # Single query with stats included
+    tools = store.list_tools(type=type, category=category, enabled=enabled, search=search, include_stats=True)
+    
+    # Lightweight facet counts from the already-fetched tools
     by_type: dict[str, int] = {}
     by_cat: dict[str, int] = {}
-    for t in all_tools:
+    for t in tools:
         by_type[t["type"]] = by_type.get(t["type"], 0) + 1
         by_cat[t["category"]] = by_cat.get(t["category"], 0) + 1
+    
     return {"tools": tools, "count": len(tools),
-            "facets": {"type": by_type, "category": by_cat, "total": len(all_tools)}}
+            "facets": {"type": by_type, "category": by_cat, "total": len(tools)}}
 
 
 class UpdateToolRequest(BaseModel):

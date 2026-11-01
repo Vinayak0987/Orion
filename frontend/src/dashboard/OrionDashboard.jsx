@@ -33,6 +33,7 @@ export default function OrionDashboard({ user = "Abhishek", onLogout }) {
   const [route, setRoute] = useState("dashboard");
   // `missions` list ↔ `mission-details` drill-down is local sub-state.
   const [inMissionDetails, setInMissionDetails] = useState(false);
+  const [selectedMissionId, setSelectedMissionId] = useState(null);
 
   function navigate(next) {
     setInMissionDetails(false);
@@ -44,8 +45,8 @@ export default function OrionDashboard({ user = "Abhishek", onLogout }) {
   else if (route === "command") screen = <CommandCenterScreen />;
   else if (route === "missions")
     screen = inMissionDetails
-      ? <MissionDetailsScreen onBack={() => setInMissionDetails(false)} />
-      : <MissionsScreen onOpenMission={() => setInMissionDetails(true)} />;
+      ? <MissionDetailsScreen onBack={() => setInMissionDetails(false)} missionId={selectedMissionId} />
+      : <MissionsScreen onOpenMission={(m) => { setSelectedMissionId(m.id); setInMissionDetails(true); }} />;
   else if (route === "approvals") screen = <ApprovalsScreen />;
   else if (route === "notifications") screen = <NotificationsScreen />;
   else screen = <Placeholder title={route.charAt(0).toUpperCase() + route.slice(1)} />;

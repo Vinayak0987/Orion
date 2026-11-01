@@ -27,13 +27,10 @@ def _resolve_oauth_user(provider: str) -> str | None:
     exists, return it (single-tenant fallback so missions running as
     'default-user' can use the real signed-in user's connection)."""
     try:
-        from app.db.sqlite import connection
-        with connection() as c:
-            rows = c.execute(
-                "SELECT user_id FROM oauth_connections WHERE provider=? AND status='connected'",
-                (provider,),
-            ).fetchall()
-        ids = [r["user_id"] for r in rows]
+        from app.auth import store as auth_store
+        connections = auth_store.list_oauth_connections_public("")
+        # Filter by provider and status
+        ids = [c.get("user_id") for c in connections if c.get("provider") == provider and c.get("status") == "connected"]
         return ids[0] if len(ids) == 1 else (ids[0] if ids else None)
     except Exception:  # noqa: BLE001
         return None

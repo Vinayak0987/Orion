@@ -324,5 +324,5 @@ def _agent_name(agent_id: str) -> str:
 
 
 def _now() -> str:
-    from app.db.sqlite import _now as now
-    return now()
+    from app.auth import store as auth_store
+    return auth_store._now().isoformat()

@@ -30,11 +30,11 @@ def _key(ctx: ToolContext) -> str | None:
         k = decrypted_keys(uid).get("google_places_api_key")
         if not k:
             # single-tenant fallback: any user's key
-            from app.db.sqlite import connection
-            with connection() as c:
-                rows = c.execute("SELECT user_id FROM user_settings").fetchall()
-            for r in rows:
-                kk = decrypted_keys(r["user_id"]).get("google_places_api_key")
+            from app.auth import store as auth_store
+            # Get all users from user_settings collection
+            users = auth_store.get_db().user_settings.find({}, {"_id": 1}).limit(10)
+            for u in users:
+                kk = decrypted_keys(u["_id"]).get("google_places_api_key")
                 if kk:
                     return kk
         return k

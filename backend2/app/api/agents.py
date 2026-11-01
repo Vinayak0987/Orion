@@ -128,7 +128,20 @@ async def create_from_template(template_id: str, req: FromTemplateRequest) -> di
 @router.get("/agents")
 async def list_agents(status: str = "active", type: str | None = None,
                       department_id: str | None = None) -> dict:
-    agents = store.list_agents_with_stats(status=status, agent_type=type, department_id=department_id)
+    # Show both user's agents AND system agents
+    user_agents = store.list_agents_with_stats(status=status, agent_type=type, department_id=department_id)
+    # Use auth_store directly to get system agents
+    from app.auth import store as auth_store
+    system_agents_raw = auth_store.list_agents(agent_type=type, status=status, created_by="system")
+    system_agents = []
+    for a in system_agents_raw:
+        decoded = store._decode(a) if hasattr(store, '_decode') else a
+        if hasattr(store, '_stats_for'):
+            decoded["stats"] = store._stats_for(decoded["id"])
+        system_agents.append(decoded)
+    # Merge and deduplicate by ID
+    agents_by_id = {a["id"]: a for a in user_agents + system_agents}
+    agents = list(agents_by_id.values())
     return {"agents": agents, "count": len(agents)}
 
 
@@ -203,7 +216,7 @@ async def test_agent(agent_id: str, req: TestAgentRequest) -> dict:
 
     test_mission_id = f"test-{uuid.uuid4().hex[:10]}"
     task = {"id": uuid.uuid4().hex[:10], "title": req.message, "agent_type": agent["agent_type"],
-            "tools_needed": agent.get("tools", [])}
+            "tools_needed": agent.get("tools") or []}
     mission = {"id": test_mission_id, "created_by": DEFAULT_USER, "user_keys": None,
                "short_term_memory": ""}
 

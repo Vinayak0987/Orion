@@ -87,8 +87,19 @@ export const ViewMissionDetails = ({ missionId, onBack, onNavigate, onViewDetail
   const actionsRef = useRef(null);
 
   const load = useCallback(() => {
-    if (!missionId) return;
-    missionApi.mission(missionId).then(setMission).catch((e) => setError(e.message));
+    if (!missionId) {
+      console.error("[ViewMissionDetails] No missionId provided");
+      setError("No mission ID provided");
+      return;
+    }
+    console.log("[ViewMissionDetails] Loading mission:", missionId);
+    missionApi.mission(missionId).then((data) => {
+      console.log("[ViewMissionDetails] Mission data received:", data);
+      setMission(data);
+    }).catch((e) => {
+      console.error("[ViewMissionDetails] Failed to load mission:", e);
+      setError(e.message);
+    });
   }, [missionId]);
 
   useEffect(() => { load(); }, [load]);

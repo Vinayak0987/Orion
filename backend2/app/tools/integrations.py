@@ -19,14 +19,20 @@ Token types per provider (what the user pastes):
 
 If a provider's network is unreachable at connect time we DON'T silently fail —
 we return an error so the user knows the token wasn't verified.
+
+Now uses MongoDB instead of SQLite.
 """
 
 from __future__ import annotations
 
 import httpx
 
+from app.auth import store as auth_store
 from app.core.crypto import decrypt, encrypt
-from app.db.sqlite import _now, connection
+
+
+def _now():
+    return auth_store._now().isoformat()
 
 # Catalog. Each entry declares HOW it connects (the easiest/fastest method):
 #   connect_method: 'oauth' | 'api_key' | 'mcp'
@@ -139,29 +145,13 @@ _CATALOG_BY_ID = {c["id"]: c for c in CATALOG}
 
 
 def seed_integrations() -> int:
-    now = _now()
-    with connection() as conn:
-        for it in CATALOG:
-            # auth_kind kept for backward compat; derive from connect_method.
-            auth_kind = {"oauth": "oauth", "mcp": "token", "api_key": "api_key"}.get(it["connect_method"], "api_key")
-            conn.execute(
-                """INSERT INTO integrations
-                   (id, name, description, category, auth_kind, status, connect_method, oauth_provider, mcp_url, docs_url, logo_key, created_at, updated_at)
-                   VALUES (?,?,?,?,?,'available',?,?,?,?,?,?,?)
-                   ON CONFLICT(id) DO UPDATE SET name=excluded.name, description=excluded.description,
-                     category=excluded.category, auth_kind=excluded.auth_kind, connect_method=excluded.connect_method,
-                     oauth_provider=excluded.oauth_provider, mcp_url=excluded.mcp_url, logo_key=excluded.logo_key,
-                     updated_at=excluded.updated_at""",
-                (it["id"], it["name"], it["description"], it["category"], auth_kind, it["connect_method"],
-                 it.get("oauth_provider"), it.get("mcp_url"), it.get("docs_url"), it.get("logo_key"), now, now),
-            )
-    return len(CATALOG)
+    return auth_store.seed_integrations(CATALOG)
 
 
 def _public(row) -> dict:
     r = dict(row)
     r.pop("credential", None)  # never expose the stored credential
-    r["has_credential"] = bool(row["credential"] if "credential" in row.keys() else None)
+    r["has_credential"] = bool(r.get("credential"))
     meta = _CATALOG_BY_ID.get(r["id"], {})
     r["token_label"] = meta.get("token_label")
     r["token_hint"] = meta.get("token_hint")
@@ -173,28 +163,11 @@ def _public(row) -> dict:
 
 
 def list_integrations() -> list[dict]:
-    with connection() as conn:
-        rows = conn.execute("SELECT * FROM integrations ORDER BY name").fetchall()
-        # Map connected MCP server URLs → their status, so catalog entries whose
-        # connect_method='mcp' reflect a live MCP connection (e.g. Higgsfield
-        # connected on the MCP Servers page shows "connected" here too).
-        mcp_rows = conn.execute("SELECT server_url, status FROM mcp_servers").fetchall()
-    mcp_status = {r["server_url"]: r["status"] for r in mcp_rows}
-    out = []
-    for r in rows:
-        pub = _public(r)
-        if pub.get("connect_method") == "mcp" and pub.get("mcp_url") in mcp_status:
-            st = mcp_status[pub["mcp_url"]]
-            pub["status"] = "connected" if st == "connected" else "available"
-            pub["via_mcp"] = True
-        out.append(pub)
-    return out
+    return auth_store.list_integrations()
 
 
 def get_integration(integration_id: str) -> dict | None:
-    with connection() as conn:
-        row = conn.execute("SELECT * FROM integrations WHERE id=?", (integration_id,)).fetchone()
-    return dict(row) if row else None
+    return auth_store.get_integration(integration_id)
 
 
 # ---- live token validation --------------------------------------------------
@@ -344,26 +317,31 @@ async def connect(integration_id: str, *, credential: str | None = None,
 
 
 def _mark_connected(integration_id: str, account_label: str, credential: str | None, extra: str = "") -> None:
-    now = _now()
-    with connection() as conn:
-        conn.execute(
-            "UPDATE integrations SET status='connected', credential=?, account_label=?, connected_at=?, updated_at=? WHERE id=?",
-            (encrypt(credential) if credential else None, account_label, now, now, integration_id),
-        )
+    auth_store.update_integration(
+        integration_id,
+        status="connected",
+        credential=encrypt(credential) if credential else None,
+        account_label=account_label,
+        connected_at=_now(),
+    )
 
 
 def disconnect(integration_id: str) -> bool:
-    with connection() as conn:
-        cur = conn.execute(
-            "UPDATE integrations SET status='available', credential=NULL, account_label=NULL, connected_at=NULL, updated_at=? WHERE id=?",
-            (_now(), integration_id),
-        )
-    return cur.rowcount > 0
+    auth_store.update_integration(
+        integration_id,
+        status="available",
+        credential=None,
+        account_label=None,
+        connected_at=None,
+    )
+    return True
 
 
 def get_credential(integration_id: str) -> str:
     """Decrypted credential for runtime use (never returned over the API)."""
-    row = get_integration(integration_id)
+    # Get integration directly from MongoDB with credential (encrypted)
+    db = auth_store.get_db()
+    row = db.integrations.find_one({"_id": integration_id})
     return decrypt(row["credential"]) if row and row.get("credential") else ""
 
 

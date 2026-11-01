@@ -1,8 +1,8 @@
 """Local Database (5) + General Utilities (10) built-in tools.
 
 Local DB tools operate on a dedicated sandboxed SQLite file in the workspace
-(agents can't touch the app's own DB) plus the shared kv_store table for
-key_value_store / local_cache. Utilities are stdlib-only encode/hash/parse/net
+(agents can't touch the app's own DB) plus the shared kv_store for
+key_value_store / local_cache (now using MongoDB). Utilities are stdlib-only encode/hash/parse/net
 helpers.
 """
 
@@ -18,9 +18,13 @@ from urllib.parse import parse_qs, urlparse
 
 import httpx
 
-from app.db.sqlite import _now, connection
+from app.auth import store as auth_store
 from app.tools.base import ToolContext, err, need, ok, tool
 from app.tools.sandbox import SandboxError, rel_to_workspace, safe_path, valid_url
+
+
+def _now():
+    return auth_store._now().isoformat()
 
 # ============================================================================
 # Local Database (5)
@@ -130,7 +134,7 @@ def database_backup(ti: dict, ctx: ToolContext) -> dict:
 # --- 184. key_value_store ----------------------------------------------------
 @tool(
     "key_value_store",
-    description="Persistent namespaced key/value store. Input: {action: get|set|delete|list, key?: str, "
+    description="Persistent namespaced key/value store (MongoDB-backed). Input: {action: get|set|delete|list, key?: str, "
     "value?: any, namespace?: str}.",
     category="database",
     input_schema={"action": {"type": "string", "required": True}, "key": {"type": "string"}, "value": {}},
@@ -140,37 +144,41 @@ def key_value_store(ti: dict, ctx: ToolContext) -> dict:
 
     action = (ti.get("action") or "get").lower()
     ns = ti.get("namespace") or f"agent:{ctx.agent_id or 'default'}"
-    with connection() as conn:
-        if action == "set":
-            if (m := need(ti, "key")):
-                return err(m)
-            conn.execute(
-                """INSERT INTO kv_store (namespace, key, value, expires_at, updated_at)
-                   VALUES (?,?,?,?,?)
-                   ON CONFLICT(namespace, key) DO UPDATE SET value=excluded.value, updated_at=excluded.updated_at""",
-                (ns, ti["key"], json.dumps(ti.get("value"), default=str), None, _now()),
-            )
-            return ok(stored=True, key=ti["key"])
-        if action == "get":
-            if (m := need(ti, "key")):
-                return err(m)
-            row = conn.execute("SELECT value FROM kv_store WHERE namespace=? AND key=?", (ns, ti["key"])).fetchone()
-            return ok(found=row is not None, value=(json.loads(row["value"]) if row else None))
-        if action == "delete":
-            if (m := need(ti, "key")):
-                return err(m)
-            cur = conn.execute("DELETE FROM kv_store WHERE namespace=? AND key=?", (ns, ti["key"]))
-            return ok(deleted=cur.rowcount > 0)
-        if action == "list":
-            rows = conn.execute("SELECT key FROM kv_store WHERE namespace=? ORDER BY key", (ns,)).fetchall()
-            return ok(keys=[r["key"] for r in rows], count=len(rows))
+    db = auth_store.get_db()
+
+    if action == "set":
+        if (m := need(ti, "key")):
+            return err(m)
+        doc = {
+            "_id": f"{ns}:{ti['key']}",
+            "namespace": ns,
+            "key": ti["key"],
+            "value": json.dumps(ti.get("value"), default=str),
+            "expires_at": None,
+            "updated_at": _now(),
+        }
+        db.kv_store.update_one({"_id": doc["_id"]}, {"$set": doc}, upsert=True)
+        return ok(stored=True, key=ti["key"])
+    if action == "get":
+        if (m := need(ti, "key")):
+            return err(m)
+        doc = db.kv_store.find_one({"namespace": ns, "key": ti["key"]})
+        return ok(found=doc is not None, value=(json.loads(doc["value"]) if doc else None))
+    if action == "delete":
+        if (m := need(ti, "key")):
+            return err(m)
+        result = db.kv_store.delete_one({"namespace": ns, "key": ti["key"]})
+        return ok(deleted=result.deleted_count > 0)
+    if action == "list":
+        docs = db.kv_store.find({"namespace": ns}).sort("key", 1)
+        return ok(keys=[d["key"] for d in docs], count=len(list(docs)))
     return err(f"unknown action: {action}")
 
 
 # --- 185. local_cache --------------------------------------------------------
 @tool(
     "local_cache",
-    description="TTL cache backed by the kv store. Input: {action: get|set, key: str, value?: any, "
+    description="TTL cache backed by MongoDB kv store. Input: {action: get|set, key: str, value?: any, "
     "ttl_seconds?: int=300}.",
     category="database",
     input_schema={"action": {"type": "string", "required": True}, "key": {"type": "string", "required": True}},
@@ -183,25 +191,28 @@ def local_cache(ti: dict, ctx: ToolContext) -> dict:
         return err(m)
     ns = f"cache:{ctx.agent_id or 'default'}"
     action = ti["action"].lower()
-    with connection() as conn:
-        if action == "set":
-            exp = (dt.datetime.now(dt.UTC) + dt.timedelta(seconds=int(ti.get("ttl_seconds") or 300))).isoformat()
-            conn.execute(
-                """INSERT INTO kv_store (namespace, key, value, expires_at, updated_at) VALUES (?,?,?,?,?)
-                   ON CONFLICT(namespace, key) DO UPDATE SET value=excluded.value,
-                   expires_at=excluded.expires_at, updated_at=excluded.updated_at""",
-                (ns, ti["key"], json.dumps(ti.get("value"), default=str), exp, _now()),
-            )
-            return ok(cached=True, expires_at=exp)
-        if action == "get":
-            row = conn.execute("SELECT value, expires_at FROM kv_store WHERE namespace=? AND key=?",
-                               (ns, ti["key"])).fetchone()
-            if not row:
-                return ok(hit=False, value=None)
-            if row["expires_at"] and row["expires_at"] <= _now():
-                conn.execute("DELETE FROM kv_store WHERE namespace=? AND key=?", (ns, ti["key"]))
-                return ok(hit=False, value=None, expired=True)
-            return ok(hit=True, value=json.loads(row["value"]))
+    db = auth_store.get_db()
+
+    if action == "set":
+        exp = (dt.datetime.now(dt.UTC) + dt.timedelta(seconds=int(ti.get("ttl_seconds") or 300))).isoformat()
+        doc = {
+            "_id": f"{ns}:{ti['key']}",
+            "namespace": ns,
+            "key": ti["key"],
+            "value": json.dumps(ti.get("value"), default=str),
+            "expires_at": exp,
+            "updated_at": _now(),
+        }
+        db.kv_store.update_one({"_id": doc["_id"]}, {"$set": doc}, upsert=True)
+        return ok(cached=True, expires_at=exp)
+    if action == "get":
+        doc = db.kv_store.find_one({"namespace": ns, "key": ti["key"]})
+        if not doc:
+            return ok(hit=False, value=None)
+        if doc.get("expires_at") and doc["expires_at"] <= _now():
+            db.kv_store.delete_one({"_id": doc["_id"]})
+            return ok(hit=False, value=None, expired=True)
+        return ok(hit=True, value=json.loads(doc["value"]))
     return err(f"unknown action: {action}")
 
 

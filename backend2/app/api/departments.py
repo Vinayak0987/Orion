@@ -15,11 +15,12 @@ def _owner() -> str:
     """Resolve the acting owner. Single-tenant: prefer the one real signed-in
     user (who owns OAuth connections) so custom departments + missions line up."""
     try:
-        from app.db.sqlite import connection
-        with connection() as c:
-            row = c.execute("SELECT user_id FROM oauth_connections LIMIT 1").fetchone()
-        if row:
-            return row["user_id"]
+        from app.auth import store as auth_store
+        # Get any connected OAuth user (try common providers)
+        for provider in ["google", "github", "slack"]:
+            user_id = auth_store.get_oauth_user_id_for_provider(provider)
+            if user_id:
+                return user_id
     except Exception:  # noqa: BLE001
         pass
     return DEFAULT_USER
@@ -65,7 +66,13 @@ async def architect(req: ArchitectRequest) -> dict:
 
 @router.get("/departments")
 async def list_departments(status: str | None = None, search: str | None = None) -> dict:
-    depts = store.list_departments_with_stats(created_by=_owner(), status=status, search=search)
+    owner = _owner()
+    # Show both user's own departments AND system departments (default ones)
+    user_depts = store.list_departments_with_stats(created_by=owner, status=status, search=search)
+    system_depts = store.list_departments_with_stats(created_by="system", status=status, search=search)
+    # Merge and deduplicate by ID
+    depts_by_id = {d["id"]: d for d in user_depts + system_depts}
+    depts = list(depts_by_id.values())
     return {"departments": depts, "count": len(depts)}
 
 
@@ -112,42 +119,58 @@ async def list_members(dept_id: str) -> dict:
 @router.get("/departments/{dept_id}/missions")
 async def department_missions(dept_id: str) -> dict:
     """Missions targeted at this department (for the Missions tab + Live Activity)."""
-    from app.db.sqlite import connection
-    with connection() as c:
-        rows = c.execute(
-            "SELECT id, prompt, title, status, mode, created_at, completed_at FROM missions "
-            "WHERE department_id=? ORDER BY created_at DESC LIMIT 50", (dept_id,),
-        ).fetchall()
-    return {"missions": [dict(r) for r in rows]}
+    from app.db.unified import list_missions_by_department
+    owner = _owner()
+    # Direct query by department_id (optimized - no in-memory filtering)
+    dept_missions = list_missions_by_department(dept_id, owner, limit=50, offset=0)
+    return {"missions": dept_missions}
 
 
 @router.get("/departments/{dept_id}/activity")
 async def department_activity(dept_id: str) -> dict:
     """Live activity: currently-running missions + their latest tasks/agents/tools."""
-    from app.db.sqlite import connection
-    with connection() as c:
-        running = c.execute(
-            "SELECT id, prompt, title, status, created_at FROM missions "
-            "WHERE department_id=? AND status IN ('planning','running','awaiting_input') "
-            "ORDER BY created_at DESC", (dept_id,),
-        ).fetchall()
-        items = []
-        for m in running:
-            tasks = c.execute(
-                "SELECT title, agent_id, status FROM mission_tasks WHERE mission_id=? ORDER BY created_at",
-                (m["id"],),
-            ).fetchall()
-            tools = c.execute(
-                "SELECT tool_name, success, created_at FROM execution_traces "
-                "WHERE mission_id=? AND trace_type='tool' ORDER BY created_at DESC LIMIT 10",
-                (m["id"],),
-            ).fetchall()
-            items.append({
-                "mission_id": m["id"], "title": m["title"] or m["prompt"][:60],
-                "status": m["status"], "created_at": m["created_at"],
-                "tasks": [dict(t) for t in tasks],
-                "recent_tools": [dict(t) for t in tools],
-            })
+    from app.db.unified import list_missions_by_department
+    from app.auth import store as auth_store
+    owner = _owner()
+    
+    # Direct query by department_id and status (optimized with aggregation)
+    db = auth_store.get_db()
+    running = list(db.missions.find(
+        {"department_id": dept_id, "status": {"$in": ["planning", "running", "awaiting_input"]}},
+        sort=[("created_at", -1)],
+        limit=20
+    ))
+    
+    # Convert _id to id
+    for m in running:
+        if "_id" in m and "id" not in m:
+            m["id"] = m.pop("_id")
+    
+    # Collect mission IDs for batch task loading
+    mission_ids = [m.get("id") for m in running]
+    
+    # Batch load tasks for all running missions
+    all_tasks = list(db.mission_tasks.find({"mission_id": {"$in": mission_ids}}))
+    tasks_by_mission = {}
+    for task in all_tasks:
+        mid = task.get("mission_id")
+        if mid not in tasks_by_mission:
+            tasks_by_mission[mid] = []
+        tasks_by_mission[mid].append(task)
+    
+    # Build response with tasks
+    items = []
+    for m in running:
+        mission_id = m.get("id")
+        mission_tasks = tasks_by_mission.get(mission_id, [])
+        items.append({
+            "mission_id": mission_id,
+            "title": m.get("title") or m.get("prompt", "")[:60],
+            "status": m.get("status"),
+            "created_at": m.get("created_at"),
+            "tasks": [{"id": t.get("_id"), "title": t.get("title"), "status": t.get("status")} for t in mission_tasks],
+            "recent_tools": [],  # TODO: implement MongoDB trace storage
+        })
     return {"running": items, "count": len(items)}
 
 

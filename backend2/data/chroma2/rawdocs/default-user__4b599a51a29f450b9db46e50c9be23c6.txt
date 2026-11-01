@@ -1,0 +1,108 @@
+agent_id,sales_agent,normalized_name,email
+SA004,Anna Snelling,anna_snelling,anna_snelling@company.com
+SA029,Cecily Lampkin,cecily_lampkin,cecily_lampkin@company.com
+SA013,Versie Hillebrand,versie_hillebrand,versie_hillebrand@company.com
+SA024,Lajuana Vencill,lajuana_vencill,lajuana_vencill@company.com
+SA001,Moses Frase,moses_frase,moses_frase@company.com
+SA030,Jonathan Berthelot,jonathan_berthelot,jonathan_berthelot@company.com
+SA023,Marty Freudenburg,marty_freudenburg,marty_freudenburg@company.com
+SA008,Gladys Colclough,gladys_colclough,gladys_colclough@company.com
+SA007,Niesha Huffines,niesha_huffines,niesha_huffines@company.com
+SA002,Darcel Schlecht,darcel_schlecht,darcel_schlecht@company.com
+SA031,Mei-Mei Johns,mei-mei_johns,mei-mei_johns@company.com
+SA016,Violet Mclelland,violet_mclelland,violet_mclelland@company.com
+SA027,Corliss Cosme,corliss_cosme,corliss_cosme@company.com
+SA018,Rosie Papadopoulos,rosie_papadopoulos,rosie_papadopoulos@company.com
+SA022,Garret Kinder,garret_kinder,garret_kinder@company.com
+SA021,Wilburn Farren,wilburn_farren,wilburn_farren@company.com
+SA032,Elizabeth Anderson,elizabeth_anderson,elizabeth_anderson@company.com
+SA014,Daniell Hammack,daniell_hammack,daniell_hammack@company.com
+SA028,Cassey Cress,cassey_cress,cassey_cress@company.com
+SA026,Donn Cantrell,donn_cantrell,donn_cantrell@company.com
+SA020,Reed Clapper,reed_clapper,reed_clapper@company.com
+SA025,Boris Faz,boris_faz,boris_faz@company.com
+SA033,Natalya Ivanova,natalya_ivanova,natalya_ivanova@company.com
+SA005,Vicki Laflamme,vicki_laflamme,vicki_laflamme@company.com
+SA012,Rosalina Dieter,rosalina_dieter,rosalina_dieter@company.com
+SA011,Hayden Neloms,hayden_neloms,hayden_neloms@company.com
+SA006,Markita Hansen,markita_hansen,markita_hansen@company.com
+SA015,Elease Gluck,elease_gluck,elease_gluck@company.com
+SA034,Carol Thompson,carol_thompson,carol_thompson@company.com
+SA009,James Ascencio,james_ascencio,james_ascencio@company.com
+SA019,Kary Hendrixson,kary_hendrixson,kary_hendrixson@company.com
+SA017,Kami Bicknell,kami_bicknell,kami_bicknell@company.com
+SA003,Zane Levy,zane_levy,zane_levy@company.com
+SA010,Maureen Marcano,maureen_marcano,maureen_marcano@company.com
+SA035,Carl Lin,carl_lin,carl_lin@company.com
+SA036,Jacqueline Reyes,jacqueline_reyes,jacqueline_reyes@company.com
+SA037,Kenneth Odonnell,kenneth_odonnell,kenneth_odonnell@company.com
+SA038,Cody Jones,cody_jones,cody_jones@company.com
+SA039,Victoria Howard,victoria_howard,victoria_howard@company.com
+SA040,Jacqueline Wright,jacqueline_wright,jacqueline_wright@company.com
+SA041,Kimberly Johnson MD,kimberly_johnson_md,kimberly_johnson_md@company.com
+SA042,Diane Li,diane_li,diane_li@company.com
+SA043,Mark Ward,mark_ward,mark_ward@company.com
+SA044,Zachary Santiago,zachary_santiago,zachary_santiago@company.com
+SA045,Ruth Griffin,ruth_griffin,ruth_griffin@company.com
+SA046,Robert Ferguson,robert_ferguson,robert_ferguson@company.com
+SA047,Kimberly Weber,kimberly_weber,kimberly_weber@company.com
+SA048,Andrea Abraham Valentín,andrea_abraham_valentín,andrea_abraham_valentín@company.com
+SA049,Israel Gabriel Amaya,israel_gabriel_amaya,israel_gabriel_amaya@company.com
+SA050,Ing. María Elena Marín,ing._maría_elena_marín,ing._maría_elena_marín@company.com
+SA051,Evelio Mónica Mendoza,evelio_mónica_mendoza,evelio_mónica_mendoza@company.com
+SA052,Citlali Mayorga Olivas,citlali_mayorga_olivas,citlali_mayorga_olivas@company.com
+SA053,Genaro Verónica Lemus,genaro_verónica_lemus,genaro_verónica_lemus@company.com
+SA054,Rosa Nayeli Perea Montero,rosa_nayeli_perea_montero,rosa_nayeli_perea_montero@company.com
+SA055,Lic. José Godínez,lic._josé_godínez,lic._josé_godínez@company.com
+SA056,Homero Camilo Valles,homero_camilo_valles,homero_camilo_valles@company.com
+SA057,Luis Gamez Matos,luis_gamez_matos,luis_gamez_matos@company.com
+SA058,Nancy Barragán Esquibel,nancy_barragán_esquibel,nancy_barragán_esquibel@company.com
+SA059,Dr. Mayte Reyes,dr._mayte_reyes,dr._mayte_reyes@company.com
+SA060,Rita Hayes,rita_hayes,rita_hayes@company.com
+SA061,Shaun Scott,shaun_scott,shaun_scott@company.com
+SA062,Miss Karen Cross,miss_karen_cross,miss_karen_cross@company.com
+SA063,Glenn Miller,glenn_miller,glenn_miller@company.com
+SA064,Samantha Taylor,samantha_taylor,samantha_taylor@company.com
+SA065,Mary Hunt,mary_hunt,mary_hunt@company.com
+SA066,Jason Jones,jason_jones,jason_jones@company.com
+SA067,Joanne Williams,joanne_williams,joanne_williams@company.com
+SA068,Rita White,rita_white,rita_white@company.com
+SA069,Pamela Jones,pamela_jones,pamela_jones@company.com
+SA070,Ben Marsh,ben_marsh,ben_marsh@company.com
+SA071,Adam Morris,adam_morris,adam_morris@company.com
+SA072,Jennifer Santiago,jennifer_santiago,jennifer_santiago@company.com
+SA073,Travis Watson,travis_watson,travis_watson@company.com
+SA074,Cindy Henderson,cindy_henderson,cindy_henderson@company.com
+SA075,Stacey Moore,stacey_moore,stacey_moore@company.com
+SA076,Bradley Chavez,bradley_chavez,bradley_chavez@company.com
+SA077,Cheryl Sharp,cheryl_sharp,cheryl_sharp@company.com
+SA078,Sean Alvarez,sean_alvarez,sean_alvarez@company.com
+SA079,Daniel Rollins,daniel_rollins,daniel_rollins@company.com
+SA080,Tracy Bowers DVM,tracy_bowers_dvm,tracy_bowers_dvm@company.com
+SA081,Amanda Manning,amanda_manning,amanda_manning@company.com
+SA082,Charles Hodges,charles_hodges,charles_hodges@company.com
+SA083,Michael Zamora,michael_zamora,michael_zamora@company.com
+SA084,Brian Snyder,brian_snyder,brian_snyder@company.com
+SA085,Matthew Johnson,matthew_johnson,matthew_johnson@company.com
+SA086,Jason Lowery,jason_lowery,jason_lowery@company.com
+SA087,Justin Jones,justin_jones,justin_jones@company.com
+SA088,David Thomas,david_thomas,david_thomas@company.com
+SA089,Jon Osborn,jon_osborn,jon_osborn@company.com
+SA090,Justin Powell,justin_powell,justin_powell@company.com
+SA091,Gregory Anderson,gregory_anderson,gregory_anderson@company.com
+SA092,Jennifer Serrano,jennifer_serrano,jennifer_serrano@company.com
+SA093,Edward Pierce,edward_pierce,edward_pierce@company.com
+SA094,John Novak,john_novak,john_novak@company.com
+SA095,Philip Patton,philip_patton,philip_patton@company.com
+SA096,Brandon Lee,brandon_lee,brandon_lee@company.com
+SA097,Dustin Perez,dustin_perez,dustin_perez@company.com
+SA098,Tim Gonzalez,tim_gonzalez,tim_gonzalez@company.com
+SA099,Desiree Martinez,desiree_martinez,desiree_martinez@company.com
+SA100,Ashley Taylor,ashley_taylor,ashley_taylor@company.com
+SA101,Michael Everett,michael_everett,michael_everett@company.com
+SA102,Matthew Stewart,matthew_stewart,matthew_stewart@company.com
+SA103,Jonathan Larson,jonathan_larson,jonathan_larson@company.com
+SA104,Christy Montoya,christy_montoya,christy_montoya@company.com
+SA105,Andre Bowman,andre_bowman,andre_bowman@company.com
+SA106,Michael Morse,michael_morse,michael_morse@company.com
+SA107,Allison Villa,allison_villa,allison_villa@company.com

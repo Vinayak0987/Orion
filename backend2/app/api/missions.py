@@ -3,19 +3,28 @@
 from __future__ import annotations
 
 import asyncio
+import uuid
 
-from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel, Field
 
+from app.auth.deps import get_current_user, get_optional_user
+from app.auth.models import UserPublic
+from app.db import unified
 from app.missions import engine, events, store
 
 router = APIRouter(tags=["missions"])
 
-# Phase 1: single-user placeholder. Auth integration is a later phase.
-DEFAULT_USER = "default-user"
-
 # Track the background asyncio task per mission so it can be cancelled on stop.
 _running: dict[str, asyncio.Task] = {}
+
+
+def _get_user_id(user: UserPublic | None) -> str:
+    """Get user_id from authenticated user, or default if not authenticated."""
+    # Handle case where user might be a Depends object (test artifact)
+    if user is None or hasattr(user, '__class__') and 'Depends' in str(type(user)):
+        return "default-user"
+    return user.id if user else "default-user"
 
 
 class CreateMissionRequest(BaseModel):
@@ -30,9 +39,18 @@ class CreateMissionRequest(BaseModel):
 
 
 @router.post("/missions", status_code=202)
-async def create_mission(req: CreateMissionRequest) -> dict:
-    mission_id = store.create_mission(
-        req.prompt, DEFAULT_USER, req.department_id, req.conversation_id, mode=req.mode
+async def create_mission(
+    req: CreateMissionRequest,
+    current_user: UserPublic | None = Depends(get_optional_user),
+) -> dict:
+    user_id = _get_user_id(current_user)
+    mission_id = unified.create_mission(
+        uuid.uuid4().hex[:12],
+        user_id,
+        req.prompt,
+        department_id=req.department_id,
+        conversation_id=req.conversation_id,
+        mode=req.mode,
     )
     # Fire-and-forget: the mission runs in the background; the client watches via WS.
     task = asyncio.create_task(engine.run_mission(mission_id, skip_clarify=req.clarified))
@@ -81,24 +99,142 @@ async def resolve_approval(approval_id: str, req: ApprovalDecision) -> dict:
 
 
 @router.get("/missions")
-async def list_missions(limit: int = 50, offset: int = 0, status: str | None = None,
-                        search: str | None = None, type: str | None = None) -> dict:
+async def list_missions(
+    limit: int = 50,
+    offset: int = 0,
+    status: str | None = None,
+    search: str | None = None,
+    type: str | None = None,
+    current_user: UserPublic | None = Depends(get_optional_user),
+) -> dict:
     limit = max(1, min(limit, 200))
-    missions = store.list_missions(limit, offset, status, DEFAULT_USER, search, type)
+    user_id = _get_user_id(current_user)
+    # Use unified for MongoDB support - show both user's missions AND default-user missions
+    missions = unified.list_missions(user_id, limit, offset)
+    # Also get default-user missions if different from current user
+    if user_id != "default-user":
+        default_missions = unified.list_missions("default-user", limit, offset)
+        # Merge and deduplicate by ID
+        missions_by_id = {m.get("id") or m.get("_id"): m for m in missions + default_missions}
+        missions = list(missions_by_id.values())
+        # Sort by created_at desc
+        missions.sort(key=lambda m: m.get("created_at", ""), reverse=True)
+        missions = missions[:limit]
+    
+    # Batch load all tasks for all missions in a single query (N+1 optimization)
+    from app.auth import store as auth_store
+    from app.missions import store as mission_store
+    
+    # Collect all mission IDs
+    mission_ids = [m.get("id") or m.get("_id") for m in missions]
+    
+    # Batch fetch all tasks in one query
+    db = auth_store.get_db()
+    all_tasks = list(db.mission_tasks.find({"mission_id": {"$in": mission_ids}}))
+    
+    # Group tasks by mission_id
+    tasks_by_mission = {}
+    for task in all_tasks:
+        mid = task.get("mission_id")
+        if mid not in tasks_by_mission:
+            tasks_by_mission[mid] = []
+        tasks_by_mission[mid].append(mission_store._decode_task(task))
+    
+    # Assign tasks and calculate derived fields for each mission
+    for m in missions:
+        mission_id = m.get("id") or m.get("_id")
+        # Convert _id to id for frontend compatibility
+        if "_id" in m and "id" not in m:
+            m["id"] = m.pop("_id")
+        # Ensure created_by field exists (mapped from user_id)
+        if "user_id" in m and "created_by" not in m:
+            m["created_by"] = m["user_id"]
+        
+        # Derive type from mode
+        mode = m.get("mode", "action")
+        if mode == "planning":
+            m["type"] = "Planning"
+        elif mode == "action":
+            m["type"] = "Operations"
+        else:
+            m["type"] = "Operations"  # default
+        
+        # Get tasks from pre-fetched batch
+        tasks = tasks_by_mission.get(mission_id, [])
+        m["tasks"] = tasks
+        
+        # Calculate progress
+        if tasks:
+            completed = sum(1 for t in tasks if t.get("status") in ["completed", "failed", "stopped"])
+            m["progress"] = round(100 * completed / len(tasks)) if tasks else 0
+        else:
+            m["progress"] = 0
+        
+        # Extract agent_ids from tasks
+        agent_ids = list(set(t.get("agent_id") for t in tasks if t.get("agent_id")))
+        m["agent_ids"] = agent_ids
+    
     return {"missions": missions, "count": len(missions)}
 
 
 @router.get("/missions/{mission_id}")
-async def get_mission(mission_id: str) -> dict:
-    mission = store.get_mission(mission_id)
-    if mission is None:
+async def get_mission(
+    mission_id: str,
+    current_user: UserPublic | None = Depends(get_optional_user),
+) -> dict:
+    user_id = _get_user_id(current_user)
+    # Get mission without tasks first (faster)
+    from app.auth import store as auth_store
+    from app.missions import store as mission_store
+    doc = auth_store.get_mission(mission_id, user_id)
+    if doc is None:
         raise HTTPException(404, f"Mission '{mission_id}' not found")
+
+    # Decode basic mission
+    mission = dict(doc)
+    mission["id"] = mission.pop("_id")
+    if "user_id" in mission and "created_by" not in mission:
+        mission["created_by"] = mission["user_id"]
+
+    # Load tasks separately
+    tasks = auth_store.get_mission_tasks(mission_id)
+    mission["tasks"] = [mission_store._decode_task(t) for t in tasks]
+    
+    # Derive type from mode
+    mode = mission.get("mode", "action")
+    if mode == "planning":
+        mission["type"] = "Planning"
+    elif mode == "action":
+        mission["type"] = "Operations"
+    else:
+        mission["type"] = "Operations"  # default
+    
+    # Calculate progress
+    if tasks:
+        completed = sum(1 for t in tasks if t.get("status") in ["completed", "failed", "stopped"])
+        mission["progress"] = round(100 * completed / len(tasks)) if tasks else 0
+    else:
+        mission["progress"] = 0
+    
+    # Extract agent_ids from tasks
+    agent_ids = list(set(t.get("agent_id") for t in tasks if t.get("agent_id")))
+    mission["agent_ids"] = agent_ids
+
     return mission
 
 
 @router.get("/missions/{mission_id}/tools")
-async def mission_tools(mission_id: str) -> dict:
+async def mission_tools(
+    mission_id: str,
+    current_user: UserPublic | None = Depends(get_optional_user),
+) -> dict:
     """Aggregated tool-call stats for this mission (from execution_traces)."""
+    user_id = current_user.id if current_user else "default-user"
+    # Verify user owns the mission first
+    mission = store.get_mission(mission_id, user_id)
+    if mission is None:
+        raise HTTPException(404, f"Mission '{mission_id}' not found")
+    
     from app.traces.store import list_traces
     agg: dict[str, dict] = {}
     for t in list_traces(mission_id):
@@ -118,8 +254,17 @@ async def mission_tools(mission_id: str) -> dict:
 
 
 @router.get("/missions/{mission_id}/evidence")
-async def mission_evidence(mission_id: str) -> dict:
+async def mission_evidence(
+    mission_id: str,
+    current_user: UserPublic | None = Depends(get_optional_user),
+) -> dict:
     """Tool outputs as an evidence trail (from execution_traces)."""
+    user_id = _get_user_id(current_user)
+    # Verify user owns the mission first
+    mission = store.get_mission(mission_id, user_id)
+    if mission is None:
+        raise HTTPException(404, f"Mission '{mission_id}' not found")
+    
     import json as _json
     from app.traces.store import list_traces
     items = []
@@ -142,8 +287,16 @@ async def mission_evidence(mission_id: str) -> dict:
 
 
 @router.get("/missions/{mission_id}/trace")
-async def mission_trace(mission_id: str) -> dict:
+async def mission_trace(
+    mission_id: str,
+    current_user: UserPublic | None = Depends(get_optional_user),
+) -> dict:
     """Ordered LLM + tool steps for this mission (provider, tokens, latency, cost)."""
+    user_id = _get_user_id(current_user)
+    mission = store.get_mission(mission_id, user_id)
+    if mission is None:
+        raise HTTPException(404, f"Mission '{mission_id}' not found")
+    
     from app.traces.store import list_traces
     steps = []
     total_cost = 0.0
@@ -162,8 +315,12 @@ async def mission_trace(mission_id: str) -> dict:
 
 
 @router.get("/missions/{mission_id}/export.json")
-async def mission_export(mission_id: str) -> dict:
-    mission = store.get_mission(mission_id)
+async def mission_export(
+    mission_id: str,
+    current_user: UserPublic | None = Depends(get_optional_user),
+) -> dict:
+    user_id = _get_user_id(current_user)
+    mission = store.get_mission(mission_id, user_id)
     if mission is None:
         raise HTTPException(404, f"Mission '{mission_id}' not found")
     return {
@@ -180,9 +337,17 @@ async def mission_export(mission_id: str) -> dict:
 
 
 @router.delete("/missions/{mission_id}")
-async def delete_mission(mission_id: str) -> dict:
-    if not store.delete_mission(mission_id):
+async def delete_mission(
+    mission_id: str,
+    current_user: UserPublic | None = Depends(get_optional_user),
+) -> dict:
+    user_id = _get_user_id(current_user)
+    if not unified.delete_mission(mission_id, user_id):
         raise HTTPException(404, f"Mission '{mission_id}' not found")
+    # Delete traces in SQLite (traces not in MongoDB yet)
+    from app.traces.store import delete_traces
+    delete_traces(mission_id)
+    await events.finish(mission_id)
     return {"deleted": mission_id}
 
 

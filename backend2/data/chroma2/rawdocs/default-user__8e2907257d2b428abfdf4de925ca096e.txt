@@ -1,0 +1,239 @@
+Qscgu @26,DESIGNATION ,CONTACT NUMBER,EMAIL,ADDRESS,STATE,EMPLOYEE ID,Blood group ,Date of Birth
+Argha Sengupta,CEO & Director 1,8514969745,ceo@accescoliving.com,"Jaladarshini layout, Bengaluru,",Karnataka,DIN 11444888,,16/08/2006
+Vishakha Bharati  ,CMO,9334032275,cmo@accescoliving.com,"Shanti Nagar, Garha Toli, 18 Old HB Road, Ranchi- 834001",Jharkhand,25ALPL000M1,O+ve,
+,,,puskarmishra022@gmail.com,"jalpaimore, Siliguri ",,25ALPL00001,,
+,,,parthivchaki09@gmail.com,"Subhas pally , Hamilton ganj , Alipur duar , 735214",,25ALPL00002,,
+,,,chhetrichetan45@gmail.com,Kolkata Road bagdogra Siliguri 734014,,25ALPL00003,,
+Archita Roy,CBO,9907701522,architaaa06@gmail.com,"Hakimpara, Siliguri ",,25ALPL00004,O+,"21st May, 2006"
+Ayushman Saha,CBDO ,8670840318,cbo@accescoliving.com,"Sanghati More, Siliguri, 734006",West Bengal,25ALPL00005,A+,"27th August,2007"
+Piyush Das,Vice President ,9800300666,papai.das.yt@gmail.com,"Ashram Para, Siliguri - 734001",West Bengal ,,A+,"5, August 2008"
+Manami,R&D head associate,7896580912,manamighosh32@gmail.com,"Maa sarada sarani, Bharat Nagar , Siliguri ",,25ALPL00007,,
+Vedant Raskar ,Business Strategy & Supply Chain Associate,9179779973,vedantraskar06@gmail.com,"12 Nehru Park road Vallabh nagar,  Indore,MP",,25ALPL00008,,
+Vishesh Singh Raghuwanshi,Business Strategy & Supply Chain Associate,9516525591,visheshraghuwanshi5@gmail.com,"New palasia, Indore, MP",,25ALPL00009,,
+Subhajit Ghosh,AI/ML Engineer Intern,8274921319,mastersubhajit@icloud.com,"58 Moo9, KM42, Paholyothin Highway, Khlong Luang, Khlong Nueng, Pathum Thani, Thailand - 12120",Pathum Thani,25ALPL00010,B+,"12th October, 2002"
+Nitish Bhagat ,operations and management lead,7908428400,bhagatnitish040@gmail.com,"Hongasandra, Bangalore ",,25ALPL00011,,
+,,,,"Katraj,Pune",,25ALPL00012,,
+Shreyashi Biswas,Founder's Office HR,7501409300,bshreyashi602@gmail.com," Babupara, Siliguri",,25ALPL00013,,
+Asif,CCO,7063068404,,"Pradhan Nagar, Siliguri",,25ALPL00014,,
+Annanya Shree,R&D Director,7280065154,shreeannanya2096@gmail.com,"House no.1, ward no. 29, Sidhu Kanu Sarani, Deshbandhu para, Siliguri - 734004",West Bengal,25ALPL00015,,
+Parthib Basu,Principal Engineer,8334089891,21parthib2006@gmail.com,Kolkata,West Bengal,25ALPL00016,O+,21/01/2006
+B.D.T.S.PATNAIK, SCM and Marketing Intern,6303355639,dileepbhimavaram@gmail.com,"kotthavalasa,vizayanagaram,andhra pradesh",,25ALPL00017,,
+Nimish Garrg,frontend developer,9517711161,nimishgarg1111@gmail.com,"MSR boys home, 6,7th main rd, msr nagar, mathikere, bengaluru",Karnataka,25ALPL00018,,
+,,8168302680,sachinjangra61829@gmail.com,"Hari Nagar,Line Par ,Bahadurgarh (Jhajjar) ",Haryana,25ALPL00019,,
+Rishwanth S V ,Full stack developer ,9087163246,rishwanthsv17@gmail.com,"Chennai, Tamilnadu",Tamilnadu,25ALPL00020,O+,17th July
+,,,,"Jatoli, Nurpur, Kangra, Himachal Pradesh, India (176204)",Himachal Pradesh,25ALPL00021,,
+Asht Vinayak,Video Editor,6393097041,ashtvinayak.w@gmail.com,"Ashiyana Enclave, Dimna road, Jamshedpur, Jharkhand- 831012",Jharkhand,25ALPL00022,,
+,,9900094084,kush.1310xvi@gmail.com,"D group Employee's Layout, Andrahalli main road, Bengaluru- 560091",Karnataka,25ALPL00023,,
+Vishal Kiran Kumar,Partnership Sales Head,7619108711,vishalk96382@gmail.com,"Address: no.123,3rd cross, bds layout, dr shivram karanth nagar, hegdenagar, 560077",Karnataka,25ALPL00024,,
+Apurv Kumar,SOC Analyst intern,9569861061,apurvkumar711@gmail.com,"Uttar Pradesh, Lalitpur",,25ALPL00025,,
+,,9900534791,,,,25ALPL00026,,
+Namith Kumar Chandrakumar,Associate App developer,9487471011,namith.bck@gmail.com,"Sobha Hillview, Kanakpura Road, Bangalore",Karnataka,25ALPL00027,,16th March 2006
+,,7259112203,kishankshenoy@gmail.com,"Dwarka nagar, Bengaluru",Karnataka,25ALPL00028,,
+,,9045188477,krrishsingla22406@gmail.com,"PES University, Bengaluru",Karnataka,25ALPL00029,,
+Adithya Rajeev,Graphic Design and Illustration Intern,8921944626,adithyarajeev616@gmail.com,"AGB Layout, Maruthi Nagar, Bengaluru",Karnataka,25ALPL00029,,
+Ankit Paul,Campus ambassador ,,,,,25ALPL00030,,
+Sankit Kundu,Senior graphics designer ,9062008128,kundusankit4@gmail.com,"Ultadanga, Ariff Road ",Kolkata ,25ALPL00031,,
+Sanjay RM ,UIUX Designer Intern,9080560274,sanjaymary55277@gmail.com,"Bone mill,Soundarya layout, Bengaluru ",Karnataka ,25ALPL00032,,
+Adrisha Saha ,Social media team head,8001361325,adrisha165@gmail.com,"Dabgram, Siliguri ",,25ALPL00033,,
+,,9782513235,praptiyush2007@gmail.com ,"Jalahalli east, Bengaluru ",karnataka ,25ALPL00034,,
+Jigar Heda,Associate App Backend Developer,7779056977,hedajigar@gmail.com,"kareilibaug , Vadodara",Gujarat,25ALPL00035,,
+,,7795751952,ankitasharma.jkv@gmail.com,"Ramaiah univeristy, bengaluru ",Karnataka,25ALPL00036,,
+,,8279966879,rishabhjain3march1234@gmail.com,"Veeralay,Flat No.504 Aparna Garden Vijay Nagar colony Agra", Uttar Pradesh,25ALPL00037,,
+,,7241110622,,,,25ALPL00038,,
+Kushal Adhikary ,Graphics Design Head,6296167642,kushaladhikary1107@gmail.com,"Haiderpara, Siliguri",,25ALPL00039,,
+,,7014687299,priyanshidhaneta20@gmail.com,"Nandpuri, Hawa sadak road, Jaipur",Rajasthan,25ALPL00040,,
+Roberto Gomez,Intern,639368665734,opencareermanagement@gmail.com,,,25ALPL00041,,
+Md. Asif,COO,9382797724,speaktoasif1@gmail.com ,,,25ALPL00042,,
+Manne Sanjana,Associate App Developer ,9391672425,saanmanne@gmail.com,"Osman Nagar,Tellapur,Hyderabad-502034",Telangana,25ALPL00043,,
+Palak kumari,Video Editor,9310443407,designbypalak.7@gmail.com,"Kalkaji, New Delhi",New Delhi,25ALPL00044,,
+Chayan Banga,AIML ops Intern ,9718897258,chayanbanga1978@gmail.com,"Sector - 5, Faridabad, Haryana",Haryana,25ALPL00045,A+,19 April 2004
+Jabez Jesudason Jena ,Web Development Intern,7339169228,jabezjena@gmail.com,"166, Redhills Road, Ikkadu kandigai IGSM, Tiruvallur 602021",Tamilnadu ,25ALPL00046,,
+Naganna Malladi ,Marketing Intern ,6362687822,vishalmalladi73@gmial.com,"keb back , rajaji nagar , malladi house , Vijayapur - Karnataka",,25ALPL00047,,
+Adithi Ganti,Junior Web Dev intern,9008438855,adithiganti07@gmail.com,"suncity gloria apt,b1 wA 009, carmelaram,sarjapur,bengaluru",Karnataka,25ALPL00048,,
+reedham Jain ,Marketing Associate ,7900758575,agrareedham@gmail.com,"F2, Mehta enclave 17, adan bagh extension near cake house Dayalbagh,Agra",Uttar Pradesh ,25ALPL00049,B+,
+Rahul,AIML Intern,9892024433,rahulsenthil2005@gmail.com,,,25ALPL00050,,
+Sohini Sarkar ,Digital Marketing Intern ,9800366772,sohinisarkar521@gmail.com,"N.C Lane, Jalpaiguri-735101 (permanent)",West Bengal ,25ALPL00051,,
+Saipriya Bhowmik,Social Media Intern,6003743185,saipriyabhowmik@gmail.com,"Nizarapar, Margherita, Assam  Pin code: 786181",Assam,25ALPL00052,,
+ Gunjan Umate ,Marketing and outreach intern ,8888995122,gunjanumate@gmail.com,"plot no. 10 Aradhana nagar, kharbi ring road, dighori, Nagpur 440002",Maharashtra ,25ALPL00055,B+,16 March 2007
+Sowmya Balasubramaniam ,App developer intern ,8220160043,b.sowmya.2007@gmail.com,"chettiyar agaram street, porur, chennai, 600116",Tamil Nadu,25ALPL00050,A+,29th August 2006
+Vrinda,Content Writer and Strategist Intern,9779402858,vrinda8331@gmail.com,Nangal Township District Ropar Punjab,Punjab,25ALPL00051,B+,25th March 2007
+Tanmay Khare,Marketing Intern ,7987752296,tanmaykhare0@gmail.com,Sadar Jabalpur,Madhya Pradesh,,B+,
+,,8420142435,agnivabhattacharjee0998@gmail.com,"Newtown, Action area - 1, Kolkata",West Bengal,,B+,
+,,,avisekhchakraborty485@gmail.com,"Babupara, Siliguri 734004",West Bengal,,A+,
+Adithi Ganti,junior web development intern,9008438855,adithiganti07@gmail.com,"009,1A suncity gloria apartments bengaluru karnataka 560035",KARNATAKA,25ALPL00054,A+,5 April 2007
+Asmi Jain ,PR Intern,9310487279,asmijain357@gmail.com,"Kalyan Vihar, North West Delhi- 110009",new delhi ,25ALPL00056,O+,7 January 2004
+Sattvik Shukla,Backend intern,7415855241,sattvikshukla@gmail.com,"BEML layout, Whitefield, Bengaluru, 560037",Karnataka ,25ALPL000057,O+,"5 August, 2005"
+Srilekha Roy,Graphic Designer,6291115834,srilekharoy58@gmail.com,"377, Prantik jubokbrindo club Indrapuri Ichhapur defence estate ",West Bengal ,25ALPL000058,B+,"12 September, 2006"
+Nabila khan ,Content writer intern ,7668875301,nkhan202002@gmail.com,Syed colony Aligarh up ,Uttar Pradesh ,25ALPL000059,B+,
+Jai Jain,AI/ML Intern,9039493010,jai.j3010@gmail.com,"Kohinoor Tower, Jawahar Marg, Indore, Madhya Pradesh - 452002",Madhya Pradesh,25ALPL000060,B+,"30 October, 2006"
+Meshack Yesudas,AI/ML intern,8767017191,meshackai01@gmail.com,"Thergaon,Pune 411033,Maharashtra ",Maharashtra,25ALPL000061,A+,10 Aprit 2004
+Syon Duke Abraham,AI/ML Intern,7695912126,syondukeabraham@gmail.com,"Brigade Panorama, Mysuru Road, Anchepalya, Bengaluru",Karnataka,25ALPL000062,B+,10 May 2007
+Saineka Pradhan,AI/ML intern,8972526173,saineka77737@gmail.com,JP Nagar 6th Phase Bengaluru,Karnataka,25ALPL000063,O+,21 October 2002
+Bharath Sai,AI/ML intern,8143839179,vaddebharathsai118@gmail.com,"Uttaranchal University , Premnagar, Dehradun - 248007",Uttarakhand,25ALPL000064,,3rd july 2005
+Ritija Dhanaria,operations& Sales Intern,8619441539,Ritija.dhanaria@bbah.christuniversity.in,"Akshat Meadows, Sirsi Road, Jaipur, 203012",Rajasthan,25ALPL000065,0+,8 February 2007
+Sanskriti,Sales support and operations intern,8851332118,ssanskriti0008@gmail.com,J-1st 17/540 Sangam vihar new delhi-110080,New Delhi,25ALPL000066,,26 Feb 2008
+Ravi Vinayak,AI/ML intern,9302710832,vinayakravi01@gmail.com,"Atal Nagar, Naya Raipur, Raipur, Chhattisgarh, 493661",Chhattisgarh ,25ALPL000067,B+,31 August 2004
+Shakti Prasad Muduli,Penetration Engineer ,6371055013,shaktiprasaddd15@gmail.com,"Tamara Layout, Gunjur, Balagere, Bengaluru, Karnataka, 560087",Karnataka,25ALPL000068,B+,15th March 2004
+Shreeharsh Deshmukh,Backend Developer (intern),8618658758,shreeharsh248@gmail.com,"suncity gloria 2b914 sarjapur road,bengaluru -560035",Karnataka,25ALPL000069,B+,27th june 2006
+Surya Panav ,Frontend Developer (intern),9620569102,suryapanav4444@gmail.com,"suncity gloria 1A 804 sarjapur road,bengaluru -560035",Karnataka,25ALPL000070,,14-10-2005
+Khyati Maheshwari ,Frontend Developer (intern),9901063112,khyatimaheshwari27@gmail.com,"suncity gloria 2A 1115 sarjapur road,bengaluru -560035",Karnataka,25ALPL000071,A+,8th August 2006
+JM Navanthiga,Backend Developer (intern) (app),9865379293,navanthiga.m@gmail.com,"SSN Ladies hostel, Shivnadar University Chennai,  Kalavakkam",Tamil Nadu,25ALPL000072,O+,19th December 2006
+Lakshya Jaiswal,Android Developer (intern),6392444217,lakshyajaiswal2929@gmail.com,"Muradnagar, Ghaziabad - 201206",Uttar Pradesh,25ALPL000073,O+,29th December 2006
+khushi Bajaj ,Soc analyst  (intern),9340940310,khushibajaj2107@gmail.com,Guna 473001,Madhya Pradesh ,25ALPL000074,,21 July 2004
+Manasvi Singh Pundir,Buisness Analyst (intern),9783408608,manasvisingh2023@gmail.com,"ESL colony type -2, 47 Rawatbhata ",Rajasthan,25ALPL000075,A+,23 March 2005
+Konkona Dhar,Marketing Associate Intern,7439504809,dharkonkona01@gmail.com,"pandit deendayal energy university, Gandhinagar 382007",Gujarat,25ALPL000076,O+,9th August 2007
+Ashwani Dubey ,Marketing associate Intern ,7017546456,ashwanidubey1421@gmail.com,,,25ALPL000077,,
+Kavina  K,HR Operations Intern,9543314196,kavinakumarasamy22@gmail.com,"Periya Thottam, Uthupalayam, Kanjapalli post, Annur, Coimbatore.",Tamil Nadu,25ALPL000078,O+,22nd October 
+Suruthi T R,HR Generalist,9788353732,suruthi.ranganathan96@gmail.com,"9 Neethiyammal Nagar,2nd street PN Road ,Tirupur 641602",Tamil Nadu,25ALPL000079,O+,25th September 1996
+Ajay Vishwakarma,App developer intern ,7380948201,ajayvish7380@gmali.com,"Vinay khand 3 Gomti nagar Lucknow ,226010",Uttar Pradesh,25ALPL000080,O+,28th october 2000
+Ramya Pathak ,Marketing Associate Intern,9187220480,ramyapathak11@gmail.com,"Flat no.22032 tower 22 Prestige ferns residency Harlur, Bangalore 560102",Karnatak ,25ALPL000081,O+,11 February 2004
+Shatakshi,HR intern,9334891400,shatakshik863@gmail.com,"Alpha living lakshmi house, kosana road, kaduneesnahalli, Bangalore - 560103",Karnataka ,25ALPL000082,O+,27 February
+Smahi Jhang,Product Design Intern,9990728881,smahijhang@gmail.com,"490, Sector 56, Gurgaon, Haryana ",Haryana,25ALPL000083,A+,13 December 2005
+Shruti Kumari ,UI/UX Designer Intern,9142110026,r.shrutiofficial@gmail.com,"Laxmi Nagar, Delhi",,25ALPL000084,,
+Priyanshu Roy Chowdhury ,HR Executive Intern ,8585069047,royp8252@gmail.com,"P/6 Jote Shibrampur, Kolkata South 24 parganas, Kol -700141",West Bengal ,25ALPL000085,B+,2nd November 2007
+Jatin Kumar,Backend Developer (intern),8923404886,jatinkumar02512@gmail.com,"Nai basti, Bijnor - 246701",Uttar Pradesh,25ALPL000086,B+,25th December 2004
+Sandeep kumar,Backend Developer web (intern),8081360931,sandeep636764@gmail.com,sachi street near ajay kumar garg engineering college ghaziabad up -201001,Uttar Pradesh,25ALPL000087,o+,24th september 2003
+Arman Kumar,Penetration Tester (intern),9810439670,armank8000@gmail.com,Street 16 Wazirabad Delhi - 110084,New Delhi,25ALPL000088,B+,17th February 2007
+Kollipakula Nikhil,Backend App Developer Intern,9381675512,kollipakulanikhil21@gmail.com,"Phagwara, LPU,144411",Punjab,25ALPL000089,,21st November 2006
+Shivanshi Tripathi,Backend App Developer Intern,8604573175,shivanshi.tripathi20104@gmail.com,"Meerut, 250004",Uttar Pradesh,25ALPL000090,O+,20 November
+Yashi Kothari,Digital Marketing Intern,9987685660,yashikothari2007@gmail.com,"Borivali west, Mumbai, 400092",Maharashtra ,25ALPL000091,B+,6th May 2007
+Sushant kumar suman ,Frontend App developer intern,7217842225,sushantkumar0603@gmail.com,"Srk gym building,near spicy food court, sultanpur, Mehrauli, New Delhi,110030",New Delhi ,25ALPL000092,0+,6th march 2006
+Riya Anil Ratnani ,Frontend App Developer Intern,9172684530,riyaratnani12@gmail.com,Ulhasnagar Thane ,Maharashtra ,25ALPL000093,AB+,18th March 2006
+Balaka Rasmita Reddy ,Digital Marketing Intern,6364521234,balakarasmitareddy@gmail.com,"A104, Benchmark Serenity Apt, Doddakannelli, Sarjapur Road, Bangalore- 560035",Karnataka,25ALPL000094,B+,4th November 2004
+Aryan Chauhan,Backend developer INTERN,7906558902,aryanrajput754@gmail.com,"Bmsit boys hostel,bengaluru,560064",Karnataka,25ALPL000095,B+,14th september 2004
+Shivani Nambiar,Supply Chain and Analytics Intern,9687107346,shivani.nambiar@icloud.com,"Ashoknagar, Mangalore ",Karnataka,25ALPL000096,,
+Mohd Affan Siddiqui,Frontend Developer (intern),7088413563,Siddaffan26@gmail.com,"Banbhoolpura ,Haldwani",Uttarakhand,25ALPL000097,B+,17 September 2006
+Eesha Mishra V ,Frontend Developer (Intern) ,8248311308,eeshamishra92@gmail.com,"21/3 Gowri Palace, 2nd Floor, Marapalam Road, KAS Nagar, Near Rangabhavan Mandabam, Erode, Tamil Nadu, IN - 638003",TamilNadu,25ALPL000098,B+,28th November 2005
+Mirson Dhony, Sales and Marketing Intern,9025108855,mirson.new@gmail.com,"1222/ab,2nd mainroad, mahatma gandhi nager, vettuvankeni,chennai-600115",TamilNadu,25ALPL000099,O+,13.06.2005
+Khushboo Swami,Social media and PR intern,9773850837,khushbooswami257@gmail.com,M107 m block hari nagar new delhi delhi -110064,New delhi,25ALPL000100,AB+,23.09.2007
+sonu kumar sharma ,video editor ,9835358541,sonusharma6299436080@gmail.com,"piro , bhojpur (bihar) 802207 ",bihar ,25ALPL000101,O+,13.03.2008
+Khushi,Frontend App Developer Intern,7986572415,kaggarwal3031@gmail.com,313 shiv nagar ,punjab,25ALPL000102,O+,16.03.2007
+Kartik Narang,Backend App Developer Intern,9997287070,narangkartik5@gmail.com,"shiv nagar beri bagh ,saharanpur",Uttar Pradesh,25ALPL000103,A+,18.02.2005
+Muhammad Alam Raza Bharmar,UI/UX Designer Intern,9324898551,alam.bharmal@gmail.com,"Al-Aziz Villa Opp. Heena Apt. Near Kasarvadavali new Post Office, Kasarvadavli G.B. Road Thane(W) 400615",Maharashtra,25ALPL000104,,13th September 2005
+Deepanshu Tevathiya,AI/ML Engineer Intern,9318405317,deepanshutev@gmail.com,"Sanjay Nagar, Ghaziabad",Uttar Pradesh,25ALPL000105,,21.01.2007
+Patnayukuni.Vinod,UI/UX Designer Intern,8523845593,patnaikunivinod@gmail.com,Visakhapatnam ,AndhraPradesh,25ALPL000106,,26.12.2005
+Ishu Anand,Backend App Developer Intern,9334294735,anandishu139@gmail.com,"Rajiv Nagar ,Patna,Bihar",Bihar ,25ALPL000107,B+,25.12.2004
+Amit kumar singh,AI/ML Engineer Intern,7280825054,ranjamit1@gmail.com,"chhapra, bihar",Bihar ,25ALPL000108,A+,22.07.2003
+MOHAMMAD HAJIKUL ,Content writer intern ,8252150632,mhajikul3@gmail.com,"Rosera, Samastipur 848216",Bihar,25ALPL000109,,09/09/2006
+Thaseem M,HR Operation Intern,9585123370,designwiththaseem@gmail.com,"Ranipet, Chennai",,25ALPL000110,B+,11/01/2004
+Bandari GaganSai,UI/UX Intern,7095037299,bandarigagan@gmail.com,OLD N.G.O.S colony Nizamabad Telengana,Telengana,25ALPL000111,,01/04/2002
+Ditya Sharma ,SCM and marketing intern,6397384005,dityasharma81@gmail.com,"82, mohalla .firahediyan jwalapur, Hardwar, Haridwar, Uttarakhand - 249407",Uttarakhand ,25ALPL000112,O+,06/07/2007
+Santosh,Full Stack Developer ,8618808929,sreddy08840@gmail.com,"jai bhemma nagra ,btm layout stage 1 ,benguluru",Kranataka,25ALPL000113,B+,26/01/2004
+Sadiya,SCM and marketing intern,9495852953,sadiya028@gmail.com,"Cheleri, Kannur",Kerala,25ALPL000114,,
+Kavita Thakur,SCM and Marketing Intern,8091759923,kavthakur000@gmail.com,"VPO Kamlah Fort Teh Dharampur Distt Mandi (HP), 175050",Chandigarh (Current Residing City),25ALPL000115,B+,26/08/1998
+Amala Shuvita S V,,9363631516,svamala05@gmail.com,"3/66 fathima street inrudayakulam,Tirunelveli",TamilNadu,25ALPL000116,0+,03.03.2005
+Tanmay Pund,SCM and Marketing Intern,8668951513,tanmaypund567@gmail.com,"Panchawati,Tq.Katol, District. Nagpur",Maharashtra,25ALPL000117,O+,18/08/1999
+Saanjh Chowdhury,Marketing Intern ,9051061666,chowdhurysaanjh18@gmail.com,"21/1A, A.K. Mukherjee Road, Kolkata 700090",West Bengal,25ALPL000118,B+,14/08/2006
+Afsal Ahmed Khan,Full Stack Development Intern,9150420069,afsalahmed2006@gmail.com,"Plot 81, Vallal Yusuf Nagar, Selaiyur, Tambaram, Chennai.",Tamil Nadu,25ALPL000119,O+,28/09/2006
+Utkarsh Gupta,Campus Ambassador,9368363741,utkarshg223@gmail.com,"ABES Engineering College
+19th KM Stone, NH-9
+Ghaziabad, Uttar Pradesh – 201009
+India",Uttar Pradesh ,25ALPL000120,,
+Kodali Dindi Basanth,CRM Executive intern,7032237757,Kodalidindibasanth2@gmail.com,VSN street Near SRR college Machavaram Vijayawada ,Andhra Pradesh,25ALPL000121,o+,15/07/1999
+SUNDARAM PANDEY,campus Ambassador,7387125080,sundarampandey999bilt@gmil.com,"shuatas nh mens hotsel , in front of registar office",uttarpradesh,25ALPL000122,AB- ,23/07/2005
+Madhur Chaturvedi ,Campus Ambassador Intern,8085529059,madhurchaturvedi99@gmail.com,Cosmo Ananda Sirol Road Gwalior ,Madhya Pradesh ,25ALPL000123,B+,21/10/2003
+venessa machado,Marketing Intern ,8668410500,Venessamachado45@gmail.com,Nandakhal virar west maharashtra 401301,Maharashtra,25ALPL000124,A+,25/12/2003
+Ravish,Campus Ambassador,9070281516,ravishlove6@gmail.com,jda lan 3 bantalab jammu,Jammu,25ALPL000125,,22/07/2026
+L KARTHIK,Campus Ambassador,9341014831,lkarthik159@gmail.com,Jamshedpur Tatanagar Jharkhand ,Jharkhand,25ALPL000126,,22/07/2006
+Srishti Gupta,HR Intern,9021217507,srishtig1806@gmail.com,"MAHE, Yelahanka, BLR",,25ALPL000127,O+,18/06/2006
+Vinayak Maurya,AI/ML Engineer Intern,8451851153,vinayakmaurya751@gmail.com,"Thane, Maharashtra ",Maharastra ,25ALPL000128,O+,03/07/2006
+Shagun Kashyap , Campus ambassador ,9369849411,shagunkashyap65@gmail.com,89 E/2 dabouli 2nd kanpur ,Uttar Pradesh ,25ALPL000129,,30/05/2006
+Shivam Kumar Mishra,R&D INTERN,8920126449,u210678@gmail.com,F-139/C JAWAHAR PARK KHANPUR NEW DELHI - 110062,Delhi,25ALPL000130,,
+GUNJI UDAY NARAYANA,AI/ML Engineer Intern,8008664806,udaynarayana45@gmail.com,"Hyderabad,Telangana - 501511",Telangana,25ALPL000131,O-,31/07/2005
+Satvikk Shrivastava,SCM and Marketing Intern,9516413155,satvikshrivastava999@gmail.com,"Palasia, Indore",Madhya Pradesh,25ALPL000132,,25/01/2005
+Sridevi S ,Digital Marketing Associate - Intern,9489287438,sridevisris187@gmail.com,"239/A, Periyar Nagar south, Vriddhachalam 606001",Tamil Nadu ,25ALPL000133,O+ve,07/04/2006
+Rishiraj Singh Shaktawat ,Digital Marketing Intern,6350051586,rishirajj.2004@gmail.com,"31/B, New Akashwani Colony, Kota ",Rajasthan ,25ALPL000134,,
+Jatin chugh, Marketing Associate Intern,9013218520,Jatin.chugh090@gmail.com,"Powai,mumbai",Maharashtra ,25ALPL000135,B+,
+DHULIPALLA JITENDRA VARMA ,Frontend developer Intern,7569054209,jitendravarmadhulipalla99@gmail.com,"Karnataka, Bangalore ",Karnataka ,25ALPL000136,B+,12/10/2005
+Arohon Gogoi,Digital Marketing Associate Intern,8876737134,      arohangogoi1@gmail.com,"Regional College of Management, Chandrasekharpur, Bhubaneswar, Odisha",Bhubaneswar,25ALPL000137,O+,05-04-2005
+Rama Gaur,Digital Marketing  Intern,8851512220,rama.gaur2005@gmail.com,"Panchsheel Garden Naveen Shahdara, Delhi - 110032",Delhi,25ALPL000138,B+,21/12/2005
+Kaviarasan,R&D INTERN,9952378503,kaviarasan.c26@gmail.com,"9, mps line,jaganathan street,theni-625531",tamilnnadu,25ALPL000139,B+,26/12/2007
+Samreen Anjum,Social Media & Trend Analyst Internship,8987827445,samreenanj2@gmail.com,"Ranchi, Jharkhand",Jharkhand,25ALPL000140,B+,17/10/2002
+Nidhi Singh ,Video Editor Intern,7982689578,ns853042@gmail.com,"Hno.-57, Deep Enclave pt-1, Vikas Nagar, New Delhi-59 ",Delhi,25ALPL000141,,
+Mariyam Siddique,R&D INTERN,8424063343,mariyamsiddique167@gmail.com,r no. 19 Haji rajjab ali compound near 'T' junction dharavi mumbai 400017,Mumbai,25ALPL000142,B+,28/09/2005
+Rahil khan,Campus Ambassador,9294569244,rk1981077@gmail.com,Head post office durga colony Guna Madhya Pradesh,Guna,25ALPL000143,,01/08/2026
+Dipanshi gupta,Graphic Design Intern ,8851448537,gdips1203@gmail.com,"Balbir Nagar, Shahdara, Delhi-110032",Delhi,25ALPL000144,B+,12/03/2006
+Kh Parveg Hossain ,Backend Developer Intern,,parevgkh64@gmail.com,"Arambagh,Hooghly",West Bengal,25ALPL000145,,
+Rokith kuamr ,CRM Executive intern,6374095580,rokithkumar200612@gmail.com,HIG plot no 129 5th Cross Mullai Nagar Hosur ,Tamil Nadu ,25ALPL000146,A+,12/05/2006
+Parul Goenka ,HR Operations Intern,7296805280,goenkaparul2@gmail.com,"D-60, Madho Singh Road, Bani Park, Jaipur, Rajasthan, 302016",Rajasthan ,25ALPL000147,B+,10/08/2005
+Nandini Gupta,HR Operations Intern,9771661355,nandinigupta1416@gmail.com,"BU 139 Pitampura marg, Kukreja pg for girls North West District, New Delhi",New Delhi,25ALPL000148,B+,10/05/2005
+Shashank Swaraj,Frontend developer Intern,9142728559,shashankswaraj440@gmail.com,Ram Nagar near South Railway colony chutiya Ranchi - 834001,Jharkhand,25ALPL000149,A+,27/12/2004
+Vishwas Tiwari,Backend Developer Intern,8355021619,vishwastiwari.sde@gmail.com,"Bhatwalia Nath Nagar Deoria, 274001, Uttar Pradesh",Uttar Pradesh ,25ALPL000150,B+,09/04/2006
+Silla Dhanush ,Frontend Developer Intern,9032565446,silladhanush957@gmail.com,"Arasavilli,Srikakulam, Andhra Pradesh ",Andhra Pradesh ,25ALPL000151,,09/12/2006
+Prachi M. Singhaniya,Digital Marketing Intern,7016785692,pgp16prachis@iimrohtak.ac.in,"Capital Flora , D-Mart , Gandhinagar",Gujarat,25ALPL000152,,
+Dhanabal S,HR operations Intern,9361929579,dhanbalselvaraj123@gmail.com,"1-131/1,amandakadavu, Udumalpet, tirupur -642201",tamil nadu ,25ALPL000153,B+,06/04/2004
+Rajat Rawat,Hr intern ,7817867409,Rajatrawat790@gmail.com,Shantikunj Peerumadara Ramnagar nanital,Uttarakhand,25ALPL000154,B+,22/04/2003
+sachin dhanraj yadav,Backend Developer Intern,7304227884,data01430@gmail.com,Manpada Thane West,Maharashtra ,25ALPL000155,O -ve,26/01/2004
+Shivam,HR operations intern,7217788246,shivamm8246@gmail.com,"R.k Puram ,new delhi -110022",Delhi,25ALPL000156,B+,30/01/2006
+Riddhi Kashyap ,Graphic Design Freelancer,9931858753,aesthetickash@gmail.com,"Bungalow Rd, Kamla Nagar, New Delhi, 110007",Delhi,25ALPL000157,B+,3/12/2006
+Koushal Mazumder ,Video editor cum Graphics Design freelance,9864855514,koushalmazumder65@gmail.com,"NIT SILCHAR, CACHAR, Assam",Assam,25ALPL000158,O+,11/09/2005
+Karamvir Virbahadur Singh,HR operations intern,7249037167,karamvir.virbahadur.singh@gmail.com,"Corlim, Goa",Goa,25ALPL000159,O+,04/09/2004
+yash verma,,7007037329,"yasherma70070@gmail.com
+
+",kanpur Uttar Pradesh ,uttar pradesh ,25ALPL000160,B+,18/09/2007
+Mannat Pujani,data analytics intern,,,,,25ALPL000161,,
+Raj Vaibhav Tiwari,Frontend Web Developer Intern,9026855424,rajvt172@gmail.com,Lucknow uttarpradesh,uttar pradesh,25ALPL000162,,
+Arunesh Sharma ,AIML Engineer Intern,8899983617,aruneshsharma2006@gmail.com,"Kanakapura, Karnataka ",Karnataka,25ALPL000163,O+,28/07/2006
+Abhishek Mishra,AIML Engineer Intern,7777039470,abhishekmishra24112004@gmail.com,"Brahmand ,Thane",Maharashtra,25ALPL000164,,24/11/2004
+Rohit Kishor Birare ,Frontend App Developer Intern,8999737516,rohitkishorbirare@gmail.com,"Nandurbar, Maharashtra ",Maharashtra ,25ALPL000165,B +ve,03/11/2005
+Nitin Raj,Backend Web Developer Intern,9470026690,rajnitin793@gmail.com,"Belghoria, kolkata 700056",West Bengal,25ALPL000166,B-,12/03/2008
+Alok Gupta,AIML Engineer Intern,8591553778,alok27052005@gmail.com,"Manorama Nagar, Thane",Maharashtra,25ALPL000167,B+,27/05/2005
+Anshul Patidar,Mobile Tester Intern,8225889142,anshhull67@gmail.com,Silicon City Indore,Madhya Pradesh,25ALPL000168,B+,20/11/2006
+Inbha Benisha J ,Digital marketing associate intern ,87786 09816,benisha200423@gmail.com,"Tirunelveli, Tamilnadu ",Tamilnadu ,25ALPL000169,o-,23/07/2004
+Prince kumar,Backend App Developer Intern,7088326451,chauhanprince21153366@gmail.com,"Ghaziabad, UttarPradesh",UttarPradesh,25ALPL000170,O+,18/09/2005
+Rishabh Jain,Marketing Intern,8279966879,rishabhjain3march1234@gmail.com,"Veeralay,Flat No.504 Aparna Garden,Vijay Nagar colony,Agra",UttarPradesh,25ALPL000171,,03/03/2007
+Amrit Sharma,UI/UX Designer Intern,9277096629,amritsharma2409@gmail.com,"Indira Nagar,Lucknow ,Uttar pradesh",Uttar Pradesh ,25ALPL000172,A+,
+Dharaniga S,Frontend Developer Intern,8754121178,dharanigas.offcl@gmail.com,"Chennai,TamilNadu",TamilNadu,25ALPL000173,B+,15/07/2008
+Saketh Yadala,UI/UX Designer Intern,7794002447,sakethyadala2004@gmail.com,"Hyderabad, Telangana",Telangana,25ALPL000174,B+,14/10/2004
+M.Mokshagna ,UI/UX Designer Intern,8639122144,tejmokshagna2@gmail.com,"Visakhapatnam,Andhra Pradesh ",Andhra Pradesh ,25ALPL000175,B+,28/05/2006
+Swarup Nandan Muduli,Backend Web Developer Intern,9692281388,swarupnandanmuduli@gmail.com,"Varthur,Bengaluru",Karnataka,25ALPL000176,B+,31/12/2005
+Devjit Bakshi,marketing & outreach intern,7029967028,devjitbakshi182@gmail.com,"siliguri , westbengal ,734006",westbengal,25ALPL000177,A+,18/02/2006
+Vansh Luthra,UI/UX Designer Intern,9315371803,Vanshluthra546@gmaIl.com,"New Delhi , 110059",,25ALPL000178,,
+Prince Kumar,Frontend Developer Intern,8126465336,prince.niat.jaipur@gmail.com,"Firozabad,Uttar Pradesh",,25ALPL000179,,
+Vansh Vashisht,Frontend App Developer Intern,9317632336,vanshvashisht23@gmail.com,"Una,Himachal Pradesh",,25ALPL000180,O+,18/07/2005
+Ayesha Begum ,HR Operations Intern,7002945387,ayeshab3096@gmail.com ,"Dibrugarh, Assam",Assam,25ALPL000181,O+,30/05/1996
+Gaurav Yadav,Frontend Developer Intern,6393226196,gauravyadavpro63@gmail.com,Lucknow uttarpradesh,Uttar pradesh,25ALPL000182,B+,19/12/2004
+Ujwal Uttam Bagul,UI/UX Designer Intern,931737093,ujwalbagul9@gmail.com,"Mumbai, Maharashtra ",Maharashtra,25ALPL000183,A+,16/06/2004
+Shivam Raj,UI/UX Designer Intern,7520238933,shivammraj.in@gmail.com,"Bhopal,Madhya Pradesh",Madhya Pradesh,25ALPL000184,,
+Karan Tribhuvan,UI/UX Designer Intern,8262075090,karantribhuwan92@gmail.com,"Vaijapur, Maharashtra 423701",Maharashtra ,25ALPL000185,O+,15/06/2006
+KURAPATI BHARGAVA NAGA VENKATA SAI,Frontend (APP) Developer Intern (Provisional),8332990970,kurapatibhargav005@gmail.com,"Chennai,TamilNadu",TamilNadu,25ALPL000186,,
+Goutham Krishna E,Junior Frontend (APP) Developer Intern,8590533027,gouthamurmila@gmail.com,"Malappuram, Kerala",Kerala,25ALPL000187,,26/03/2005
+Harshavardhan Reddy Arava,SOC Analyst Intern,7981525016,harsha868813@gmail.com,"Kapurthala,Punjab,144111",Punjab,25ALPL000188,,
+Zaira Ahmad,Content Writing Intern,7651913599,zairaahmad5339@gmail.com,"Chennai,Tamil Nadu",Tamil Nadu,25ALPL000189,B+,11/11/2006
+Yashdeep,Frontend developer Intern,8816052500,makrayash@gmail.com,kumarswamylayout bengaluru Karnataka,Karnataka,25ALPL000190,O+,22/12/2005
+Pratheeksha.V,Frontend developer Intern,9353183665,prateeksha4688@gmail.com,"banashankari,banglore",Karnataka,25ALPL000191,O+,22/06/2006
+Sakshi Dhakrey ,Marketing intern ,8979520544,shi.dhakrey@gmail.com,Agra ,UP,25ALPL000192,,14 January 2005
+Nishanth,UI/UX Designer Intern,9043473445,gnishanth28092006@gmail.com,"Kurumbapalayam, Coimbatore ",Tamilnadu ,25ALPL000193,0+,28/09/2026
+Rama Gaur,Digital Marketing Intern,,rama.gaur2005@gmail.com,Delhi - 110032,New Delhi,25ALPL000194,,21 December 2005
+Jatan agarwal,CRM Executive Intern,6388128187,jatan.works2002@gmail.com,jhansi,up,25ALPL000195,,04/03/2002
+Kaviarasan,R&D intern,8851512220,kaviarasan.c26@gmail.com,theni-625531,tamilnadu,25ALPL000196,,26/12/2007
+Dhanush Silla,Frontend developer intern ,9032565446,silladhanush957@gmail.com,srikakulam ,Andhra Pradesh,25ALPL000197,,03/08/2026
+Prince kumar,Backend Developer (app) Intern,7088326451,chauhanprince21153366@gmail.com,Ghaziabad,UttarPradesh,25ALPL000198,,18 September 2005
+Anvi Shukla,Campus Ambassador Intern,9170188890,shuklaanvi33@gmail.com,"Noida , Uttar Pradesh",Uttar Pradesh,25ALPL000199,B+,27/06/2006
+Nimrat Kaur Mudhar ,Digital Marketing Associate Intern ,9109192229,nimrat.mudhar@sdabocconiasiacenter.com,Powai,Mumbai,25ALPL000200,O+,01/08/2000
+PERINENI LAKSHITH,Cloud Engineer,9849434858,perinenilakshith@gmail.com,"16-591,Vepamanu Street, Chittoor, 517001",Andhra Pradesh,25ALPL000201,O+,18-07-2006
+Bodige Stanley ,Cloud engineer ,9676593185,stanleybodige@gmail.com,Warangal Telangana 506002,Telangana ,25ALPL000202,A+,31-08-2005
+Sachin Verma,Frontend Web Developer Intern,9336842263,shalltomar2004@gmail.com,"Ramayan Nagar Koni,Bilaspur",Chattisgarh,25ALPL000203,B+,29-11-2004
+Arun Sethu Shankar. J,Frontend App Dev Intern ,9152007181,arunsethushankarj@gmail.com,"Bf4 ,Airview Apartments, Manapakkam, Chennai",Tamil Nadu,25ALPL000204,B+,01-06-2005
+Anusruta Mohanty,Product Manager Intern,7008382702,anusrutamohanty@gmail.com,"GDB Hall of Residence, NIT Rourkela, Odisha- 769008",Odisha,25ALPL000205,A+,02-07-2005
+Uzair Meran Shafiullah Khan,Business Analyst Intern,9307577374,uzairmerankhangithub@gmail.com ,"Laxmi chowk, Hinjewadi Phase 1, Pune, Maharashtra",Maharashtra ,25ALPL000206,B+,15-06-2004
+Madhur,AI/ML Engineer,9468169040,madhur.24110188@iitgn.ac.in,"H-213, Hostel Area, IIT Gandhinagar, Palaj, Gandhinagar, Gujarat",Gujarat,25ALPL000207,O+,23-08-2006
+Aanya Malpani,PR and Outreach Intern,7014126622,malpaniaanya16@gmail.com,"The Common House, CTS Nos.171/21, Plot Nos.23 & 24, Sakore Nagar, Viman Nagar, Pune, Maharashtra 411014",Maharashtra ,25ALPL000208,O+,16-11-2007
+Pranav Somase,AI/ML Engineer,9762834354,pranav.somase@iitgn.ac.in,"F-143, IIT Gandhinagar, Palaj, Gamdhinagar, Gujarat",Gujarat,25ALPL000209,O+,02/08/2003
+Uma Mishra,Business Analyst Intern,7665443319,dmdkumamishra@gmail.com,Ghaziabad,Uttar Pradesh,25ALPL000210,B+,26-03-2006
+Saurav Kumar,Backend  Developer Intern,7349829164,saurav09809825@gmail.com,"Narayanpur Dedhpura , Mahnar, Vaishali, Bihar, 844505",Bihar,25ALPL000211,o+,22-05-2005
+Harsh Vardhan Maurya,Backend App Developer Intern,9555327406,mauryaharsh784@gmail.com,Ghaziabad,UP,25ALPL000212,O+,01-07-2003
+Bhargavee Joshi,HR Operations Intern,8595593255,bhargavee.0208@gmail.com,1997 sector 7D faridabad,Haryana ,25ALPL000213,B+,26/11/2005
+Bhange Neha Gokul,Content Writing Intern,9371848980,bhangeneha23@gmail.com,"BJGMC,Pune",Maharashtra ,25ALPL000214,O-,23/01/2006
+Puneet Ramlani ,Supply Chain Management Intern,9001771262,25mba193@iimraipur.ac.in,IIM Raipur ,Chattisgarh,25ALPL000215,B+,15/10/2001
+Sahir Tikoo,Social Media & Marketing Intern,8493830288,work.sahir13@gmail.com,"Roopnagar Enclave, Jammu",J&K,25ALPL000216,O+,13.04.2005
+Aditya Kumar ,BACKEND DEVELOPER INTERN ,9525980571,adityamishra70135@gmail.com,"DR APJ ABDUL KALAM TECHNICAL UNIVERSITY, LUCKNOW ",BIHAR ,25ALPL000217,B+,21/04/2004
+Dasari Bhavya Santhoshi,UI/UX Designer Intern,7995538989,bhavyasanthoshi02@gmail.com,"Rajahmundry, Andhra Pradesh",Andhra Pradesh,25ALPL000218,B+,02/06/2007
+Vaibhav kumari ,Content Writing Intern,9315969183,kumarivaibhavi87@gmail.com,Faridabad,Haryana ,25ALPL000219,O+,25/10/2004
+Vaishnavi bhosale,Marketing intern,7972319724,bhosalevaishnavi499@gmail.com,"Alandi devachi , pune ",Maharashtra ,25ALPL000220,,19/01/2009
+Kritika Choudhary,Social Media & Trend Analysis Intern,6386459235,kritika.sajs@gmail.com,"Yelahanka, Bengaluru",Karnataka,25ALPL000221,A+,22/01/2007
+Sakthivel R,HR Operations Intern,6381189510,sakthivelrathinavel0@gmail.com,"Chidambaram, Tamil Nadu",Tamil Nadu,25ALPL000222,A+,29/10/2004
+Piyush Singh Rawat,Data Analytics Intern,8447538321,piyushsinghrawat34@gmail.com,"Rama Krishna Puram, New Delhi",New Delhi,25ALPL000223,AB+,05/03/2007
+Tejas Shyam Fulumbarkar,UI/UX Designer Intern,7219287449,tejasshyamfulumbarkar@gmail.com,"Lohegaon,pune",Maharashtra,25ALPL000224,,
+Vikramaditya Pruthviraj Pisal Deshmukh ,Mobile tester ,9850290000,vikramadityapisaldeshmukh00@gmail.com,"Sant Tukaram nagar, Pune ",Maharashtra,25ALPL000225,,
+Mohd Affan Siddiqui,frontend developer,7088413563,siddaffan26@gmail.com,haldwani,uttarakhand,25ALPL000097,B+,17/09/2006

@@ -10,6 +10,8 @@ registry's dispatch mcp-branch calls `call_tool` to proxy at runtime.
 
 All network failures degrade to structured results/raised ClientError that the
 API layer turns into a clear message — never a 500.
+
+Now uses MongoDB instead of SQLite.
 """
 
 from __future__ import annotations
@@ -19,7 +21,11 @@ import uuid
 
 import httpx
 
-from app.db.sqlite import _now, connection
+from app.auth import store as auth_store
+
+
+def _now():
+    return auth_store._now().isoformat()
 
 # MCP protocol version we advertise during initialize.
 MCP_PROTOCOL_VERSION = "2025-06-18"
@@ -155,84 +161,64 @@ async def call_tool(server_url: str, remote_name: str, arguments: dict,
 def create_server(*, name: str, server_url: str, description: str = "", tool_count: int = 0,
                   auth_token: str | None = None, auth_scheme: str = "bearer",
                   refresh_token: str | None = None, oauth_config: str | None = None) -> str:
-    from app.core.crypto import encrypt
-
-    sid = uuid.uuid4().hex
-    now = _now()
-    enc = encrypt(auth_token) if auth_token else None
-    enc_refresh = encrypt(refresh_token) if refresh_token else None
-    with connection() as conn:
-        conn.execute(
-            """INSERT INTO mcp_servers (id, name, description, server_url, status, tool_count, last_active, auth_token, auth_scheme, refresh_token, oauth_config, created_at)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
-               ON CONFLICT(server_url) DO UPDATE SET name=excluded.name, description=excluded.description,
-                 status='connected', tool_count=excluded.tool_count, last_active=excluded.last_active,
-                 auth_token=excluded.auth_token, auth_scheme=excluded.auth_scheme,
-                 refresh_token=excluded.refresh_token, oauth_config=excluded.oauth_config""",
-            (sid, name, description, server_url, "connected", tool_count, now, enc, auth_scheme,
-             enc_refresh, oauth_config, now),
-        )
-        row = conn.execute("SELECT id FROM mcp_servers WHERE server_url=?", (server_url,)).fetchone()
-    return row["id"]
+    return auth_store.create_mcp_server(
+        name=name,
+        server_url=server_url,
+        description=description,
+        tool_count=tool_count,
+        auth_token=auth_token,
+        auth_scheme=auth_scheme,
+        refresh_token=refresh_token,
+        oauth_config=oauth_config,
+    )
 
 
 def update_server_tokens(server_url: str, access_token: str, refresh_token: str | None) -> None:
     """Rotate tokens after a refresh. Keeps the old refresh token if none returned."""
-    from app.core.crypto import encrypt
-
-    with connection() as conn:
-        row = conn.execute("SELECT refresh_token FROM mcp_servers WHERE server_url=?", (server_url,)).fetchone()
-        keep = row["refresh_token"] if row else None
-        new_refresh = encrypt(refresh_token) if refresh_token else keep
-        conn.execute(
-            "UPDATE mcp_servers SET auth_token=?, refresh_token=?, last_active=? WHERE server_url=?",
-            (encrypt(access_token), new_refresh, _now(), server_url),
-        )
+    auth_store.update_mcp_server_tokens(server_url, access_token, refresh_token)
 
 
 def list_servers() -> list[dict]:
-    with connection() as conn:
-        rows = conn.execute("SELECT * FROM mcp_servers ORDER BY created_at DESC").fetchall()
-    out = []
-    for r in rows:
-        rec = dict(r)
-        rec["has_auth"] = bool(rec.pop("auth_token", None))  # never expose the token
-        out.append(rec)
-    return out
+    return auth_store.list_mcp_servers()
 
 
 def get_server(server_id: str) -> dict | None:
-    with connection() as conn:
-        row = conn.execute("SELECT * FROM mcp_servers WHERE id=?", (server_id,)).fetchone()
-    if not row:
-        return None
-    rec = dict(row)
-    rec["has_auth"] = bool(rec.get("auth_token"))
-    rec.pop("auth_token", None)
-    return rec
+    """Get server by ID (without decrypted tokens)."""
+    db = auth_store.get_db()
+    doc = db.mcp_servers.find_one({"_id": server_id})
+    if doc:
+        doc = dict(doc)
+        doc.pop("auth_token", None)
+        doc.pop("refresh_token", None)
+        doc["has_auth"] = bool(doc.get("auth_token"))
+    return doc
 
 
 def get_server_auth(server_url: str) -> tuple[str | None, str]:
     """Decrypted (token, scheme) for a server url — for dispatch only, never over API."""
-    from app.core.crypto import decrypt
-
-    with connection() as conn:
-        row = conn.execute("SELECT auth_token, auth_scheme FROM mcp_servers WHERE server_url=?", (server_url,)).fetchone()
-    if not row:
+    doc = auth_store.get_mcp_server(server_url)
+    if not doc:
         return (None, "bearer")
-    return (decrypt(row["auth_token"]) if row["auth_token"] else None, row["auth_scheme"] or "bearer")
+    return (doc.get("auth_token"), doc.get("auth_scheme", "bearer"))
 
 
 def delete_server(server_id: str) -> bool:
-    with connection() as conn:
-        cur = conn.execute("DELETE FROM mcp_servers WHERE id=?", (server_id,))
-    return cur.rowcount > 0
+    # Find server by ID first to get URL
+    db = auth_store.get_db()
+    doc = db.mcp_servers.find_one({"_id": server_id})
+    if not doc:
+        return False
+    return auth_store.delete_mcp_server(doc["server_url"])
 
 
 def set_server_status(server_id: str, status: str) -> bool:
     """Flip connected/disconnected WITHOUT deleting the server or its tools."""
-    with connection() as conn:
-        cur = conn.execute(
-            "UPDATE mcp_servers SET status=?, last_active=? WHERE id=?", (status, _now(), server_id)
-        )
-    return cur.rowcount > 0
+    db = auth_store.get_db()
+    doc = db.mcp_servers.find_one({"_id": server_id})
+    if not doc:
+        return False
+    result = db.mcp_servers.update_one(
+        {"_id": server_id},
+        {"$set": {"status": status, "last_active": _now()}}
+    )
+    return result.modified_count > 0

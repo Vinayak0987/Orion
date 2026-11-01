@@ -47,6 +47,8 @@ def test_store_set_and_decrypt():
 def test_store_masks_keys():
     from app.settings import store
 
+    # Clear any existing keys first
+    store.delete_key("groq")
     store.set_keys({"serper_api_key": "srp_abcd1234"})
     masked = store.masked_keys()
     assert masked["serper"] == "...1234"

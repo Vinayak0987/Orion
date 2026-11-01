@@ -12,30 +12,28 @@ import pytest
 
 @pytest.fixture(autouse=True)
 def temp_db(monkeypatch):
-    """Point the app at a throwaway SQLite file for the duration of each test."""
-    tmpdir = tempfile.mkdtemp()
-    db_path = os.path.join(tmpdir, "test.db")
-    chroma_path = os.path.join(tmpdir, "chroma")
-
-    monkeypatch.setenv("SQLITE_PATH", db_path)
-    monkeypatch.setenv("CHROMA_PATH", chroma_path)
-
-    # Reload config so the new env vars take effect.
+    """Point the app at a throwaway MongoDB (mongomock) for the duration of each test."""
+    # Use mongomock for offline testing
+    import mongomock
+    import app.auth.store as auth_store
     import app.config as config
 
+    # Create a fresh mongomock client for each test
+    mock_client = mongomock.MongoClient()
+    auth_store.configure(mock_client, "test_orion")
+
+    # Set env var to indicate MongoDB is available
+    monkeypatch.setenv("MONGODB_URI", "mongodb://localhost:27017/test")
+    monkeypatch.setenv("MONGO_DB_NAME", "test_orion")
+
+    # Reload config so the new env vars take effect.
     config.get_settings.cache_clear()
     config.settings = config.get_settings()
 
-    # Re-point modules that captured `settings` at import time.
-    import app.db.sqlite as sqlite_mod
-    importlib.reload(sqlite_mod)
-
-    from app.db.sqlite import init_db
-    init_db()
-
     yield
 
-    try:
-        Path(db_path).unlink(missing_ok=True)
-    except OSError:
-        pass
+    # Cleanup - clear all collections in mongomock
+    db = mock_client["test_orion"]
+    for collection_name in db.list_collection_names():
+        db.drop_collection(collection_name)
+    auth_store.reset_for_tests()

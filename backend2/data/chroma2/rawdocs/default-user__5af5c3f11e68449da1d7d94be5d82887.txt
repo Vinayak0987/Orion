@@ -1,0 +1,4 @@
+name,email,status
+Alice,alice@x.com,active
+Bob,bob@x.com,active
+Cara,cara@x.com,churned

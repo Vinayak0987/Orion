@@ -21,9 +21,75 @@ from app.traces import store as traces
 
 
 def _tier_for(agent: dict) -> str:
-    model = agent.get("model", "")
+    model = agent.get("model") or ""
     # 70b / reasoning-class models → reasoning tier; else fast.
     return "reasoning" if "70b" in model or "reasoning" in model else "fast"
+
+
+# Keys models commonly use (instead of "input") to wrap a tool call's arguments,
+# and envelope keys that are metadata rather than tool input.
+_INPUT_ALIASES = (
+    "input", "arguments", "args", "parameters", "params",
+    "tool_input", "toolArguments", "tool_arguments", "arguments_json", "kwargs",
+)
+_META_KEYS = {"tool", "name", "tool_name", "action", "thought", "reasoning", "rationale"}
+
+
+def _extract_input(o: dict) -> dict:
+    """Recover a tool call's argument dict, tolerating the many wrapper key names
+    models emit (input/arguments/args/parameters) and the flat form where the args
+    sit at the top level. This is the fix for the 'Missing required field' class of
+    failure: the model DID provide the field, just under a key we weren't reading."""
+    for key in _INPUT_ALIASES:
+        if key not in o:
+            continue
+        val = o[key]
+        if isinstance(val, dict):
+            return val
+        if isinstance(val, str):
+            s = val.strip()
+            if s.startswith("{"):
+                try:
+                    inner = json.loads(s)
+                    if isinstance(inner, dict):
+                        return inner
+                except Exception:  # noqa: BLE001
+                    pass
+            # bare (non-dict) payload — remember and keep scanning aliases, then
+            # fall through to top-level flatten; _run_single wraps it later.
+            return {"__raw__": val}
+        break
+    # Flat form: {"tool": ..., "code": "..."} — everything that isn't envelope meta.
+    top = {k: v for k, v in o.items()
+           if k not in _META_KEYS and k not in _INPUT_ALIASES}
+    return top
+
+
+def _single_required_field(tool_name: str) -> str | None:
+    """If the tool takes exactly one field, return its name. Used to place a
+    bare-string argument a model gave us (e.g. input="print(1)") into the right
+    key for single-arg tools such as code_interpreter."""
+    sch: dict = {}
+    try:
+        from app.tools import store
+        rec = store.get_tool(tool_name)
+        if rec is not None:
+            sch = rec.get("input_schema") or {}
+        else:
+            from app.tools.base import REGISTRY
+            bt = REGISTRY.get(tool_name)
+            sch = (getattr(bt, "input_schema", {}) or {}) if bt else {}
+    except Exception:  # noqa: BLE001 — DB/registry not ready; best-effort
+        sch = {}
+    if not isinstance(sch, dict):
+        return None
+    props = sch.get("properties")
+    if isinstance(props, dict) and len(props) == 1:
+        return next(iter(props))
+    req = sch.get("required")
+    if isinstance(req, list) and len(req) == 1:
+        return req[0]
+    return None
 
 
 def _parse_tool_call(text: str) -> dict | None:
@@ -36,7 +102,7 @@ def _parse_tool_call(text: str) -> dict | None:
     try:
         obj = extract_json(stripped)
         if isinstance(obj, dict) and "tool" in obj:
-            return {"tool": obj["tool"], "input": obj.get("input", {})}
+            return {"tool": obj["tool"], "input": _extract_input(obj)}
     except Exception:  # noqa: BLE001
         pass
 
@@ -50,7 +116,7 @@ def _parse_tool_call(text: str) -> dict | None:
         except Exception:  # noqa: BLE001
             continue
         if isinstance(o, dict) and "tool" in o:
-            return {"tool": o["tool"], "input": o.get("input", {})}
+            return {"tool": o["tool"], "input": _extract_input(o)}
     return None
 
 
@@ -129,7 +195,7 @@ def _effective_tools(agent: dict, task: dict, mission: dict | None = None) -> li
     tools the planner marked the task as needing. In ACTION mode, agents also
     get the registered ACTION tools (gated by the approval flow) so they can
     actually perform real-world actions; in Planning mode they do not."""
-    tools = list(agent.get("tools", []) or [])
+    tools = list(agent.get("tools") or [])
     for t in (task.get("tools_needed") or []):
         if t not in tools:
             tools.append(t)
@@ -185,7 +251,7 @@ def _build_messages(agent: dict, task: dict, context: dict, memory: str = "", mi
                 desc = (pdef.get("description") or "")[:50]
                 flag = "*" if pname in required else ""
                 parts.append(f"{pname}{flag}" + (f"({ptype})" if ptype else "") + (f": {desc}" if desc else ""))
-            return "  args: {" + "; ".join(parts) + "}  (*=required)"
+            return "  input: {" + "; ".join(parts) + "}  (*=required)"
         # Handle flat format: {"field": {"type": "string", "required": True}}
         props = sch if isinstance(sch, dict) else {}
         if not props:
@@ -197,7 +263,7 @@ def _build_messages(agent: dict, task: dict, context: dict, memory: str = "", mi
             is_required = pdef.get("required", False)
             flag = "*" if is_required else ""
             parts.append(f"{pname}{flag}({ptype})")
-        return "  args: {" + "; ".join(parts) + "}  (*=required)"
+        return "  input: {" + "; ".join(parts) + "}  (*=required)"
 
     # Full tool records (name + description + input_schema + type + category) so
     # we can show the capability tag and, for MCP tools, the FULL description.
@@ -723,6 +789,14 @@ async def _run_single(agent: dict, agent_id: str, task: dict, context: dict,
 
         tool_name = tool_call["tool"]
         tool_input = tool_call["input"]
+
+        # Recover a bare-string argument a model gave for a single-field tool
+        # (e.g. {"tool": "code_interpreter", "input": "print(1)"}) so it lands on
+        # the correct key instead of triggering "Missing required field".
+        if isinstance(tool_input, dict) and set(tool_input) == {"__raw__"}:
+            only = _single_required_field(tool_name)
+            if only:
+                tool_input = {only: tool_input["__raw__"]}
 
         # Enforce the agent's allowed-tools list.
         if tool_name not in allowed_tools:

@@ -21,6 +21,7 @@ from app.config import settings
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS sessions (
     id                  TEXT PRIMARY KEY,
+    user_id             TEXT NOT NULL DEFAULT 'default',
     raw_prompt          TEXT NOT NULL,
     intent_json         TEXT,
     status              TEXT NOT NULL DEFAULT 'pending',
@@ -37,6 +38,7 @@ CREATE TABLE IF NOT EXISTS sessions (
 
 CREATE INDEX IF NOT EXISTS idx_sessions_created_at ON sessions(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_sessions_status     ON sessions(status);
+CREATE INDEX IF NOT EXISTS idx_sessions_user_id    ON sessions(user_id);
 
 CREATE TABLE IF NOT EXISTS evaluation_results (
     id           INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -86,12 +88,12 @@ def init_db() -> None:
 # =============================================================================
 
 
-def create_session(session_id: str, raw_prompt: str) -> None:
+def create_session(session_id: str, raw_prompt: str, user_id: str = "default") -> None:
     with connection() as conn:
         conn.execute(
-            "INSERT OR REPLACE INTO sessions (id, raw_prompt, status, created_at) "
-            "VALUES (?, ?, 'pending', ?)",
-            (session_id, raw_prompt, _now()),
+            "INSERT OR REPLACE INTO sessions (id, raw_prompt, status, created_at, user_id) "
+            "VALUES (?, ?, 'pending', ?, ?)",
+            (session_id, raw_prompt, _now(), user_id),
         )
 
 
@@ -127,27 +129,34 @@ def update_session(session_id: str, **fields: Any) -> None:
         )
 
 
-def get_session(session_id: str) -> dict | None:
+def get_session(session_id: str, user_id: str = "default") -> dict | None:
     with connection() as conn:
-        row = conn.execute("SELECT * FROM sessions WHERE id = ?", (session_id,)).fetchone()
+        row = conn.execute(
+            "SELECT * FROM sessions WHERE id = ? AND user_id = ?",
+            (session_id, user_id),
+        ).fetchone()
     return _decode_session(row) if row else None
 
 
-def list_sessions(limit: int = 50, offset: int = 0) -> list[dict]:
-    """F51 - history list for the frontend."""
+def list_sessions(user_id: str = "default", limit: int = 50, offset: int = 0) -> list[dict]:
+    """F51 - history list for the frontend. User-isolated."""
     with connection() as conn:
         rows = conn.execute(
             "SELECT id, raw_prompt, status, completeness_score, total_duration_ms, "
             "created_at, completed_at FROM sessions "
+            "WHERE user_id = ? "
             "ORDER BY created_at DESC LIMIT ? OFFSET ?",
-            (limit, offset),
+            (user_id, limit, offset),
         ).fetchall()
     return [dict(r) for r in rows]
 
 
-def delete_session(session_id: str) -> bool:
+def delete_session(session_id: str, user_id: str = "default") -> bool:
     with connection() as conn:
-        cursor = conn.execute("DELETE FROM sessions WHERE id = ?", (session_id,))
+        cursor = conn.execute(
+            "DELETE FROM sessions WHERE id = ? AND user_id = ?",
+            (session_id, user_id),
+        )
     return cursor.rowcount > 0
 
 

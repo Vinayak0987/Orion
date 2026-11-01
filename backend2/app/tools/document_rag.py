@@ -1,25 +1,17 @@
-"""document_rag built-in tool — ChromaDB-backed semantic search.
+"""document_rag built-in tool — MongoDB-backed semantic search.
 
-Phase 1: searches whatever has been embedded into the user's collection. An
-empty or missing collection returns {"passages": []} — never crashes. The
-upload pipeline that fills ChromaDB arrives in Phase 4; this tool is ready for
-it now.
+Searches document embeddings stored in MongoDB Atlas Vector Search using
+actual embeddings. Falls back to keyword matching if vector search fails.
+Never crashes — returns empty results on error.
 """
 
 from __future__ import annotations
 
+import re
+
+from app.auth import store as auth_store
 from app.config import settings
-
-_client = None
-
-
-def _get_client():
-    global _client
-    if _client is None:
-        import chromadb
-
-        _client = chromadb.PersistentClient(path=str(settings.chroma_dir))
-    return _client
+from app.llm.embeddings import get_embedding_client
 
 
 async def document_rag(tool_input: dict, user_keys: dict | None = None,
@@ -28,29 +20,67 @@ async def document_rag(tool_input: dict, user_keys: dict | None = None,
     if not query:
         return {"error": "document_rag requires a 'query'", "passages": []}
 
+    # Extract user_id from collection name (format: documents_<user_id>)
+    user_id = collection.replace("documents_", "", 1) or "default-user"
+
     try:
+        db = auth_store.get_db()
+
+        # Try vector search first
         try:
-            import chromadb  # noqa: F401
-        except ImportError:
-            # No ChromaDB — use the local keyword fallback store.
-            from app.knowledge import fallback
+            embedding_client = get_embedding_client(user_keys)
+            query_embedding = await embedding_client.embed_text(query)
 
-            user_id = collection.replace("documents_", "", 1) or "default-user"
-            passages = fallback.search(user_id, query)
-            if not passages:
-                return {"passages": [], "note": "No documents uploaded yet."}
-            return {"passages": passages, "count": len(passages)}
+            # Use MongoDB's vector search if we have a valid embedding
+            if query_embedding and any(v != 0 for v in query_embedding):
+                pipeline = [
+                    {
+                        "$vectorSearch": {
+                            "index": "vector_index",
+                            "path": "embedding",
+                            "queryVector": query_embedding,
+                            "numCandidates": 50,
+                            "limit": 5,
+                        }
+                    },
+                    {"$match": {"user_id": user_id}},
+                    {"$project": {"embedding": 0, "_id": 0}},
+                ]
+                results = list(db.document_embeddings.aggregate(pipeline))
 
-        client = _get_client()
-        try:
-            coll = client.get_collection(collection)
-        except Exception:
-            # Collection does not exist yet (nothing uploaded) — not an error.
-            return {"passages": [], "note": "No documents uploaded yet."}
+                if results:
+                    passages = [{"text": r.get("text", "")} for r in results]
+                    return {"passages": passages, "count": len(passages), "method": "vector_search"}
+        except Exception as e:  # noqa: BLE001 - fall back to keyword search
+            pass
 
-        res = coll.query(query_texts=[query], n_results=5)
-        docs = (res.get("documents") or [[]])[0]
-        passages = [{"text": d} for d in docs]
-        return {"passages": passages, "count": len(passages)}
+        # Fallback: keyword-based search
+        query_lower = query.lower()
+        terms = set(re.findall(r"[a-z0-9]+", query_lower))
+
+        if not terms:
+            return {"passages": [], "note": "Query contains no searchable terms."}
+
+        # Search document embeddings by keyword matching
+        embeddings = list(db.document_embeddings.find({"user_id": user_id}).limit(100))
+
+        # Score each chunk by term overlap
+        scored = []
+        for emb in embeddings:
+            text = emb.get("text", "").lower()
+            overlap = len(terms & set(re.findall(r"[a-z0-9]+", text)))
+            if overlap > 0:
+                scored.append({"text": emb.get("text", ""), "score": overlap, "chunk_id": emb.get("chunk_id")})
+
+        # Sort by score and return top 5
+        scored.sort(key=lambda x: x["score"], reverse=True)
+        top = scored[:5]
+
+        if not top:
+            return {"passages": [], "note": "No matching documents found."}
+
+        passages = [{"text": item["text"]} for item in top]
+        return {"passages": passages, "count": len(passages), "method": "keyword_search"}
+
     except Exception as e:  # noqa: BLE001 - degrade, never crash the mission
         return {"error": f"document_rag unavailable: {e}", "passages": []}

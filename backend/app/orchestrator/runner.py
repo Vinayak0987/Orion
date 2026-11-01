@@ -27,6 +27,7 @@ import structlog
 from app.agents.registry import DepartmentRunner
 from app.config import settings
 from app.core.logging import bind_session, clear_session
+from app.db import unified
 from app.db import sqlite
 from app.intent import classify_intent
 from app.llm.chain import LLMClient
@@ -54,6 +55,7 @@ async def orchestrate(
     prompt: str,
     *,
     session_id: str | None = None,
+    user_id: str = "default",
     client: LLMClient | None = None,
     force_all_departments: bool = False,
     progress_callback: ProgressCallback | None = None,
@@ -85,7 +87,8 @@ async def orchestrate(
 
     try:
         if persist:
-            sqlite.create_session(sid, prompt)
+            from app.db import unified
+            unified.create_session(sid, user_id, prompt)
 
         # --- F2 intent -------------------------------------------------------
         intent = await classify_intent(prompt, client=client)
@@ -110,7 +113,7 @@ async def orchestrate(
         await emitter.routing_resolved(decision.reason)
 
         if persist:
-            sqlite.update_session(
+            unified.update_session(
                 sid,
                 status=RunStatus.RUNNING.value,
                 intent_json=intent.model_dump(mode="json"),
@@ -158,7 +161,7 @@ async def orchestrate(
         duration_ms = int((time.perf_counter() - started) * 1000)
         log.error("orchestrate.failed", error=str(exc)[:300], duration_ms=duration_ms)
         if persist:
-            sqlite.update_session(
+            unified.update_session(
                 sid,
                 status=RunStatus.FAILED.value,
                 total_duration_ms=duration_ms,
@@ -227,7 +230,7 @@ def total_tokens(state: SharedBusinessState) -> int:
 
 def _persist_final(session_id: str, state: SharedBusinessState) -> None:
     metadata = state["metadata"]
-    sqlite.update_session(
+    unified.update_session(
         session_id,
         status=metadata.status.value,
         plan_json=export_plan(state),

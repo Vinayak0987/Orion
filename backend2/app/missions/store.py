@@ -1,23 +1,35 @@
-"""Missions + mission_tasks store."""
+"""Missions + mission_tasks store - MongoDB-backed."""
 
 from __future__ import annotations
 
 import json
 import uuid
 
-from app.db.sqlite import _now, connection
+from app.auth import store as auth_store
 
 
-def _decode_mission(row) -> dict:
-    return dict(row)
+def _decode_mission(doc: dict, include_tasks: bool = True) -> dict:
+    """Convert MongoDB doc to mission dict."""
+    mission = dict(doc)
+    mission["id"] = mission.pop("_id")
+    # Map user_id to created_by for compatibility
+    if "user_id" in mission and "created_by" not in mission:
+        mission["created_by"] = mission["user_id"]
+    if include_tasks:
+        mission["tasks"] = list_tasks(mission["id"])
+    else:
+        mission["tasks"] = []
+    return mission
 
 
-def _decode_task(row) -> dict:
-    rec = dict(row)
+def _decode_task(doc: dict) -> dict:
+    """Convert MongoDB doc to task dict."""
+    task = dict(doc)
+    task["id"] = task.pop("_id")
     for f in ("tools_needed", "depends_on"):
-        rec[f] = json.loads(rec[f]) if rec.get(f) else []
-    rec["result"] = json.loads(rec["result"]) if rec.get("result") else None
-    return rec
+        task[f] = task.get(f) or []
+    task["result"] = task.get("result") or None
+    return task
 
 
 # --- missions ----------------------------------------------------------------
@@ -26,77 +38,60 @@ def create_mission(prompt: str, created_by: str = "default-user",
                    department_id: str | None = None,
                    conversation_id: str | None = None,
                    mode: str = "action") -> str:
+    """Create a mission in MongoDB."""
     mission_id = uuid.uuid4().hex[:12]
     mode = mode if mode in ("planning", "action") else "action"
-    with connection() as conn:
-        conn.execute(
-            "INSERT INTO missions (id, prompt, status, department_id, conversation_id, mode, created_by, created_at) "
-            "VALUES (?, ?, 'planning', ?, ?, ?, ?, ?)",
-            (mission_id, prompt, department_id, conversation_id, mode, created_by, _now()),
-        )
+    auth_store.create_mission(
+        mission_id, created_by, prompt, None, department_id, conversation_id, mode
+    )
     return mission_id
 
 
 def set_mission(mission_id: str, **fields) -> None:
-    allowed = {"title", "status", "completed_at", "department_id"}
-    bad = fields.keys() - allowed
-    if bad:
-        raise ValueError(f"Unknown mission column(s): {bad}")
-    assignments = ", ".join(f"{k} = ?" for k in fields)
-    with connection() as conn:
-        conn.execute(
-            f"UPDATE missions SET {assignments} WHERE id = ?",  # noqa: S608 - whitelisted
-            (*fields.values(), mission_id),
-        )
+    """Update mission fields in MongoDB."""
+    auth_store.update_mission(mission_id, **fields)
 
 
-def get_mission(mission_id: str) -> dict | None:
-    with connection() as conn:
-        row = conn.execute("SELECT * FROM missions WHERE id = ?", (mission_id,)).fetchone()
-    if row is None:
+def get_mission(mission_id: str, user_id: str = "default-user") -> dict | None:
+    """Get a mission from MongoDB."""
+    doc = auth_store.get_mission(mission_id, user_id)
+    if doc is None:
         return None
-    mission = _decode_mission(row)
-    mission["tasks"] = list_tasks(mission_id)
-    return mission
+    return _decode_mission(doc)
 
 
 def list_missions(limit: int = 50, offset: int = 0, status: str | None = None,
                   created_by: str = "default-user", search: str | None = None,
                   mtype: str | None = None) -> list[dict]:
-    q = "SELECT * FROM missions WHERE created_by = ?"
-    params: list = [created_by]
+    """List missions from MongoDB."""
+    missions = auth_store.list_missions(created_by, limit, offset)
+    
+    # Filter by status if specified
     if status:
-        q += " AND status = ?"
-        params.append(status)
+        missions = [m for m in missions if m.get("status") == status]
+    
+    # Filter by search if specified
     if search:
-        q += " AND (LOWER(prompt) LIKE ? OR LOWER(COALESCE(title,'')) LIKE ?)"
-        like = f"%{search.lower()}%"
-        params += [like, like]
-    q += " ORDER BY created_at DESC LIMIT ? OFFSET ?"
-    params += [limit, offset]
-    with connection() as conn:
-        rows = conn.execute(q, params).fetchall()
+        search_lower = search.lower()
+        missions = [m for m in missions if search_lower in m.get("prompt", "").lower() or search_lower in m.get("title", "").lower()]
+    
     out = []
-    for r in rows:
-        m = _decode_mission(r)
-        with connection() as conn:
-            counts = conn.execute(
-                "SELECT COUNT(*) AS tasks, COUNT(DISTINCT agent_id) AS agents "
-                "FROM mission_tasks WHERE mission_id = ?",
-                (m["id"],),
-            ).fetchone()
-            trows = conn.execute(
-                "SELECT agent_type, agent_id, status FROM mission_tasks WHERE mission_id = ?",
-                (m["id"],),
-            ).fetchall()
-        m["task_count"] = counts["tasks"]
-        m["agent_count"] = counts["agents"]
-        types = [t["agent_type"] for t in trows]
-        m["type"] = _classify_type(types)
-        m["agent_ids"] = sorted({t["agent_id"] for t in trows if t["agent_id"]})
-        done = sum(1 for t in trows if t["status"] in ("completed", "failed", "stopped"))
-        m["progress"] = round(100 * done / len(trows)) if trows else 0
-        out.append(m)
+    for m in missions:
+        m_decoded = _decode_mission(m)
+        tasks = auth_store.get_mission_tasks(m_decoded["id"])
+        
+        # Calculate stats
+        agent_types = [t.get("agent_type") for t in tasks if t.get("agent_type")]
+        agent_ids = sorted({t.get("agent_id") for t in tasks if t.get("agent_id")})
+        
+        m_decoded["task_count"] = len(tasks)
+        m_decoded["agent_count"] = len(agent_ids)
+        m_decoded["type"] = _classify_type(agent_types)
+        m_decoded["agent_ids"] = agent_ids
+        done = sum(1 for t in tasks if t.get("status") in ("completed", "failed", "stopped"))
+        m_decoded["progress"] = round(100 * done / len(tasks)) if tasks else 0
+        out.append(m_decoded)
+    
     if mtype:
         out = [m for m in out if m["type"].lower() == mtype.lower()]
     return out
@@ -119,53 +114,33 @@ def _classify_type(types: list[str]) -> str:
     return "Research" if research else "Planning"
 
 
-def delete_mission(mission_id: str) -> bool:
-    with connection() as conn:
-        conn.execute("DELETE FROM mission_tasks WHERE mission_id = ?", (mission_id,))
-        cur = conn.execute("DELETE FROM missions WHERE id = ?", (mission_id,))
-    return cur.rowcount > 0
+def delete_mission(mission_id: str, user_id: str = "default-user") -> bool:
+    """Delete a mission from MongoDB."""
+    auth_store.delete_mission_tasks(mission_id)
+    return auth_store.delete_mission(mission_id, user_id)
 
 
 # --- tasks -------------------------------------------------------------------
 
 def save_tasks(mission_id: str, tasks: list[dict]) -> list[dict]:
-    """Insert planner tasks. Returns them with assigned ids."""
+    """Insert planner tasks into MongoDB. Returns them with assigned ids."""
     saved = []
-    with connection() as conn:
-        for t in tasks:
-            task_id = uuid.uuid4().hex[:12]
-            conn.execute(
-                "INSERT INTO mission_tasks "
-                "(id, mission_id, title, agent_type, tools_needed, depends_on, status, created_at) "
-                "VALUES (?, ?, ?, ?, ?, ?, 'pending', ?)",
-                (
-                    task_id, mission_id, t["title"], t["agent_type"],
-                    json.dumps(t.get("tools_needed", [])),
-                    json.dumps(t.get("depends_on", [])),
-                    _now(),
-                ),
-            )
-            saved.append({**t, "id": task_id, "mission_id": mission_id, "status": "pending"})
+    for t in tasks:
+        task_id = uuid.uuid4().hex[:12]
+        auth_store.create_mission_task(
+            task_id, mission_id, t["title"], t["agent_type"],
+            t.get("agent_id"), t.get("tools_needed", []), t.get("depends_on", []), "pending"
+        )
+        saved.append({**t, "id": task_id, "mission_id": mission_id, "status": "pending"})
     return saved
 
 
 def set_task(task_id: str, **fields) -> None:
-    allowed = {"agent_id", "status", "result", "completed_at"}
-    bad = fields.keys() - allowed
-    if bad:
-        raise ValueError(f"Unknown task column(s): {bad}")
-    enc = {k: (json.dumps(v) if isinstance(v, (dict, list)) else v) for k, v in fields.items()}
-    assignments = ", ".join(f"{k} = ?" for k in enc)
-    with connection() as conn:
-        conn.execute(
-            f"UPDATE mission_tasks SET {assignments} WHERE id = ?",  # noqa: S608 - whitelisted
-            (*enc.values(), task_id),
-        )
+    """Update task fields in MongoDB."""
+    auth_store.update_mission_task(task_id, **fields)
 
 
 def list_tasks(mission_id: str) -> list[dict]:
-    with connection() as conn:
-        rows = conn.execute(
-            "SELECT * FROM mission_tasks WHERE mission_id = ? ORDER BY created_at", (mission_id,)
-        ).fetchall()
-    return [_decode_task(r) for r in rows]
+    """List tasks for a mission from MongoDB."""
+    tasks = auth_store.get_mission_tasks(mission_id)
+    return [_decode_task(t) for t in tasks]

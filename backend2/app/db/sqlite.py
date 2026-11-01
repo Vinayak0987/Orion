@@ -1,8 +1,14 @@
-"""Orion v2 — SQLite persistence core.
+"""Orion v2 — SQLite persistence core (LEGACY).
+
+⚠️ LEGACY: This module is kept for backward compatibility and testing purposes.
+The primary storage is now MongoDB Atlas. SQLite is only used for:
+- Test isolation (tests need local, fast storage)
+- Migration scripts (reading from old SQLite databases)
+- Local tool databases (agents can create their own SQLite DBs)
+- File-based KV stores and local caches
 
 Standard-library sqlite3 only, no ORM. WAL mode so the WebSocket reader and the
-mission writer never block each other. All feature stores (missions, agents,
-traces, settings) import `connection()` and `_now()` from here.
+mission writer never block each other.
 """
 
 from __future__ import annotations

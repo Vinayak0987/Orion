@@ -101,7 +101,9 @@ class Settings(BaseSettings):
     cloud_api_secret: str = ""
 
     # --- Storage -------------------------------------------------------------
+    # LEGACY: SQLite kept for tests and local tool databases only
     sqlite_path: str = "./data/orion2.db"
+    # LEGACY: ChromaDB migrated to MongoDB Atlas Vector Search
     chroma_path: str = "./data/chroma2"
     # Sandbox root for file/document built-in tools. All file paths an agent
     # passes are resolved INSIDE this directory — never outside it.

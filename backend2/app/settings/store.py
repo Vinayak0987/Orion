@@ -9,10 +9,10 @@ Phase: single 'default-user' row until auth user_id is threaded into missions.
 
 from __future__ import annotations
 
-import json
+import re
 
+from app.auth import store as auth_store
 from app.core.crypto import decrypt, encrypt
-from app.db.sqlite import _now, connection
 
 DEFAULT_USER = "default-user"
 
@@ -26,21 +26,18 @@ PROVIDERS = (
 
 
 def _load_raw(user_id: str) -> dict:
-    with connection() as conn:
-        row = conn.execute(
-            "SELECT api_keys FROM user_settings WHERE user_id = ?", (user_id,)
-        ).fetchone()
-    return json.loads(row["api_keys"]) if row else {}
+    db = auth_store.get_db()
+    doc = db.user_settings.find_one({"_id": user_id})
+    return doc.get("api_keys", {}) if doc else {}
 
 
 def _save_raw(user_id: str, keys: dict) -> None:
-    with connection() as conn:
-        conn.execute(
-            "INSERT INTO user_settings (user_id, api_keys, updated_at) VALUES (?, ?, ?) "
-            "ON CONFLICT(user_id) DO UPDATE SET api_keys = excluded.api_keys, "
-            "updated_at = excluded.updated_at",
-            (user_id, json.dumps(keys), _now()),
-        )
+    db = auth_store.get_db()
+    db.user_settings.update_one(
+        {"_id": user_id},
+        {"$set": {"api_keys": keys, "updated_at": auth_store._now()}},
+        upsert=True
+    )
 
 
 def set_keys(updates: dict, user_id: str = DEFAULT_USER) -> None:
@@ -95,7 +92,6 @@ _CUSTOM_PREFIX = "custom:"
 
 
 def _slug(name: str) -> str:
-    import re
     return re.sub(r"[^a-z0-9_]+", "_", (name or "").strip().lower()).strip("_")
 
 

@@ -1,0 +1,5 @@
+name,email,reaction
+Alice,alice@x.com,liked
+Bob,bob@x.com,ignored
+Cara,cara@x.com,liked
+Dan,dan@x.com,clicked

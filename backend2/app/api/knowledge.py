@@ -73,11 +73,8 @@ async def index_document_endpoint(doc_id: str) -> dict:
 
 def _google_user() -> str | None:
     """The user_id that owns the Google OAuth connection (single-tenant)."""
-    from app.db.sqlite import connection
-    with connection() as c:
-        row = c.execute("SELECT user_id FROM oauth_connections WHERE provider='google' "
-                        "AND status='connected' LIMIT 1").fetchone()
-    return row["user_id"] if row else None
+    from app.auth import store as auth_store
+    return auth_store.get_oauth_user_id_for_provider("google")
 
 
 @router.get("/knowledge/sources/drive/status")
@@ -193,11 +190,8 @@ async def drive_import(req: DriveImportRequest) -> dict:
 
 def _provider_user(provider: str) -> str | None:
     """The user_id owning a connected OAuth provider (single-tenant)."""
-    from app.db.sqlite import connection
-    with connection() as c:
-        row = c.execute("SELECT user_id FROM oauth_connections WHERE provider=? "
-                        "AND status='connected' LIMIT 1", (provider,)).fetchone()
-    return row["user_id"] if row else None
+    from app.auth import store as auth_store
+    return auth_store.get_oauth_user_id_for_provider(provider)
 
 
 async def _provider_token(provider: str) -> str | None:
