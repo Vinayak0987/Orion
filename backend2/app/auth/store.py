@@ -183,6 +183,10 @@ def _ensure_indexes() -> None:
     # Scheduled missions
     _db.scheduled_missions.create_index([("enabled", 1), ("next_run", 1)])
     _db.scheduled_missions.create_index([("created_by", 1)])
+    # Workspaces
+    _db.workspaces.create_index([("owner_id", 1)], unique=True)
+    _db.members.create_index([("workspace_id", 1)])
+    _db.members.create_index([("workspace_id", 1), ("email", 1)], unique=True)
     # Document embeddings - vector search index
     try:
         _db.document_embeddings.create_search_index(

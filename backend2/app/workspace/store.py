@@ -26,6 +26,7 @@ DEFAULT_WORKSPACE = {
     "name": "My Workspace",
     "description": "",
     "logo_url": None,
+    "banner_url": None,
     "timezone": "(GMT+05:30) Asia/Kolkata",
     "language": "English (US)",
 }
@@ -41,6 +42,13 @@ def get_or_create_workspace(owner_id: str, owner_name: str = "", owner_email: st
     db = get_db()
     ws = db.workspaces.find_one({"owner_id": owner_id})
     if ws:
+        # Migration: add banner_url if missing
+        if "banner_url" not in ws:
+            db.workspaces.update_one(
+                {"_id": ws["_id"]},
+                {"$set": {"banner_url": None}}
+            )
+            ws["banner_url"] = None
         return ws
 
     ws = {
@@ -68,7 +76,7 @@ def update_workspace(owner_id: str, owner_name: str = "", owner_email: str = "",
     allowed = {
         k: v
         for k, v in fields.items()
-        if k in {"name", "description", "logo_url", "timezone", "language"} and v is not None
+        if k in {"name", "description", "logo_url", "banner_url", "timezone", "language"} and v is not None
     }
     ws = get_or_create_workspace(owner_id, owner_name, owner_email)
     if allowed:

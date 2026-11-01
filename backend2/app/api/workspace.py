@@ -16,6 +16,7 @@ class WorkspaceUpdate(BaseModel):
     name: str | None = Field(default=None, min_length=1, max_length=120)
     description: str | None = Field(default=None, max_length=400)
     logo_url: str | None = None
+    banner_url: str | None = None
     timezone: str | None = None
     language: str | None = None
 
@@ -38,6 +39,7 @@ def _ws_public(ws: dict) -> dict:
         "name": ws.get("name"),
         "description": ws.get("description"),
         "logo_url": ws.get("logo_url"),
+        "banner_url": ws.get("banner_url"),
         "timezone": ws.get("timezone"),
         "language": ws.get("language"),
         "created_at": ws.get("created_at"),
