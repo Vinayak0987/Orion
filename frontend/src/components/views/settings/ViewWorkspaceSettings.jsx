@@ -29,14 +29,16 @@ function Overview() {
   const toast = useToast();
   const [ws, setWs] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadingBanner, setUploadingBanner] = useState(false);
   const logoRef = useRef(null);
+  const bannerRef = useRef(null);
   const set = (k, v) => setWs((w) => ({ ...w, [k]: v }));
 
   useEffect(() => { authApi.getWorkspace().then(setWs).catch((e) => toast.error(e.message)); /* eslint-disable-next-line */ }, []);
 
   async function save() {
     try {
-      const u = await authApi.updateWorkspace({ name: ws.name, description: ws.description, timezone: ws.timezone, language: ws.language, logo_url: ws.logo_url });
+      const u = await authApi.updateWorkspace({ name: ws.name, description: ws.description, timezone: ws.timezone, language: ws.language, logo_url: ws.logo_url, banner_url: ws.banner_url });
       setWs(u);
       toast.success("Workspace saved.");
     } catch (e) { toast.error(e.message); }
@@ -51,6 +53,17 @@ function Overview() {
       setWs(u);
       toast.success("Logo updated.");
     } catch (e) { toast.error(e.message); } finally { setUploading(false); }
+  }
+
+  async function onBanner(e) {
+    const file = e.target.files?.[0]; e.target.value = ""; if (!file) return;
+    setUploadingBanner(true);
+    try {
+      const res = await authApi.uploadFile(file);
+      const u = await authApi.updateWorkspace({ banner_url: res.url });
+      setWs(u);
+      toast.success("Banner updated.");
+    } catch (e) { toast.error(e.message); } finally { setUploadingBanner(false); }
   }
 
   if (!ws) return <div className="text-[13px] text-[#94a3b8] py-6">Loading…</div>;
@@ -94,6 +107,24 @@ function Overview() {
             </button>
             <input ref={logoRef} type="file" accept="image/*" className="hidden" onChange={onLogo} />
           </NeuField>
+          <NeuField label="Company Banner">
+            <button
+              onClick={() => bannerRef.current?.click()}
+              disabled={uploadingBanner}
+              className="neu-inset w-full h-[120px] flex flex-col items-center justify-center gap-1 hover:brightness-[0.99] transition overflow-hidden"
+            >
+              {ws.banner_url ? (
+                <img src={ws.banner_url} alt="banner" className="w-full h-full object-cover" />
+              ) : (
+                <>
+                  <ImageUp size={20} className="text-[#4f46e5]" />
+                  <span className="text-[13px] font-semibold text-[#5b6678]">{uploadingBanner ? "Uploading…" : "Click to upload banner"}</span>
+                  <span className="text-[11.5px] text-[#9aa6b8]">PNG or JPG · Recommended 1200x300px</span>
+                </>
+              )}
+            </button>
+            <input ref={bannerRef} type="file" accept="image/*" className="hidden" onChange={onBanner} />
+          </NeuField>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <NeuField label="Default Timezone">
               <select value={ws.timezone || ""} onChange={(e) => set("timezone", e.target.value)} className={`${neuInput} appearance-none cursor-pointer`}>
@@ -117,6 +148,13 @@ function Overview() {
         </div>
 
         <div className="flex flex-col items-center text-center">
+          {/* Banner Preview */}
+          {ws.banner_url && (
+            <div className="w-full h-[120px] rounded-xl overflow-hidden mb-4 neu-inset">
+              <img src={ws.banner_url} alt="banner" className="w-full h-full object-cover" />
+            </div>
+          )}
+
           <div className="neu-avatar-well p-2 rounded-2xl">
             <span className="grid place-items-center w-[72px] h-[72px] rounded-xl bg-gradient-to-br from-[#6366f1] to-[#4338ca] text-white overflow-hidden">
               {ws.logo_url ? <img src={ws.logo_url} alt="" className="w-full h-full object-cover" /> : <Sparkles size={26} fill="currentColor" />}
